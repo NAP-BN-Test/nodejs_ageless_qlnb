@@ -541,6 +541,7 @@ module.exports = function (app) {
     app.route('/qlnb/get_list_department').post(apiSpecializedSoftware.getListDepartment);
 
     app.route('/qlnb/change_customer_data').post(apiSpecializedSoftware.changeCustomerData);
+    app.route('/qlnb/test').post(apiSpecializedSoftware.test);
 
     app.route('/qlnb/change_invoice_or_credit_data').post(apiSpecializedSoftware.changeInvoiceOrCreditData);
     var tblInvoice = require('./controller_finance/ctl-tblInvoice')

@@ -22,7 +22,7 @@ async function deleteRelationshiptblDMNhaCungCap(db, listID) {
 }
 var customerData = require('../controller_finance/ctl-apiSpecializedSoftware')
 
-let dataCustomer = customerData.getCustomerSpecializeSoftware()
+let dataCustomer = customerData.getCustomerOfPMCM()
 module.exports = {
     deleteRelationshiptblDMNhaCungCap,
     // add_tbl_dmnhacungcap

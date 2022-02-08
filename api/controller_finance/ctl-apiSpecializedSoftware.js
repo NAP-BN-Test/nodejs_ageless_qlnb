@@ -312,15 +312,6 @@ let data = [
         nameAccountingCredit: 'Doanh thu bán hàng và cung cấp dịch vụ',
     },
 ];
-totalMoney = [{
-    total: 1000000000,
-    type: 'VND',
-},
-{
-    total: 1000,
-    type: 'USD',
-}
-];
 var dataCredit = [{
     id: 100,
     createdDate: '01/05/2021',
@@ -630,139 +621,6 @@ var dataCredit = [{
     },],
 },
 ]
-dataStaff = [
-
-    {
-        id: 1,
-        staffCode: 'NV001',
-        fullName: 'NGUYỄN THỊ THU',
-        gender: 'Nữ',
-        birthday: '20/03/1992',
-        cmndNumber: '125457789',
-        address: 'Số 13 Hoàng Mai Hà Nội',
-        mobile: '065817845',
-        email: 'thu123@gmail.com',
-        departmentName: 'Ban MKT',
-        branchName: 'Việt Nam',
-    },
-    {
-        id: 2,
-        staffCode: 'NV002',
-        fullName: 'Nguyễn Anh Tuấn',
-        gender: 'Nam',
-        birthday: '15/04/1994',
-        cmndNumber: '123789210',
-        address: 'Số 21A Kim Ngưu Hoàng Mai Hai Bà Trưng Hà Nội',
-        mobile: '067812345',
-        email: 'tuanna@gmail.com',
-        departmentName: 'Ban sáng chế',
-        branchName: 'Việt Nam',
-    },
-    {
-        id: 3,
-        staffCode: 'NV003',
-        fullName: 'LÊ THỊ THẢO',
-        gender: 'Nữ',
-        birthday: '25/10/1997',
-        cmndNumber: '125654421',
-        address: 'Số 203 Minh Khai Hà Nội',
-        mobile: '0989705248',
-        email: 'lethao.nap@gmail.com',
-        departmentName: 'Ban kế toán',
-        branchName: 'Việt Nam',
-    },
-    {
-        id: 4,
-        staffCode: 'NV004',
-        fullName: 'Phạm Đức Anh',
-        gender: 'Nam',
-        birthday: '10/05/1985',
-        cmndNumber: '121012351',
-        address: 'Số 2 Đào Tấn Hà Nội',
-        mobile: '0365412784',
-        email: 'anhduc12@gmail.com',
-        departmentName: 'Ban sáng chế',
-        branchName: 'Việt Nam',
-    },
-    {
-        id: 5,
-        staffCode: 'NV005',
-        fullName: 'Trần Quỳnh Trang',
-        gender: 'Nữ',
-        birthday: '18/03/1991',
-        cmndNumber: '125317451',
-        address: 'Số 23 Tam Trinh Hoàng Mai Hà Nội',
-        mobile: '0368451274',
-        email: 'trang123@gmail.com',
-        departmentName: 'Ban NH1',
-        branchName: 'Việt Nam',
-    },
-    {
-        id: 6,
-        staffCode: 'NV006',
-        fullName: 'Nguyễn Thị Thu Trang',
-        gender: 'Nữ',
-        birthday: '20/09/1988',
-        cmndNumber: '12612468',
-        address: 'Số 1B Ngõ 286 Lĩnh Nam Hoàng Mai Hà Nội',
-        mobile: '098714521',
-        email: 'thutrang@gmail.com',
-        departmentName: 'Ban Kế toán',
-        branchName: 'Việt Nam',
-    },
-    {
-        id: 7,
-        staffCode: 'NV007',
-        fullName: 'Vũ Văn Chiến',
-        gender: 'Nam',
-        birthday: '16/06/1990',
-        cmndNumber: '125781423',
-        address: 'Số 25 Ngọc Lâm Long Biên Hà Nội',
-        mobile: '083654127',
-        email: 'vvchien@gmail.com',
-        departmentName: 'Ban Sáng chế',
-        branchName: 'Việt Nam',
-    },
-    {
-        id: 8,
-        staffCode: 'NV008',
-        fullName: 'lê Thị Ngọc Diệp',
-        gender: 'Nữ',
-        birthday: '25/10/1996',
-        cmndNumber: '125021342',
-        address: 'Số 3B Hàng Mã Hà Nội',
-        mobile: '012784125',
-        email: 'diephn@gmail.com',
-        departmentName: 'Ban Sáng chế',
-        branchName: 'Việt Nam',
-    },
-    {
-        id: 9,
-        staffCode: 'NV009',
-        fullName: 'Vũ Quang Minh',
-        gender: 'Nam',
-        birthday: '06/06/1980',
-        cmndNumber: '126120412',
-        address: 'Số 86 Thái Hà Hà Nội',
-        mobile: '086234517',
-        email: 'vuminh@gmail.com',
-        departmentName: 'Ban NH2',
-        branchName: 'Việt Nam',
-    },
-    {
-        id: 10,
-        staffCode: 'NV010',
-        fullName: 'Nguyễn Thị Thu Hà',
-        gender: 'Nữ',
-        birthday: '14/02/1985',
-        cmndNumber: '121453245',
-        address: 'Số 26 Hàng Chiếu Hà Nội',
-        mobile: '089631242',
-        email: 'thuha12@gmail.com',
-        departmentName: 'Ban Kế toán',
-        branchName: 'Việt Nam',
-    },
-]
 
 function checkDuplicate(array, elm) {
     var check = false;
@@ -809,238 +667,95 @@ async function calculateTheTotalAmountOfEachCurrency(array) {
     }
     return arrayResult
 }
-let dataCustomer = [{
-    "customerCode": "KH0001",
-    "name": "Công ty tnhh An Phú",
-    "attributesChangeLog": "Công ty chuyên về lắp ráp linh kiện",
-    "tax": "123456789",
-    "countryName": "Việt Nam",
-    "address": "Số 2 Hoàng Mai Hà Nội",
-    "mobile": "098705124",
-    "fax": "01234567",
-    "email": "anphu@gmail.com",
-    "id": 1,
-},
-{
-    "customerCode": "KH0002",
-    "name": "Công ty tnhh Is Tech Vina",
-    "attributesChangeLog": "Công ty chuyên sản xuất bánh kẹo ",
-    "tax": "01245870",
-    "countryName": "Việt Nam",
-    "address": "Số 35 Bạch mai Cầu Giấy Hà Nội",
-    "mobile": "082457145",
-    "fax": "0241368451",
-    "email": "istech@gmail.com",
-    "id": 2,
-},
-{
-    "customerCode": "KH0003",
-    "name": "Công ty cổ phần Orion Việt Nam",
-    "attributesChangeLog": "Công ty chuyên sản xuất bánh kẹo",
-    "tax": "012341250",
-    "countryName": "Việt nam",
-    "address": "Số 12 Bạch Mai Hà Nội",
-    "mobile": "0315456554",
-    "fax": "132456545",
-    "email": "orion13@gmail.com",
-    "id": 3,
-},
-{
-    "customerCode": "KH0004",
-    "name": "Công ty TNHH Rồng Việt",
-    "attributesChangeLog": "Công ty chuyên cung cấp thiết bị điện lạnh",
-    "tax": "01323255",
-    "countryName": "Việt Nam",
-    "address": "Số 11 Vĩnh Tuy Hai Bà Trưng Hà Nội",
-    "mobile": "0445445474",
-    "fax": "1135635",
-    "email": "rongviet@gmail.com",
-    "id": 4,
-},
-{
-    "customerCode": "KH0005",
-    "name": "Công ty cổ phần và thương mại Đức Việt",
-    "attributesChangeLog": "Công ty chuyên cung cấp thức ăn đông lạnh ",
-    "tax": "017654124",
-    "countryName": "Việt Nam",
-    "address": "Số 389 Lĩnh Nam Hoàng mai Hà Nội",
-    "mobile": "0444545401",
-    "fax": "75241241241",
-    "email": "ducviet0209@gmail.com",
-    "id": 5,
-},
-{
-    "customerCode": "KH0006",
-    "name": "Công ty TNHH 1 thành viên Bảo Minh",
-    "attributesChangeLog": "Công ty chuyên cung cấp cácclaoị thực phẩm khô",
-    "tax": "154654565",
-    "countryName": "Việt Nam",
-    "address": "Số 25 Ba Đình Hà Nội",
-    "mobile": "045102474",
-    "fax": "02137244",
-    "email": "baominh56@gmail.com",
-    "id": 6,
-},
-{
-    "customerCode": "KH0007",
-    "name": "Công ty Sx và Tm Minh Hòa",
-    "attributesChangeLog": "Công ty chuyên cung cấp lao động thời vụ",
-    "tax": "04785635432",
-    "countryName": "Việt Nam",
-    "address": "Số 21 Hàng Mã Hà Nội",
-    "mobile": "0045454510",
-    "fax": "415265654",
-    "email": "minhhoa1212@gmail.com",
-    "id": 7,
-},
-{
-    "customerCode": "KH0008",
-    "name": "Công ty cổ phần EC",
-    "attributesChangeLog": "Công ty chuyên cung cấp đồ gá khuôn jig",
-    "tax": "45454545",
-    "countryName": "Việt Nam",
-    "address": "Số 13 đường 17 KCN Tiên Sơn Bắc Ninh",
-    "mobile": "012345474",
-    "fax": "012244635",
-    "email": "ec1312@gmail.com",
-    "id": 8,
-},
-{
-    "customerCode": "KH0009",
-    "name": "Công ty cổ phần Thu Hương",
-    "attributesChangeLog": "Công ty chuyên cung cấp suất ăn công  nghiệp",
-    "tax": "012546565",
-    "countryName": "Việt Nam",
-    "address": "Số 24 Bạch Mai Hà Nội",
-    "mobile": "015245454",
-    "fax": "45552478",
-    "email": "thuhuong34@gmail.com",
-    "id": 9,
-},
-{
-    "customerCode": "KH0010",
-    "name": "Công ty tnhh Hòa Phát",
-    "attributesChangeLog": "Công ty chuyên sản xuất tôn ngói ",
-    "tax": "014775745",
-    "countryName": "Việt Nam",
-    "address": "Số 2 Phố Huế Hà Nội",
-    "mobile": "045245401",
-    "fax": "021455235",
-    "email": "hoaphat0102@gmail.com",
-    "id": 10,
-},
-{
-    "customerCode": "KH0011",
-    "name": "Cơ quan nhà nước",
-    "attributesChangeLog": "Cơ quan nhà nước",
-    "tax": "014775745",
-    "countryName": "Việt Nam",
-    "address": "Số 2 Phố Huế Hà Nội",
-    "mobile": "045245401",
-    "fax": "021455235",
-    "email": "cqnnvn@gmail.com",
-    "id": 11,
-},
-]
-
-function getCustomerSpecializeSoftware() {
-
-    return dataCustomer
+async function getCustomerOfPMCM(page, itemPerPage) {
+    let obj = {
+        "paging": {
+            "pageSize": itemPerPage,
+            "currentPage": page,
+            "rowsCount": 0
+        }
+    }
+    let objResult = {}
+    await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/address_book/list_pmtc`, obj).then(async data => {
+        if (data.data.data) {
+            objResult['data'] = data.data.data.list;
+            objResult['count'] = data.data.data.pager.rowsCount;
+        }
+    })
+    return objResult
 }
-
-// data
-dataPartner = [{
-    id: "2",
-    partnerCode: "LOCK LOCK",
-    name: "Công ty TNHH Lock & Lock",
-    tax: "01245782110",
-    address: "Số 72A Nguyễn Trãi phường Thượng Đỉnh Thanh Xuân Hà Nội",
-    mobile: "0823145678",
-    fax: "045784124",
-    email: "locklockvn@gmail",
-},
-{
-    id: "3",
-    partnerCode: "HOA PHAT",
-    name: "Công ty TNHH Hòa Phát ",
-    tax: "012345678",
-    address: "Số 12 Bạch Mai Hà Nội",
-    mobile: "089745120",
-    fax: "023145216",
-    email: "hoaphat123@gmail.com",
-},
-{
-    id: "4",
-    partnerCode: "MEDIA MART",
-    name: "Siêu thị điện máy xanh media mart",
-    tax: "012345801",
-    address: "Số 1 Trương Định Hà Nội",
-    mobile: "089724152",
-    fax: "021465741",
-    email: "mediamart4546@gmail.com",
-},
-{
-    id: "5",
-    partnerCode: "GLOMED",
-    name: "Công ty dược phẩm Glomed  ",
-    tax: "012465563",
-    address: "Số 34 Huỳnh Thúc Kháng Hà Nội",
-    mobile: "012568523",
-    fax: "012457821",
-    email: "glomeddp@gmail.com",
-},
-{
-    id: "6",
-    partnerCode: "THUONG ĐINH",
-    name: "Công ty giầy Thượng Đỉnh",
-    tax: "012489660",
-    address: "Số 2 Kim Ngưu Hà Nội",
-    mobile: "021565635",
-    fax: "014653225",
-    email: "thuongdinhgiay@gmail.com",
-},
-{
-    id: "7",
-    partnerCode: "GIAY THANG LONG",
-    name: "Công ty TNHH giày Thăng Long",
-    tax: "012457821",
-    address: "Số 2A Phường Khương Trung Thanh Xuân Hà Nội",
-    mobile: "012465623",
-    fax: "01774125",
-    email: "giaytot@gmail.com",
-},
-{
-    id: "8",
-    partnerCode: "VINH DOAN",
-    name: "Công ty cổ phần Vĩnh Đoàn",
-    tax: "012458990",
-    address: "Số 60 Vĩnh Tuy Hai Bà Trưng Hà Nội",
-    mobile: "021565650",
-    fax: "0158555245",
-    email: "vinhdoan123@gmail.com",
-},
-{
-    id: "9",
-    partnerCode: "SINO VANLOCK",
-    name: "Công ty sản xuất thiết bị điện Sino vanlock",
-    tax: "0124456685",
-    address: "SỐ 10 nguyễn Văn Cừ Long Biên Hà Nội",
-    mobile: "0154878741",
-    fax: "0157878865",
-    email: "sinovanlock@gmail.com",
-},
-{
-    id: "10",
-    partnerCode: "TRUNG NGUYEN",
-    name: "Tập đoàn cà phê Trung Nguyên",
-    tax: "0125748546",
-    address: "Thị Cấm Phường Xuân Phương Nam Từ Liêm Hà Nội",
-    mobile: "045654565",
-    fax: "013245422",
-    email: "trugnnguyen@gmail.com",
-},
-
-]
+async function getDetailCustomerOfPMCM(idCustomer) {
+    let objResult = {}
+    await axios.get(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/address_book/get_by_id_pmtc?id=` + idCustomer).then(async data => {
+        if (data.data.data) {
+            objResult['data'] = data.data.data;
+        }
+    })
+    console.log(objResult);
+    return objResult
+}
+async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, customerID = null) {
+    let typeRes = 1;
+    if (type == 'credit')
+        typeRes = 2
+    let obj = {
+        "type": typeRes,
+        "paging": {
+            "pageSize": itemPerPage,
+            "currentPage": page,
+            "rowsCount": 0
+        }
+    }
+    if (status) {
+        obj["status"] = converStatusPMCM(status)
+    }
+    if (customerID)
+        obj["addressBookId"] = customerID
+    let objResult = {}
+    console.log(obj);
+    await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/list_pmtc`, obj).then(async data => {
+        if (data.data.data) {
+            console.log(data.data.data);
+            objResult['data'] = data.data.data.list;
+            objResult['count'] = data.data.data.pager.rowsCount;
+        }
+    })
+    return objResult
+}
+async function getDetailInvCreOfPMCM(idInvCre) {
+    let objResult = {}
+    await axios.get(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/get_by_id_pmtc?id=` + idInvCre).then(async data => {
+        if (data.data.data) {
+            objResult['data'] = data.data.data;
+        }
+    })
+    console.log(objResult);
+    return objResult
+}
+function converStatusPMCM(status) {
+    let result = status
+    if (status == 2)
+        result = 'Chờ thanh toán'
+    if (status == 3)
+        result = 'Yêu cầu sửa'
+    if (status == 4)
+        result = 'Yêu cầu xóa'
+    if (status == 5)
+        result = 'Yêu cầu thanh toán'
+    if (status == 6)
+        result = 'Đã thanh toán'
+    if (status == 'Chờ thanh toán')
+        result = 2
+    if (status == 'Yêu cầu sửa')
+        result = 3
+    if (status == 'Yêu cầu xóa')
+        result = 4
+    if (status == 'Yêu cầu thanh toán')
+        result = 5
+    if (status == 'Đã thanh toán')
+        result = 6
+    return result
+}
 async function calculateMoneyFollowVND(db, typeMoney, total, date) {
     let exchangeRate = 1;
     let result = 0;
@@ -1134,7 +849,16 @@ async function getExchangeRateFromDate(db, typeMoney, date) {
 module.exports = {
     data,
     dataCredit,
-    getCustomerSpecializeSoftware,
+    getCustomerOfPMCM,
+    test: async (req, res) => {
+        let body = req.body;
+        try {
+            let result = await getDetailInvCreOfPMCM(3042)
+            res.json(result);
+        } catch (error) {
+            console.log(error);
+        }
+    },
     // change_customer_data
     changeCustomerData: async (req, res) => {
         let body = req.body;
