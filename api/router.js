@@ -564,7 +564,7 @@ module.exports = function (app) {
 
 
     // --------------------------------INVOICE---------------------------------------------------------------------------------
-    app.route('/qlnb/get_list_invoice').post(tblInvoice.getListtblInvoice);
+    app.route('/qlnb/get_list_invoice').post(apiSpecializedSoftware.getListtblInvoice);
     app.route('/qlnb/get_list_invoice_wait_for_pay').post(apiSpecializedSoftware.getListInvoiceWaitForPay);
     app.route('/qlnb/get_list_invoice_paid').post(apiSpecializedSoftware.getListInvoicePaid);
     app.route('/qlnb/get_list_invoice_edit_request').post(apiSpecializedSoftware.getListInvoiceEditRequest);

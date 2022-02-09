@@ -11,307 +11,12 @@ const Op = require('sequelize').Op;
 var mtblReceiptsPayment = require('../tables/financemanage/tblReceiptsPayment')
 var mtblPaymentRInvoice = require('../tables/financemanage/tblPaymentRInvoice')
 var mtblInvoiceRCurrency = require('../tables/financemanage/tblInvoiceRCurrency')
+var mtblDMUser = require('../tables/constants/tblDMUser');
+var mtblDMChiNhanh = require('../tables/constants/tblDMChiNhanh')
+var mtblDMTaiKhoanKeToan = require('../tables/financemanage/tblDMTaiKhoanKeToan')
+var mtblCurrency = require('../tables/financemanage/tblCurrency')
+var mtblRate = require('../tables/financemanage/tblRate')
 // data model invoice của KH
-let data = [
-    {
-        id: 2,
-        createdDate: '02/05/2021',
-        refNumber: 'REF0002',
-        invoiceNumber: 'INV0002',
-        arrayMoney: [{
-            total: '1100000',
-            typeMoney: 'VND',
-        },
-        {
-            total: '10',
-            typeMoney: 'USD',
-        },
-        ],
-        statusName: 'Đã thanh toán',
-        idCustomer: 1,
-        customerName: 'Công ty tnhh An Phú',
-        content: 'Demo 2',
-        request: 'Yêu cầu xóa',
-        departmentName: 'KẾ TOÁN',
-        departmentID: 10026,
-        accountingDebt: '131',
-        nameAccountingDebt: 'Phải thu khách hàng',
-        accountingCredit: '511',
-        nameAccountingCredit: 'Doanh thu bán hàng và cung cấp dịch vụ',
-    },
-
-    {
-        id: 3,
-        createdDate: '03/05/2021',
-        refNumber: 'REF0003',
-        invoiceNumber: 'INV0003',
-        arrayMoney: [{
-            total: '1200000',
-            typeMoney: 'VND',
-        },
-
-        ],
-        statusName: 'Đã thanh toán',
-        idCustomer: 1,
-        customerName: 'Công ty tnhh An Phú',
-        content: 'Demo 3',
-        request: 'Yêu cầu sửa',
-        departmentName: 'Sáng chế',
-        departmentID: 10025,
-        accountingDebt: '131',
-        nameAccountingDebt: 'Phải thu khách hàng',
-        accountingCredit: '511',
-        nameAccountingCredit: 'Doanh thu bán hàng và cung cấp dịch vụ',
-    },
-    {
-        id: 4,
-        createdDate: '04/05/2021',
-        refNumber: 'REF0004',
-        invoiceNumber: 'INV0004',
-        arrayMoney: [{
-            total: '1300000',
-            typeMoney: 'VND',
-        },
-        {
-            total: '100',
-            typeMoney: 'USD',
-        },
-
-        ],
-        statusName: 'Đã thanh toán',
-        idCustomer: 1,
-        customerName: 'Công ty tnhh An Phú',
-        content: 'Demo 4',
-        request: 'Yêu cầu sửa',
-        departmentName: 'HÀNH CHÍNH NHÂN SỰ',
-        departmentID: 10027,
-        accountingDebt: '131',
-        nameAccountingDebt: 'Phải thu khách hàng',
-        accountingCredit: '511',
-        nameAccountingCredit: 'Doanh thu bán hàng và cung cấp dịch vụ',
-    },
-    {
-        id: 5,
-        createdDate: '05/05/2021',
-        refNumber: 'REF0005',
-        invoiceNumber: 'INV0005',
-        arrayMoney: [{
-            total: '1400000',
-            typeMoney: 'VND',
-        },
-
-        ],
-        statusName: 'Đã thanh toán',
-        idCustomer: 1,
-        customerName: 'Công ty tnhh An Phú',
-        content: 'Demo 5',
-        request: '',
-        departmentName: 'Sáng chế',
-        departmentID: 10025,
-        accountingDebt: '131',
-        nameAccountingDebt: 'Phải thu khách hàng',
-        accountingCredit: '511',
-        nameAccountingCredit: 'Doanh thu bán hàng và cung cấp dịch vụ',
-    },
-    {
-        id: 6,
-        createdDate: '06/05/2021',
-        refNumber: 'REF0006',
-        invoiceNumber: 'INV0006',
-        arrayMoney: [{
-            total: '1500000',
-            typeMoney: 'VND',
-        },
-        {
-            total: '100',
-            typeMoney: 'USD',
-        },
-        ],
-        statusName: 'Đã thanh toán',
-        idCustomer: 1,
-        customerName: 'Công ty tnhh An Phú',
-        content: 'Demo 6',
-        request: 'Yêu cầu xóa',
-        departmentName: 'Sáng chế',
-        departmentID: 10025,
-        accountingDebt: '131',
-        nameAccountingDebt: 'Phải thu khách hàng',
-        accountingCredit: '511',
-        nameAccountingCredit: 'Doanh thu bán hàng và cung cấp dịch vụ',
-    },
-    {
-        id: 7,
-        createdDate: '07/05/2021',
-        refNumber: 'REF0007',
-        invoiceNumber: 'INV0007',
-        arrayMoney: [{
-            total: '1600000',
-            typeMoney: 'VND',
-        },
-
-        ],
-        statusName: 'Chờ thanh toán',
-        idCustomer: 1,
-        customerName: 'Công ty tnhh An Phú',
-        content: 'Demo 7',
-        request: 'Yêu cầu xóa',
-        departmentName: 'KẾ TOÁN',
-        departmentID: 10026,
-        accountingDebt: '131',
-        nameAccountingDebt: 'Phải thu khách hàng',
-        accountingCredit: '511',
-        nameAccountingCredit: 'Doanh thu bán hàng và cung cấp dịch vụ',
-    },
-    {
-        id: 8,
-        createdDate: '08/05/2021',
-        refNumber: 'REF0008',
-        invoiceNumber: 'INV0008',
-        arrayMoney: [{
-            total: '100',
-            typeMoney: 'USD',
-        },
-
-        ],
-        statusName: 'Chờ thanh toán',
-        idCustomer: 1,
-        customerName: 'Công ty tnhh An Phú',
-        content: 'Demo 8',
-        request: 'Yêu cầu sửa',
-        departmentName: 'Sáng chế',
-        departmentID: 10025,
-        accountingDebt: '131',
-        nameAccountingDebt: 'Phải thu khách hàng',
-        accountingCredit: '511',
-        nameAccountingCredit: 'Doanh thu bán hàng và cung cấp dịch vụ',
-    },
-    {
-        id: 9,
-        createdDate: '09/05/2021',
-        refNumber: 'REF0009',
-        invoiceNumber: 'INV0009',
-        arrayMoney: [{
-            total: '2000000',
-            typeMoney: 'VND',
-        },
-        {
-            total: '130',
-            typeMoney: 'USD',
-        },
-
-        ],
-        statusName: 'Chờ thanh toán',
-        idCustomer: 1,
-        customerName: 'Công ty tnhh An Phú',
-        content: 'Demo 9',
-        request: 'Yêu cầu sửa',
-        departmentName: 'Ban NH3',
-        departmentID: 10035,
-        accountingDebt: '131',
-        nameAccountingDebt: 'Phải thu khách hàng',
-        accountingCredit: '511',
-        nameAccountingCredit: 'Doanh thu bán hàng và cung cấp dịch vụ',
-    },
-    {
-        id: 10,
-        createdDate: '10/05/2021',
-        refNumber: 'REF0010',
-        invoiceNumber: 'INV0010',
-        arrayMoney: [{
-            total: '123',
-            typeMoney: 'VND',
-        },],
-        statusName: 'Chờ thanh toán',
-        idCustomer: 1,
-        customerName: 'Công ty tnhh An Phú',
-        content: 'Demo 10',
-        request: 'Yêu cầu sửa',
-        departmentName: 'Ban NH3',
-        departmentID: 10035,
-        accountingDebt: '131',
-        nameAccountingDebt: 'Phải thu khách hàng',
-        accountingCredit: '511',
-        nameAccountingCredit: 'Doanh thu bán hàng và cung cấp dịch vụ',
-    },
-    {
-        id: 11,
-        createdDate: '12/05/2021',
-        refNumber: 'REF00011',
-        invoiceNumber: 'INV00011',
-        arrayMoney: [{
-            total: '1100000',
-            typeMoney: 'VND',
-        },
-        {
-            total: '10',
-            typeMoney: 'USD',
-        },
-        ],
-        statusName: 'Chờ thanh toán',
-        idCustomer: 2,
-        customerName: 'Công ty tnhh Is Tech Vina',
-        content: 'Demo 2',
-        request: 'Yêu cầu xóa',
-        departmentName: 'KẾ TOÁN',
-        departmentID: 10026,
-        accountingDebt: '131',
-        nameAccountingDebt: 'Phải thu khách hàng',
-        accountingCredit: '511',
-        nameAccountingCredit: 'Doanh thu bán hàng và cung cấp dịch vụ',
-    },
-    {
-        id: 12,
-        createdDate: '13/05/2021',
-        refNumber: 'REF00012',
-        invoiceNumber: 'INV00012',
-        arrayMoney: [{
-            total: '1200000',
-            typeMoney: 'VND',
-        },
-        {
-            total: '12',
-            typeMoney: 'USD',
-        },
-        ],
-        statusName: 'Chờ thanh toán',
-        idCustomer: 2,
-        customerName: 'Công ty tnhh Is Tech Vina',
-        content: 'Demo 2',
-        request: 'Yêu cầu xóa',
-        departmentName: 'KẾ TOÁN',
-        departmentID: 10026,
-        accountingDebt: '131',
-        nameAccountingDebt: 'Phải thu khách hàng',
-        accountingCredit: '511',
-        nameAccountingCredit: 'Doanh thu bán hàng và cung cấp dịch vụ',
-    },
-    {
-        id: 13,
-        createdDate: '14/05/2021',
-        refNumber: 'REF00013',
-        invoiceNumber: 'INV00013',
-        arrayMoney: [{
-            total: '1300000',
-            typeMoney: 'VND',
-        },
-        {
-            total: '15',
-            typeMoney: 'USD',
-        },
-        ],
-        statusName: 'Chờ thanh toán',
-        idCustomer: 2,
-        customerName: 'Công ty tnhh Is Tech Vina',
-        content: 'Demo 2',
-        request: 'Yêu cầu xóa',
-        departmentName: 'KẾ TOÁN',
-        departmentID: 10026,
-        accountingDebt: '131',
-        nameAccountingDebt: 'Phải thu khách hàng',
-        accountingCredit: '511',
-        nameAccountingCredit: 'Doanh thu bán hàng và cung cấp dịch vụ',
-    },
-];
 var dataCredit = [{
     id: 100,
     createdDate: '01/05/2021',
@@ -712,15 +417,168 @@ async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, 
     if (customerID)
         obj["addressBookId"] = customerID
     let objResult = {}
-    console.log(obj);
+    let totalMoneyVND = 0
     await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/list_pmtc`, obj).then(async data => {
         if (data.data.data) {
-            console.log(data.data.data);
-            objResult['data'] = data.data.data.list;
+            let arrayResult = []
+            for (let item of data.data.data.list) {
+                let refName = ''
+                for (let ref = 0; ref < item.refDetailModels.length; ref++) {
+                    if (item.refDetailModels[ref].agelessRef) {
+                        if (ref < item.refDetailModels.length - 1)
+                            refName += item.refDetailModels[ref].agelessRef + ', ';
+                        else
+                            refName += item.refDetailModels[ref].agelessRef;
+                    }
+                }
+                let typeMoney = item.grandTotal[0] ? convertypeMoneyPMCM(item.grandTotal[0].unit) : 'VND';
+                let arrayMoney = [{
+                    total: item.grandTotal[0] ? item.grandTotal[0].total : 0,
+                    typeMoney: typeMoney
+                }];
+                let departmentName = '';
+                let address = '';
+                let branchName = '';
+                let employeeName = '';
+                let staffCode = '';
+                let nameAccounting = '';
+                let payments = '';
+                let payDate = '';
+                let exchangeRate = 1;
+                let remainingAmountArray = [{
+                    key: typeMoney,
+                    value: item.grandTotal[0] ? item.grandTotal[0].total : 0,
+                }];
+                let paidAmountArray = [];
+                await database.connectDatabase().then(async db => {
+                    if (typeMoney != '')
+                        totalMoneyVND += await calculateMoneyFollowVND(db, typeMoney, item.grandTotal[0] ? item.grandTotal[0].total : 0, item.createDate)
+                    if (item.userName) {
+                        let tblDMUser = mtblDMUser(db);
+                        let tblDMNhanvien = mtblDMNhanvien(db);
+                        let tblDMBoPhan = mtblDMBoPhan(db);
+                        tblDMUser.belongsTo(tblDMNhanvien, { foreignKey: 'IDNhanvien', sourceKey: 'IDNhanvien', as: 'staff' })
+                        tblDMNhanvien.belongsTo(tblDMBoPhan, { foreignKey: 'IDBoPhan', sourceKey: 'IDBoPhan', as: 'department' })
+                        tblDMBoPhan.belongsTo(mtblDMChiNhanh(db), { foreignKey: 'IDChiNhanh', sourceKey: 'IDChiNhanh', as: 'branch' })
+                        await tblDMUser.findOne({
+                            where: {
+                                Username: item.userName
+                            },
+                            include: [
+                                {
+                                    model: tblDMNhanvien,
+                                    required: false,
+                                    as: 'staff',
+                                    include: [
+                                        {
+                                            model: tblDMBoPhan,
+                                            required: false,
+                                            as: 'department',
+                                            include: [
+                                                {
+                                                    model: mtblDMChiNhanh(db),
+                                                    required: false,
+                                                    as: 'branch'
+                                                },
+                                            ],
+                                        },
+                                    ],
+                                },
+                            ],
+                        }).then(user => {
+                            departmentName = user.staff ? (user.staff.department ? user.staff.department.DepartmentName : '') : ''
+                            branchName = user.staff ? (user.staff.department ? (user.staff.department.branch ? user.staff.department.branch.BranchName : '') : '') : ''
+                            address = user.staff ? user.staff.Address : ''
+                            employeeName = user.staff ? user.staff.StaffName : ''
+                            staffCode = user.staff ? user.staff.StaffCode : ''
+                        })
+                    }
+                    if (item.recondingTxName) {
+                        await mtblDMTaiKhoanKeToan(db).findOne({
+                            where: {
+                                AccountingCode: item.recondingTxName
+                            }
+                        }).then(account => {
+                            if (account) {
+                                nameAccounting = account.AccountingName
+                            } else {
+                                nameAccounting = 'Không có tài khoản này trên hệ thống. Vui lòng cấu hình vào hệ thống!'
+                            }
+                        })
+                    }
+                    await mtblInvoice(db).findOne({
+                        where: {
+                            IDSpecializedSoftware: item.id ? item.id : null
+                        }
+                    }).then(invoice => {
+                        if (invoice) {
+                            payments = invoice.Payments ? invoice.Payments : null;
+                            payDate = invoice.PayDate ? moment(invoice.PayDate).format('DD-MM-YYYY') : null;
+                            paidAmountArray = [{
+                                key: typeMoney,
+                                value: invoice.PaidAmount ? invoice.PaidAmount : 0,
+                            }]
+                        }
+                    })
+                    await mtblCurrency(db).findOne({
+                        where: {
+                            ShortName: typeMoney
+                        }
+                    }).then(async curency => {
+                        if (curency)
+                            await mtblRate(db).findOne({
+                                where: {
+                                    Date: { [Op.substring]: moment(item.createDate).format('DD-MM-YYYY') },
+                                    IDCurrency: curency.ID
+                                }
+                            }).then(rate => {
+                                if (rate)
+                                    exchangeRate = rate.ExchangeRate
+                            })
+                    })
+                })
+                let obj = {
+                    id: item.id,
+                    createdDate: item.createDate ? moment(item.createDate).format('DD-MM-YYYY') : null,
+                    refNumber: refName,
+                    address: address,
+                    invoiceNumber: item.no ? item.no : '',
+                    arrayMoney: arrayMoney,
+                    statusName: converStatusPMCM(item.status),
+                    idCustomer: item.addressBookId,
+                    customerName: item.addressBookName,
+                    content: item.note,
+                    request: item.status == 3 ? 'Yêu cầu sửa' : (item.status == 4 ? 'Yêu cầu xóa' : ''),
+                    departmentName: departmentName,
+                    branchName: branchName,
+                    accounting: item.recondingTxName ? item.recondingTxName : '',
+                    nameAccounting: nameAccounting,
+                    employeeName: employeeName,
+                    staffName: employeeName,
+                    staffcode: staffCode,
+                    payDate: payDate,
+                    payments: payments,
+                    remainingAmountArray: remainingAmountArray,
+                    paidAmountArray: paidAmountArray,
+                    typeMoney: typeMoney,
+                    exchangeRate: exchangeRate,
+                }
+                arrayResult.push(obj)
+            }
+            objResult['data'] = arrayResult;
             objResult['count'] = data.data.data.pager.rowsCount;
         }
     })
-    return objResult
+    let totalMoney = await calculateTheTotalAmountOfEachCurrency(objResult['data'])
+    var result = {
+        array: objResult['data'],
+        status: Constant.STATUS.SUCCESS,
+        message: Constant.MESSAGE.ACTION_SUCCESS,
+        all: objResult['count'],
+        totalMoneyVND: totalMoneyVND,
+        totalMoney: totalMoney,
+    }
+    return result
 }
 async function getDetailInvCreOfPMCM(idInvCre) {
     let objResult = {}
@@ -729,7 +587,6 @@ async function getDetailInvCreOfPMCM(idInvCre) {
             objResult['data'] = data.data.data;
         }
     })
-    console.log(objResult);
     return objResult
 }
 function converStatusPMCM(status) {
@@ -754,6 +611,18 @@ function converStatusPMCM(status) {
         result = 5
     if (status == 'Đã thanh toán')
         result = 6
+    return result
+}
+function convertypeMoneyPMCM(type) {
+    let result = 'VND'
+    if (type == 1)
+        result = 'USD'
+    if (type == 2)
+        result = 'EURO'
+    if (type == 3)
+        result = 'FRANCE'
+    if (type == 4)
+        result = 'VND'
     return result
 }
 async function calculateMoneyFollowVND(db, typeMoney, total, date) {
@@ -847,8 +716,6 @@ async function getExchangeRateFromDate(db, typeMoney, date) {
     return result
 }
 module.exports = {
-    data,
-    dataCredit,
     getCustomerOfPMCM,
     test: async (req, res) => {
         let body = req.body;
@@ -1134,583 +1001,40 @@ module.exports = {
     // get_list_invoice_from_customer
     getListInvoiceFromCustomer: async (req, res) => {
         var body = req.body
-        var obj = {
-            "paging": {
-                "pageSize": 10,
-                "currentPage": 1,
-            },
-            "type": body.type
-        }
-        // console.log(body);
-        // await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/share`, obj).then(data => {
-        database.connectDatabase().then(async db => {
-            if (db) {
-                if (data) {
-                    let array = []
-                    for (let i = 0; i < data.length; i++) {
-                        if (data[i].idCustomer == Number(body.idCustomer)) {
-                            let check = await mtblInvoice(db).findOne({
-                                where: { IDSpecializedSoftware: data[i].id }
-                            })
-                            let totalMoneyVND = 0
-                            let arrayExchangeRate = []
-                            for (let m = 0; m < data[i].arrayMoney.length; m++) {
-                                totalMoneyVND += await calculateMoneyFollowVND(db, data[i].arrayMoney[m].typeMoney, (data[i].arrayMoney[m].total ? data[i].arrayMoney[m].total : 0), moment(data[i].createdDate).format('YYYY-DD-MM'))
-                                arrayExchangeRate.push(await getExchangeRateFromDate(db, data[i].arrayMoney[m].typeMoney, moment(data[i].createdDate).format('YYYY-DD-MM')))
-                            }
-                            data[i]['totalMoneyVND'] = totalMoneyVND
-                            data[i]['arrayExchangeRate'] = arrayExchangeRate
-                            if (!check) {
-                                await mtblInvoice(db).create({
-                                    IDSpecializedSoftware: data[i].id,
-                                    Status: data[i].statusName,
-                                    Request: data[i].request
-                                })
-                            } else {
-                                data[i]['payDate'] = check ? (check.PayDate ? moment(check.PayDate).format('DD/MM/YYYY') : '') : ''
-                                data[i]['payments'] = check ? check.Payments : ''
-                                data[i].statusName = check.Status
-                                data[i].request = check.Request
-                            }
-                            array.push(data[i])
-                            // data[i]['totalAmountByCurrency'] = totalMoneyVND
-                        }
-                    }
-                    let totalMoney = await calculateTheTotalAmountOfEachCurrency(array)
-                    let totalMoneyVND = 0
-                    for (let a = 0; a < totalMoney.length; a++) {
-                        totalMoneyVND += await calculateMoneyFollowVND(db, totalMoney[a].type, totalMoney[a].total, totalMoney[a].date)
-                    }
-                    var result = {
-                        array: array,
-                        status: Constant.STATUS.SUCCESS,
-                        message: Constant.MESSAGE.ACTION_SUCCESS,
-                        all: 10,
-                        totalMoney: totalMoney,
-                        totalMoneyVND: totalMoneyVND,
-                        // all: data.data.data.pager.rowsCount
-                    }
-                }
-                res.json(result);
-                // } else {
-                //     res.json(Result.SYS_ERROR_RESULT)
-                // }
-            } else {
-                res.json(Result.SYS_ERROR_RESULT)
-            }
-        })
+        let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', null, body.idCustomer ? body.idCustomer : null)
+        res.json(result)
     },
     // get_list_invoice_wait_for_pay_from_customer
     getListInvoiceWaitForPayFromCustomer: async (req, res) => {
         var body = req.body
-        var obj = {
-            "paging": {
-                "pageSize": body.itemPerPage ? body.itemPerPage : 0,
-                "currentPage": body.page ? body.page : 0
-            },
-            "type": body.type
-        }
-        let nameCurrency = 'VND'
-        // await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/share`, obj).then(data => {
-        //     if (data) {
-        //         if (data.data.status_code == 200) {
-        database.connectDatabase().then(async db => {
-            try {
-                if (db) {
-                    if (body.currencyID) {
-                        await mtblCurrency(db).findOne({
-                            where: {
-                                ID: body.currencyID
-                            }
-                        }).then(data => {
-                            if (data)
-                                nameCurrency = data.ShortName
-                        })
-                    }
-
-                    var arrayUpdate = []
-                    var arrayCreate = []
-                    let totalMoney = []
-                    let arrayInvoice = []
-                    let arrayUpdateCheck = []
-                    if (body.idReceiptPayment) {
-                        await mtblReceiptsPayment(db).findOne({
-                            where: {
-                                ID: body.idReceiptPayment
-                            }
-                        }).then(async data => {
-                            await mtblPaymentRInvoice(db).findAll({
-                                where: {
-                                    IDPayment: data.ID
-                                }
-                            }).then(invoice => {
-                                invoice.forEach(element => {
-                                    arrayInvoice.push(Number(element.IDSpecializedSoftware))
-                                    arrayUpdateCheck.push(Number(element.IDSpecializedSoftware))
-                                })
-                            })
-                        })
-                    }
-                    let totalMoneyVND = 0
-                    for (var i = 0; i < data.length; i++) {
-                        totalMoneyVND = 0;
-                        if (data[i].idCustomer == Number(body.idCustomer)) {
-                            let check = await mtblInvoice(db).findOne({
-                                where: { IDSpecializedSoftware: data[i].id }
-                            })
-                            let arrayExchangeRate = []
-                            for (let m = 0; m < data[i].arrayMoney.length; m++) {
-                                if (body.currencyID) {
-                                    for (let item of data[i].arrayMoney) {
-                                        if (nameCurrency == item.typeMoney)
-                                            totalMoneyVND = item.total
-                                    }
-                                } else {
-                                    arrayExchangeRate.push(await getExchangeRateFromDate(db, data[i].arrayMoney[m].typeMoney, moment(data[i].createdDate).format('YYYY-DD-MM')))
-                                    totalMoneyVND += await calculateMoneyFollowVND(db, data[i].arrayMoney[m].typeMoney, (data[i].arrayMoney[m].total ? data[i].arrayMoney[m].total : 0), moment(data[i].createdDate).format('YYYY-DD-MM'))
-                                }
-                            }
-                            data[i]['totalMoneyVND'] = totalMoneyVND
-                            data[i]['totalMoneyDisplay'] = totalMoneyVND
-                            data[i]['typeMoney'] = nameCurrency
-                            data[i]['arrayExchangeRate'] = arrayExchangeRate
-                            if (!check) {
-                                data[i]['remainingAmount'] = 0
-                                data[i]['paidAmount'] = 0
-                                data[i]['paymentAmount'] = 0
-                                data[i]['total'] = data[i]
-                                await mtblInvoice(db).create({
-                                    IDSpecializedSoftware: data[i].id,
-                                    Status: data[i].statusName
-                                })
-                                if (data[i].statusName == 'Chờ thanh toán' && totalMoneyVND != 0) {
-                                    arrayCreate.push(data[i])
-                                } else {
-                                    if (checkDuplicate(arrayInvoice, Number(data[i].id) && totalMoneyVND != 0)) {
-                                        arrayUpdate.push(data[i])
-                                    }
-                                }
-                            } else {
-                                let amountPaid = await mtblPaymentRInvoice(db).findOne({
-                                    where: {
-                                        IDPayment: body.idReceiptPayment ? body.idReceiptPayment : null,
-                                        IDSpecializedSoftware: check.IDSpecializedSoftware ? check.IDSpecializedSoftware : null
-                                    }
-                                })
-                                let whereINCu = {}
-                                if (body.currencyID) {
-                                    whereINCu = {
-                                        CurrencyID: body.currencyID ? body.currencyID : null,
-                                        InvoiceID: check.ID,
-                                    }
-                                    let ObjAmount = await mtblInvoiceRCurrency(db).findOne({
-                                        where: whereINCu
-                                    })
-                                    if (ObjAmount) {
-                                        data[i].statusName = ObjAmount.Status
-                                        data[i].request = check.Request
-                                        data[i]['remainingAmount'] = ObjAmount.UnpaidAmount ? ObjAmount.UnpaidAmount : 0
-                                        data[i]['paidAmount'] = ObjAmount.PaidAmount ? ObjAmount.PaidAmount : 0
-                                        data[i]['paymentAmount'] = amountPaid ? (amountPaid.Amount ? amountPaid.Amount : 0) : 0
-                                        if (ObjAmount.UnpaidAmount && ObjAmount.UnpaidAmount != 0 && ObjAmount.Status == 'Chờ thanh toán') {
-                                            data[i]['payDate'] = ObjAmount.PayDate
-                                            data[i]['Payments'] = ObjAmount.Payments
-                                            arrayCreate.push(data[i])
-                                        }
-                                        if (checkDuplicate(arrayUpdateCheck, Number(check.IDSpecializedSoftware)) || ObjAmount.UnpaidAmount && ObjAmount.UnpaidAmount != 0 && ObjAmount.Status == 'Chờ thanh toán') {
-                                            data[i]['payDate'] = check.PayDate
-                                            data[i]['Payments'] = check.Payments
-                                            arrayUpdate.push(data[i])
-                                        }
-                                    }
-                                } else {
-                                    whereINCu = {
-                                        InvoiceID: check.ID,
-                                    }
-                                    let ObjAmount = await mtblInvoiceRCurrency(db).findAll({
-                                        where: whereINCu
-                                    })
-                                    if (ObjAmount.length > 0) {
-                                        let isCheck = false
-                                        for (let item of ObjAmount) {
-                                            if (item.Status == 'Chờ thanh toán')
-                                                isCheck = true
-                                        }
-                                        if (isCheck) {
-                                            data[i]['payDate'] = ObjAmount.PayDate
-                                            data[i]['Payments'] = ObjAmount.Payments
-                                            arrayCreate.push(data[i])
-                                        }
-                                    }
-                                }
-
-                            }
-                        }
-                        totalMoney = await calculateTheTotalAmountOfEachCurrency(arrayCreate)
-                        totalMoneyVND = 0
-                        for (let a = 0; a < totalMoney.length; a++) {
-                            totalMoneyVND += await calculateMoneyFollowVND(db, totalMoney[a].type, totalMoney[a].total, totalMoney[a].date)
-                        }
-                    }
-                    var result = {
-                        arrayCreate: arrayCreate,
-                        arrayUpdate: arrayUpdate,
-                        status: Constant.STATUS.SUCCESS,
-                        message: Constant.MESSAGE.ACTION_SUCCESS,
-                        all: 10,
-                        totalMoney: totalMoney,
-                        totalMoneyVND: totalMoneyVND,
-                    }
-                    res.json(result);
-                } else {
-                    res.json(Result.SYS_ERROR_RESULT)
-                }
-            } catch (error) {
-                console.log(error);
-                var result = {
-                    status: Constant.STATUS.FAIL,
-                    message: 'Lỗi xử lý hệ thống!',
-                }
-                res.json(result);
-            }
-        })
+        let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', 'Chờ thanh toán', body.idCustomer ? body.idCustomer : null)
+        res.json(result)
     },
     // get_list_invoice_paid_from_customer
     getListInvoicePaidFromCustomer: async (req, res) => {
         var body = req.body
-        console.log(body);
-        var obj = {
-            "paging": {
-                "pageSize": body.itemPerPage ? body.itemPerPage : 0,
-                "currentPage": body.page ? body.page : 0
-            },
-            "type": body.type
-        }
-        // await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/share`, obj).then(data => {
-        //     if (data) {
-        //         if (data.data.status_code == 200) {
-        database.connectDatabase().then(async db => {
-            if (db) {
-                var array = []
-                let totalMoney = []
-                for (var i = 0; i < data.length; i++) {
-                    if (data[i].idCustomer == Number(body.idCustomer)) {
-                        let check = await mtblInvoice(db).findOne({
-                            where: { IDSpecializedSoftware: data[i].id }
-                        })
-                        let totalMoneyVND = 0
-                        let arrayExchangeRate = []
-                        for (let m = 0; m < data[i].arrayMoney.length; m++) {
-                            arrayExchangeRate.push(await getExchangeRateFromDate(db, data[i].arrayMoney[m].typeMoney, moment(data[i].createdDate).format('YYYY-DD-MM')))
-                            totalMoneyVND += await calculateMoneyFollowVND(db, data[i].arrayMoney[m].typeMoney, (data[i].arrayMoney[m].total ? data[i].arrayMoney[m].total : 0), moment(data[i].createdDate).format('YYYY-DD-MM'))
-                        }
-                        data[i]['totalMoneyVND'] = totalMoneyVND
-                        data[i]['arrayExchangeRate'] = arrayExchangeRate
-
-                        if (!check) {
-                            await mtblInvoice(db).create({
-                                IDSpecializedSoftware: data[i].id,
-                                Status: data[i].statusName
-                            })
-                            if (data[i].statusName == 'Đã thanh toán')
-                                array.push(data[i])
-                        } else {
-                            if (check.Status == 'Đã thanh toán') {
-                                data[i]['payDate'] = check ? (check.PayDate ? moment(check.PayDate).format('DD/MM/YYYY') : null) : ''
-                                data[i]['payments'] = check ? check.Payments : ''
-                                array.push(data[i])
-                            }
-                        }
-                    }
-                }
-                totalMoney = await calculateTheTotalAmountOfEachCurrency(array)
-                let totalMoneyVND = 0
-                for (let a = 0; a < totalMoney.length; a++) {
-                    totalMoneyVND += await calculateMoneyFollowVND(db, totalMoney[a].type, totalMoney[a].total, totalMoney[a].date)
-                }
-                var result = {
-                    array: array,
-                    // array: data.data.data.list,
-                    status: Constant.STATUS.SUCCESS,
-                    message: Constant.MESSAGE.ACTION_SUCCESS,
-                    all: 10,
-                    totalMoney: totalMoney,
-                    totalMoneyVND: totalMoneyVND,
-
-                    // all: data.data.data.pager.rowsCount
-                }
-                res.json(result);
-            } else {
-                res.json(Result.SYS_ERROR_RESULT)
-
-            }
-        })
+        let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', 'Đã thanh toán', body.idCustomer ? body.idCustomer : null)
+        res.json(result)
     },
 
     // Credit follow customer ------------------------------------------------------------------------------------------------------------------
     // get_list_credit_from_customer
     getListCreditFromCustomer: async (req, res) => {
         var body = req.body
-        var obj = {
-            "paging": {
-                "pageSize": 10,
-                "currentPage": 1,
-            },
-            "type": body.type
-        }
-        // console.log(body);
-        // await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/share`, obj).then(data => {
-        database.connectDatabase().then(async db => {
-            if (db) {
-                if (dataCredit) {
-                    let array = []
-                    for (let i = 0; i < dataCredit.length; i++) {
-                        if (dataCredit[i].idCustomer == Number(body.idCustomer)) {
-                            let check = await mtblInvoice(db).findOne({
-                                where: { IDSpecializedSoftware: dataCredit[i].id }
-                            })
-                            if (!check) {
-                                await mtblInvoice(db).create({
-                                    IDSpecializedSoftware: dataCredit[i].id,
-                                    Status: dataCredit[i].statusName,
-                                    Request: dataCredit[i].request
-                                })
-                            } else {
-                                dataCredit[i]['payDate'] = check ? (check.PayDate ? moment(check.PayDate).format('DD/MM/YYYY') : null) : ''
-                                dataCredit[i]['payments'] = check ? check.Payments : ''
-                                dataCredit[i].statusName = check.Status
-                                dataCredit[i].request = check.Request
-                            }
-                            array.push(dataCredit[i])
-                        }
-                    }
-                    let totalMoney = await calculateTheTotalAmountOfEachCurrency(array)
-                    var result = {
-                        array: array,
-                        status: Constant.STATUS.SUCCESS,
-                        message: Constant.MESSAGE.ACTION_SUCCESS,
-                        all: 10,
-                        totalMoney: totalMoney,
-                        // all: data.data.data.pager.rowsCount
-                    }
-                    res.json(result);
-                    // } else {
-                    //     res.json(Result.SYS_ERROR_RESULT)
-                    // }
-                } else {
-                    res.json(Result.SYS_ERROR_RESULT)
-                }
-            } else {
-                res.json(Result.SYS_ERROR_RESULT)
-            }
-        })
+        let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'credit', null, body.idCustomer ? body.idCustomer : null)
+        res.json(result)
     },
     // get_list_credit_wait_for_pay_from_customer
     getListCreditWaitForPayFromCustomer: async (req, res) => {
         var body = req.body
-        var obj = {
-            "paging": {
-                "pageSize": 10,
-                "currentPage": 1,
-            },
-            "type": body.type
-        }
-        let nameCurrency = 'VND'
-        // await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/share`, obj).then(data => {
-        database.connectDatabase().then(async db => {
-            if (db) {
-                if (body.currencyID) {
-                    await mtblCurrency(db).findOne({
-                        where: {
-                            ID: body.currencyID
-                        }
-                    }).then(data => {
-                        if (data)
-                            nameCurrency = data.ShortName
-                    })
-                }
-                let array = []
-                let updateArr = []
-                if (dataCredit) {
-                    let arrayUpdate = []
-                    let where = {}
-                    if (body.idReceiptPayment) {
-                        where = {
-                            IDPayment: body.idReceiptPayment
-                        }
-                    }
-                    await mtblPaymentRInvoice(db).findAll({
-                        where: where
-                    }).then(data => {
-                        for (item of data) {
-                            arrayUpdate.push(Number(item.IDSpecializedSoftware))
-                        }
-                    })
-                    for (let i = 0; i < dataCredit.length; i++) {
-                        if (dataCredit[i].idCustomer == Number(body.idCustomer)) {
-                            let check = await mtblInvoice(db).findOne({
-                                where: { IDSpecializedSoftware: dataCredit[i].id }
-                            })
-                            let credit;
-                            if (!check) {
-                                credit = await mtblInvoice(db).create({
-                                    IDSpecializedSoftware: dataCredit[i].id,
-                                    Status: dataCredit[i].statusName,
-                                    Request: dataCredit[i].request
-                                })
-                                if (dataCredit[i].statusName == 'Chờ thanh toán') {
-                                    dataCredit[i]['remainingAmount'] = 0
-                                    dataCredit[i]['paidAmount'] = 0
-                                    dataCredit[i]['paymentAmount'] = 0
-                                    dataCredit[i]['total'] = dataCredit[i]
-                                    array.push(dataCredit[i])
-                                }
-                                if (checkDuplicate(arrayUpdate, Number(dataCredit[i].id)) || dataCredit[i].statusName == 'Chờ thanh toán' || ObjAmount.UnpaidAmount && ObjAmount.UnpaidAmount != 0)
-                                    updateArr.push(dataCredit[i])
-                            } else {
-                                let amountPaid = await mtblPaymentRInvoice(db).findOne({
-                                    where: {
-                                        IDPayment: body.idReceiptPayment ? body.idReceiptPayment : null,
-                                        IDSpecializedSoftware: check.IDSpecializedSoftware ? check.IDSpecializedSoftware : null
-                                    }
-                                })
-                                let whereINCu = {}
-                                if (body.currencyID) {
-                                    whereINCu = {
-                                        CurrencyID: body.currencyID ? body.currencyID : null,
-                                        InvoiceID: check.ID,
-                                    }
-                                    let ObjAmount = await mtblInvoiceRCurrency(db).findOne({
-                                        where: whereINCu
-                                    })
-                                    if (ObjAmount) {
-                                        dataCredit[i].statusName = ObjAmount.Status
-                                        dataCredit[i].request = check.Request
-                                        dataCredit[i]['remainingAmount'] = ObjAmount.UnpaidAmount ? ObjAmount.UnpaidAmount : 0
-                                        dataCredit[i]['paidAmount'] = ObjAmount.PaidAmount ? ObjAmount.PaidAmount : 0
-                                        dataCredit[i]['paymentAmount'] = amountPaid ? (amountPaid.Amount ? amountPaid.Amount : 0) : 0
-                                        if (ObjAmount.UnpaidAmount && ObjAmount.UnpaidAmount != 0 && ObjAmount.Status == 'Chờ thanh toán') {
-                                            dataCredit[i]['payDate'] = ObjAmount.PayDate
-                                            dataCredit[i]['Payments'] = ObjAmount.Payments
-                                            array.push(dataCredit[i])
-                                        }
-                                        if (checkDuplicate(arrayUpdate, Number(check.IDSpecializedSoftware)) || ObjAmount.UnpaidAmount && ObjAmount.UnpaidAmount != 0 && ObjAmount.Status == 'Chờ thanh toán') {
-                                            dataCredit[i]['payDate'] = check.PayDate
-                                            dataCredit[i]['Payments'] = check.Payments
-                                            updateArr.push(dataCredit[i])
-                                        }
-                                    }
-                                } else {
-                                    whereINCu = {
-                                        InvoiceID: check.ID,
-                                    }
-                                    let ObjAmount = await mtblInvoiceRCurrency(db).findAll({
-                                        where: whereINCu
-                                    })
-                                    if (ObjAmount.length > 0) {
-                                        let isCheck = false
-                                        for (let item of ObjAmount) {
-                                            if (item.Status == 'Chờ thanh toán')
-                                                isCheck = true
-                                        }
-                                        if (isCheck) {
-                                            dataCredit[i]['payDate'] = ObjAmount.PayDate
-                                            dataCredit[i]['Payments'] = ObjAmount.Payments
-                                            array.push(dataCredit[i])
-                                        }
-                                    }
-                                }
-
-                            }
-                            let totalMoneyVND = 0;
-                            for (let m = 0; m < dataCredit[i].arrayMoney.length; m++) {
-                                if (body.currencyID) {
-                                    for (let item of dataCredit[i].arrayMoney) {
-                                        if (nameCurrency == item.typeMoney) {
-                                            totalMoneyVND = item.total
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            dataCredit[i]['total'] = totalMoneyVND
-                        }
-                    }
-                    let totalMoney = await calculateTheTotalAmountOfEachCurrency(array)
-                    var result = {
-                        arrayCreate: array,
-                        arrayUpdate: updateArr,
-                        status: Constant.STATUS.SUCCESS,
-                        message: Constant.MESSAGE.ACTION_SUCCESS,
-                        all: 10,
-                        totalMoney: totalMoney,
-                    }
-                    res.json(result);
-                } else {
-                    res.json(Result.SYS_ERROR_RESULT)
-                }
-            } else {
-                res.json(Result.SYS_ERROR_RESULT)
-            }
-        })
+        let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'credit', 'Chờ thanh toán', body.idCustomer ? body.idCustomer : null)
+        res.json(result)
     },
     // get_list_credit_paid_from_customer
     getListCreditPaidFromCustomer: async (req, res) => {
         var body = req.body
-        var obj = {
-            "paging": {
-                "pageSize": 10,
-                "currentPage": 1,
-            },
-            "type": body.type
-        }
-        // console.log(body);
-        // await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/share`, obj).then(data => {
-        database.connectDatabase().then(async db => {
-            if (db) {
-                let array = []
-                if (dataCredit) {
-                    for (let i = 0; i < dataCredit.length; i++) {
-                        if (data[i].idCustomer == Number(body.idCustomer)) {
-
-                            let check = await mtblInvoice(db).findOne({
-                                where: { IDSpecializedSoftware: dataCredit[i].id }
-                            })
-                            if (!check) {
-                                await mtblInvoice(db).create({
-                                    IDSpecializedSoftware: dataCredit[i].id,
-                                    Status: dataCredit[i].statusName,
-                                    Request: dataCredit[i].request
-                                })
-                                if (dataCredit[i].statusName == 'Đã thanh toán')
-                                    array.push(dataCredit[i])
-                            } else {
-                                dataCredit[i].statusName = check.Status
-                                dataCredit[i].request = check.Request
-                                if (dataCredit[i].statusName == 'Đã thanh toán') {
-                                    dataCredit[i]['payDate'] = check ? (check.PayDate ? moment(check.PayDate).format('DD/MM/YYYY') : null) : ''
-                                    dataCredit[i]['payments'] = check ? check.Payments : ''
-                                    array.push(dataCredit[i])
-                                }
-                            }
-                        }
-                    }
-                    let totalMoney = await calculateTheTotalAmountOfEachCurrency(array)
-                    var result = {
-                        array: array,
-                        status: Constant.STATUS.SUCCESS,
-                        message: Constant.MESSAGE.ACTION_SUCCESS,
-                        all: 10,
-                        totalMoney: totalMoney,
-                    }
-                    res.json(result);
-                } else {
-                    res.json(Result.SYS_ERROR_RESULT)
-                }
-            } else {
-                res.json(Result.SYS_ERROR_RESULT)
-            }
-        })
+        let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'credit', 'Đã thanh toán', body.idCustomer ? body.idCustomer : null)
+        res.json(result)
     },
 
 
@@ -1744,748 +1068,66 @@ module.exports = {
         })
     },
     // invoice-------------------------------------------------------------------------------------------------------------------------------------
+    // get_list_tbl_invoice
+    getListtblInvoice: async (req, res) => {
+        var body = req.body
+        let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice')
+        res.json(result)
+    },
     // get_list_invoice_wait_for_pay
     getListInvoiceWaitForPay: async (req, res) => {
         var body = req.body
-        var obj = {
-            "paging": {
-                "pageSize": body.itemPerPage ? body.itemPerPage : 0,
-                "currentPage": body.page ? body.page : 0
-            },
-            "type": body.type
-        }
-        // await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/share`, obj).then(data => {
-        //     if (data) {
-        //         if (data.data.status_code == 200) {
-        database.connectDatabase().then(async db => {
-            if (db) {
-                var array = []
-                let totalMoney = []
-                let totalMoneyVNDR = 0
-                for (var i = 0; i < data.length; i++) {
-                    let check = await mtblInvoice(db).findOne({
-                        where: { IDSpecializedSoftware: data[i].id }
-                    })
-                    let totalMoneyVND = 0
-                    let arrayExchangeRate = []
-
-                    for (let m = 0; m < data[i].arrayMoney.length; m++) {
-                        arrayExchangeRate.push(await getExchangeRateFromDate(db, data[i].arrayMoney[m].typeMoney, moment(data[i].createdDate).format('YYYY-DD-MM')))
-                        totalMoneyVND += await calculateMoneyFollowVND(db, data[i].arrayMoney[m].typeMoney, (data[i].arrayMoney[m].total ? data[i].arrayMoney[m].total : 0), moment(data[i].createdDate).format('YYYY-DD-MM'))
-                    }
-                    data[i]['totalMoneyVND'] = totalMoneyVND
-                    data[i]['arrayExchangeRate'] = arrayExchangeRate
-                    await mtblPaymentRInvoice(db).findOne({
-                        where: {
-                            IDSpecializedSoftware: data[i].id
-                        }
-                    }).then(invoice => {
-                        if (invoice)
-                            data[i]['receiptPaymentID'] = invoice.IDPayment
-                    })
-                    if (!check) {
-                        await mtblInvoice(db).create({
-                            IDSpecializedSoftware: data[i].id,
-                            Status: data[i].statusName
-                        })
-                        if (data[i].statusName == 'Chờ thanh toán') {
-                            totalMoneyVNDR += totalMoneyVND
-                            array.push(data[i])
-
-                        }
-                    } else {
-                        if (check.Status == 'Chờ thanh toán') {
-                            data[i]['payDate'] = null
-                            data[i]['payments'] = null
-                            array.push(data[i])
-                            totalMoneyVNDR += totalMoneyVND
-                        }
-                    }
-                }
-                totalMoney = await calculateTheTotalAmountOfEachCurrency(array)
-                var result = {
-                    array: array,
-                    status: Constant.STATUS.SUCCESS,
-                    message: Constant.MESSAGE.ACTION_SUCCESS,
-                    all: 10,
-                    totalMoney: totalMoney,
-                    totalMoneyVND: totalMoneyVNDR,
-                }
-                res.json(result);
-            } else {
-                res.json(Result.SYS_ERROR_RESULT)
-
-            }
-        })
+        let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', 'Chờ thanh toán')
+        res.json(result)
     },
     // get_list_invoice_paid
     getListInvoicePaid: async (req, res) => {
         var body = req.body
-        console.log(body);
-        var obj = {
-            "paging": {
-                "pageSize": body.itemPerPage ? body.itemPerPage : 0,
-                "currentPage": body.page ? body.page : 0
-            },
-            "type": body.type
-        }
-        // await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/share`, obj).then(data => {
-        //     if (data) {
-        //         if (data.data.status_code == 200) {
-        database.connectDatabase().then(async db => {
-            if (db) {
-                var array = []
-                let totalMoney = []
-                for (var i = 0; i < data.length; i++) {
-                    let check = await mtblInvoice(db).findOne({
-                        where: { IDSpecializedSoftware: data[i].id }
-                    })
-                    let totalMoneyVND = 0
-                    let arrayExchangeRate = []
-                    let arrayCurrency = []
-                    for (let m = 0; m < data[i].arrayMoney.length; m++) {
-                        arrayCurrency.push(data[i].arrayMoney[m].typeMoney)
-                        arrayExchangeRate.push(await getExchangeRateFromDate(db, data[i].arrayMoney[m].typeMoney, moment(data[i].createdDate).format('YYYY-DD-MM')))
-                        totalMoneyVND += await calculateMoneyFollowVND(db, data[i].arrayMoney[m].typeMoney, (data[i].arrayMoney[m].total ? data[i].arrayMoney[m].total : 0), moment(data[i].createdDate).format('YYYY-DD-MM'))
-                        let paidAmountArray = []
-                        let remainingAmountArray = []
-                        for (let cur of arrayCurrency) {
-                            let currency = await mtblCurrency(db).findOne({
-                                where: {
-                                    ShortName: cur
-                                }
-                            })
-                            let ObjAmount = await mtblInvoiceRCurrency(db).findOne({
-                                where: {
-                                    CurrencyID: currency.ID,
-                                    InvoiceID: check.ID,
-                                }
-                            })
-                            paidAmountArray.push({
-                                key: cur,
-                                value: ObjAmount.PaidAmount ? ObjAmount.PaidAmount : null,
-                            })
-                            remainingAmountArray.push({
-                                key: cur,
-                                value: ObjAmount.UnpaidAmount ? ObjAmount.UnpaidAmount : null,
-                            })
-                        }
-                        data[i]['paidAmountArray'] = paidAmountArray;
-                        data[i]['remainingAmountArray'] = remainingAmountArray;
-                    }
-                    data[i]['arrayExchangeRate'] = arrayExchangeRate
-                    data[i]['totalMoneyVND'] = totalMoneyVND
-                    let tblPaymentRInvoice = mtblPaymentRInvoice(db)
-                    tblPaymentRInvoice.belongsTo(mtblReceiptsPayment(db), { foreignKey: 'IDPayment', sourceKey: 'IDPayment', as: 'payment' })
-                    let arrayReceiptPayment = []
-                    await tblPaymentRInvoice.findAll({
-                        where: {
-                            IDSpecializedSoftware: data[i].id
-                        },
-                        include: [{
-                            model: mtblReceiptsPayment(db),
-                            required: false,
-                            as: 'payment'
-                        },],
-                    }).then(invoice => {
-                        if (invoice && invoice.length > 0) {
-                            for (let item of invoice) {
-                                arrayReceiptPayment.push({
-                                    receiptPaymentID: item.IDPayment,
-                                    receiptPaymentName: item.payment ? item.payment.CodeNumber : ''
-                                })
-                            }
-                        }
-                    })
-                    data[i]['arrayReceiptPayment'] = arrayReceiptPayment
-                    if (!check) {
-                        await mtblInvoice(db).create({
-                            IDSpecializedSoftware: data[i].id,
-                            Status: data[i].statusName
-                        })
-                        if (data[i].statusName == 'Đã thanh toán')
-                            array.push(data[i])
-                    } else {
-                        if (check.Status == 'Đã thanh toán') {
-                            data[i]['payDate'] = check ? (check.PayDate ? moment(check.PayDate).format('DD/MM/YYYY') : null) : ''
-                            data[i]['payments'] = check ? check.Payments : ''
-                            array.push(data[i])
-                        }
-                    }
-                }
-                totalMoney = await calculateTheTotalAmountOfEachCurrency(array)
-                let totalMoneyVND = 0
-                for (let a = 0; a < totalMoney.length; a++) {
-                    totalMoneyVND += await calculateMoneyFollowVND(db, totalMoney[a].type, totalMoney[a].total, totalMoney[a].date)
-                }
-                var result = {
-                    array: array,
-                    // array: data.data.data.list,
-                    status: Constant.STATUS.SUCCESS,
-                    message: Constant.MESSAGE.ACTION_SUCCESS,
-                    all: 10,
-                    totalMoney: totalMoney,
-                    totalMoneyVND: totalMoneyVND,
-
-                    // all: data.data.data.pager.rowsCount
-                }
-                res.json(result);
-            } else {
-                res.json(Result.SYS_ERROR_RESULT)
-
-            }
-        })
+        let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', 'Đã thanh toán')
+        res.json(result)
     },
     // get_list_invoice_edit_request
     getListInvoiceEditRequest: async (req, res) => {
         var body = req.body
-        var obj = {
-            "paging": {
-                "pageSize": body.itemPerPage ? body.itemPerPage : 0,
-                "currentPage": body.page ? body.page : 0
-            },
-            "type": body.type
-        }
-        // await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/share`, obj).then(data => {
-        //     if (data) {
-        //         if (data.data.status_code == 200) {
-        database.connectDatabase().then(async db => {
-            if (db) {
-                var array = []
-                let totalMoney = []
-                for (var i = 0; i < data.length; i++) {
-                    let check = await mtblInvoice(db).findOne({
-                        where: { IDSpecializedSoftware: data[i].id }
-                    })
-                    let totalMoneyVND = 0
-                    let arrayExchangeRate = []
-
-                    for (let m = 0; m < data[i].arrayMoney.length; m++) {
-                        arrayExchangeRate.push(await getExchangeRateFromDate(db, data[i].arrayMoney[m].typeMoney, moment(data[i].createdDate).format('YYYY-DD-MM')))
-                        totalMoneyVND += await calculateMoneyFollowVND(db, data[i].arrayMoney[m].typeMoney, (data[i].arrayMoney[m].total ? data[i].arrayMoney[m].total : 0), moment(data[i].createdDate).format('YYYY-DD-MM'))
-                    }
-                    data[i]['arrayExchangeRate'] = arrayExchangeRate
-
-                    data[i]['totalMoneyVND'] = totalMoneyVND
-                    await mtblPaymentRInvoice(db).findOne({
-                        where: {
-                            IDSpecializedSoftware: data[i].id
-                        }
-                    }).then(invoice => {
-                        if (invoice)
-                            data[i]['receiptPaymentID'] = invoice.IDPayment
-                    })
-                    if (!check) {
-                        await mtblInvoice(db).create({
-                            IDSpecializedSoftware: data[i].id,
-                            Status: data[i].statusName
-                        })
-                        if (data[i].request == 'Yêu cầu sửa')
-                            array.push(data[i])
-                    } else {
-                        console.log(check.Status);
-                        if (check.Request == 'Yêu cầu sửa')
-                            array.push(data[i])
-                    }
-                }
-                totalMoney = await calculateTheTotalAmountOfEachCurrency(array)
-                let totalMoneyVND = 0
-                for (let a = 0; a < totalMoney.length; a++) {
-                    totalMoneyVND += await calculateMoneyFollowVND(db, totalMoney[a].type, totalMoney[a].total, totalMoney[a].date)
-                }
-                var result = {
-                    array: array,
-                    // array: data.data.data.list,
-                    status: Constant.STATUS.SUCCESS,
-                    message: Constant.MESSAGE.ACTION_SUCCESS,
-                    all: 10,
-                    totalMoney: totalMoney,
-                    totalMoneyVND: totalMoneyVND,
-
-                    // all: data.data.data.pager.rowsCount
-                }
-                res.json(result);
-            } else {
-                res.json(Result.SYS_ERROR_RESULT)
-
-            }
-        })
+        let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', 'Yêu cầu sửa')
+        res.json(result)
     },
     // get_list_invoice_delete_request
     getListInvoiceDeleteRequest: async (req, res) => {
         var body = req.body
-        console.log(body);
-        var obj = {
-            "paging": {
-                "pageSize": body.itemPerPage ? body.itemPerPage : 0,
-                "currentPage": body.page ? body.page : 0
-            },
-            "type": body.type
-        }
-        // await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/share`, obj).then(data => {
-        //     if (data) {
-        //         if (data.data.status_code == 200) {
-        database.connectDatabase().then(async db => {
-            if (db) {
-                var array = []
-                let totalMoney = []
-                for (var i = 0; i < data.length; i++) {
-                    let check = await mtblInvoice(db).findOne({
-                        where: { IDSpecializedSoftware: data[i].id }
-                    })
-                    let totalMoneyVND = 0
-                    let arrayExchangeRate = []
-
-                    for (let m = 0; m < data[i].arrayMoney.length; m++) {
-                        arrayExchangeRate.push(await getExchangeRateFromDate(db, data[i].arrayMoney[m].typeMoney, moment(data[i].createdDate).format('YYYY-DD-MM')))
-                        totalMoneyVND += await calculateMoneyFollowVND(db, data[i].arrayMoney[m].typeMoney, (data[i].arrayMoney[m].total ? data[i].arrayMoney[m].total : 0), moment(data[i].createdDate).format('YYYY-DD-MM'))
-                    }
-                    data[i]['arrayExchangeRate'] = arrayExchangeRate
-
-                    data[i]['totalMoneyVND'] = totalMoneyVND
-                    await mtblPaymentRInvoice(db).findOne({
-                        where: {
-                            IDSpecializedSoftware: data[i].id
-                        }
-                    }).then(invoice => {
-                        if (invoice)
-                            data[i]['receiptPaymentID'] = invoice.IDPayment
-                    })
-                    if (!check) {
-                        await mtblInvoice(db).create({
-                            IDSpecializedSoftware: data[i].id,
-                            Status: data[i].statusName
-                        })
-                        if (data[i].request == 'Yêu cầu xóa')
-                            array.push(data[i])
-                    } else {
-                        if (check.Request == 'Yêu cầu xóa')
-                            array.push(data[i])
-                    }
-                }
-                totalMoney = await calculateTheTotalAmountOfEachCurrency(array)
-                let totalMoneyVND = 0
-                for (let a = 0; a < totalMoney.length; a++) {
-                    totalMoneyVND += await calculateMoneyFollowVND(db, totalMoney[a].type, totalMoney[a].total, totalMoney[a].date)
-                }
-                var result = {
-                    array: array,
-                    // array: data.data.data.list,
-                    status: Constant.STATUS.SUCCESS,
-                    message: Constant.MESSAGE.ACTION_SUCCESS,
-                    all: 10,
-                    totalMoney: totalMoney,
-                    totalMoneyVND: totalMoneyVND,
-
-                    // all: data.data.data.pager.rowsCount
-                }
-                res.json(result);
-            } else {
-                res.json(Result.SYS_ERROR_RESULT)
-
-            }
-        })
+        let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', 'Yêu cầu xóa')
+        res.json(result)
     },
-
-
     // credit-------------------------------------------------------------------------------------------------------------------------------------
     // get_list_credit
     getListCredit: async (req, res) => {
         var body = req.body
-        database.connectDatabase().then(async db => {
-            var obj = {
-                "paging": {
-                    "pageSize": body.itemPerPage ? body.itemPerPage : 0,
-                    "currentPage": body.page ? body.page : 0
-                },
-                "type": body.type
-            }
-            // await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/share`, obj).then(async data => {
-            //     if (data) {
-            //         if (data.data.status_code == 200) {
-            if (dataCredit) {
-                // Tính số tiền trong arrayMoney
-                let totalMoney = await calculateTheTotalAmountOfEachCurrency(dataCredit)
-                for (let i = 0; i < dataCredit.length; i++) {
-                    let check = await mtblInvoice(db).findOne({
-                        where: { IDSpecializedSoftware: dataCredit[i].id }
-                    })
-                    let invoiceID;
-                    let tblPaymentRInvoice = mtblPaymentRInvoice(db)
-                    tblPaymentRInvoice.belongsTo(mtblReceiptsPayment(db), { foreignKey: 'IDPayment', sourceKey: 'IDPayment', as: 'payment' })
-                    let arrayReceiptPayment = []
-                    await tblPaymentRInvoice.findAll({
-                        where: {
-                            IDSpecializedSoftware: dataCredit[i].id
-                        },
-                        include: [{
-                            model: mtblReceiptsPayment(db),
-                            required: false,
-                            as: 'payment'
-                        },],
-                    }).then(invoice => {
-                        if (invoice && invoice.length > 0) {
-                            for (let item of invoice) {
-                                arrayReceiptPayment.push({
-                                    receiptPaymentID: item.IDPayment,
-                                    receiptPaymentName: item.payment ? item.payment.CodeNumber : ''
-                                })
-                            }
-                        }
-                    })
-                    dataCredit[i]['arrayReceiptPayment'] = arrayReceiptPayment
-                    if (!check) {
-                        invoiceID = await mtblInvoice(db).create({
-                            IDSpecializedSoftware: dataCredit[i].id,
-                            Status: dataCredit[i].statusName,
-                            Request: dataCredit[i].request,
-                            InitialAmount: dataCredit[i].total,
-                            UnpaidAmount: dataCredit[i].total,
-                            IsInvoice: false
-                        })
-                        check = invoiceID
-                    } else {
-                        invoiceID = check
-                        dataCredit[i]['payDate'] = check ? (check.PayDate ? moment(check.PayDate).format('DD/MM/YYYY') : null) : ''
-                        dataCredit[i]['payments'] = check ? check.Payments : ''
-                        dataCredit[i].statusName = check.Status
-                        dataCredit[i].request = check.total
-                    }
-                    let totalMoneyVND = 0
-                    let arrayExchangeRate = []
-                    let arrayCurrency = []
-                    for (let m = 0; m < dataCredit[i].arrayMoney.length; m++) {
-                        arrayCurrency.push(dataCredit[i].arrayMoney[m].typeMoney)
-                        totalMoneyVND += await calculateMoneyFollowVND(db, dataCredit[i].arrayMoney[m].typeMoney, (dataCredit[i].arrayMoney[m].total ? dataCredit[i].arrayMoney[m].total : 0), moment(dataCredit[i].createdDate).format('YYYY-DD-MM'))
-                        arrayExchangeRate.push(await getExchangeRateFromDate(db, dataCredit[i].arrayMoney[m].typeMoney, moment(dataCredit[i].createdDate).format('YYYY-DD-MM')))
-                        let currency = await mtblCurrency(db).findOne({
-                            where: {
-                                ShortName: dataCredit[i].arrayMoney[m].typeMoney
-                            }
-                        })
-                        if (currency) {
-                            let checkCurrency = await mtblInvoiceRCurrency(db).findOne({
-                                where: {
-                                    CurrencyID: currency.ID,
-                                    InvoiceID: invoiceID.ID,
-                                }
-                            })
-                            if (!checkCurrency)
-                                await mtblInvoiceRCurrency(db).create({
-                                    CurrencyID: currency.ID,
-                                    InvoiceID: invoiceID.ID,
-                                    UnpaidAmount: dataCredit[i].arrayMoney[m].total,
-                                    PaidAmount: 0,
-                                    InitialAmount: dataCredit[i].arrayMoney[m].total,
-                                    Status: dataCredit[i].statusName,
-                                })
-                        }
-                    }
-                    dataCredit[i]['totalMoneyVND'] = totalMoneyVND
-                    dataCredit[i]['arrayExchangeRate'] = arrayExchangeRate
-                    dataCredit[i]['payDate'] = check ? (check.PayDate ? moment(check.PayDate).format('DD/MM/YYYY') : null) : ''
-                    dataCredit[i]['payments'] = check ? check.Payments : ''
-                    let paidAmountArray = [];
-                    let remainingAmountArray = [];
-                    for (let cur of arrayCurrency) {
-                        let currency = await mtblCurrency(db).findOne({
-                            where: {
-                                ShortName: cur
-                            }
-                        })
-                        let ObjAmount = await mtblInvoiceRCurrency(db).findOne({
-                            where: {
-                                CurrencyID: currency.ID,
-                                InvoiceID: check.ID,
-                            }
-                        })
-                        paidAmountArray.push({
-                            key: cur,
-                            value: ObjAmount.PaidAmount ? ObjAmount.PaidAmount : null,
-                        })
-                        remainingAmountArray.push({
-                            key: cur,
-                            value: ObjAmount.UnpaidAmount ? ObjAmount.UnpaidAmount : null,
-                        })
-                    }
-                    dataCredit[i]['paidAmountArray'] = paidAmountArray;
-                    dataCredit[i]['remainingAmountArray'] = remainingAmountArray;
-                }
-                let totalMoneyVND = 0
-                for (let a = 0; a < totalMoney.length; a++) {
-                    totalMoneyVND += await calculateMoneyFollowVND(db, totalMoney[a].type, totalMoney[a].total, totalMoney[a].date)
-                }
-                var result = {
-                    array: dataCredit,
-                    status: Constant.STATUS.SUCCESS,
-                    message: Constant.MESSAGE.ACTION_SUCCESS,
-                    all: 10,
-                    totalMoney: totalMoney,
-                }
-
-                res.json(result);
-            } else {
-                res.json(Result.SYS_ERROR_RESULT)
-            }
-        })
+        let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'credit')
+        res.json(result)
     },
     // get_list_credit_wait_for_pay
     getListCreditWaitForPay: async (req, res) => {
         var body = req.body
-        database.connectDatabase().then(async db => {
-            let array = []
-            var obj = {
-                "paging": {
-                    "pageSize": body.itemPerPage ? body.itemPerPage : 0,
-                    "currentPage": body.page ? body.page : 0
-                },
-                "type": body.type
-            }
-            // await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/share`, obj).then(async data => {
-            //     if (data) {
-            //         if (data.data.status_code == 200) {
-            if (dataCredit) {
-                for (let i = 0; i < dataCredit.length; i++) {
-                    let check = await mtblInvoice(db).findOne({
-                        where: { IDSpecializedSoftware: dataCredit[i].id }
-                    })
-                    await mtblPaymentRInvoice(db).findOne({
-                        where: {
-                            IDSpecializedSoftware: dataCredit[i].id
-                        }
-                    }).then(invoice => {
-                        if (invoice)
-                            dataCredit[i]['receiptPaymentID'] = invoice.IDPayment
-                    })
-                    if (!check) {
-                        await mtblInvoice(db).create({
-                            IDSpecializedSoftware: dataCredit[i].id,
-                            Status: dataCredit[i].statusName,
-                            Request: dataCredit[i].request
-                        })
-                        if (dataCredit[i].statusName == 'Chờ thanh toán')
-                            array.push(dataCredit[i])
-                    } else {
-                        dataCredit[i].unpaidAmount = check.UnpaidAmount ? check.UnpaidAmount : 0
-                        dataCredit[i].initialAmount = check.InitialAmount ? check.InitialAmount : 0
-                        dataCredit[i].paidAmount = check.PaidAmount ? check.PaidAmount : 0
-                        dataCredit[i].statusName = check.Status
-                        dataCredit[i].request = check.Request
-                        if (check.Status == 'Chờ thanh toán' && dataCredit[i].statusName == 'Chờ thanh toán') {
-                            dataCredit[i]['payDate'] = null
-                            dataCredit[i]['payments'] = null
-                            array.push(dataCredit[i])
-                        }
-                    }
-                }
-                let totalMoney = await calculateTheTotalAmountOfEachCurrency(array)
-                var result = {
-                    array: array,
-                    status: Constant.STATUS.SUCCESS,
-                    message: Constant.MESSAGE.ACTION_SUCCESS,
-                    all: 10,
-                    totalMoney: totalMoney,
-                }
-
-                res.json(result);
-            } else {
-                res.json(Result.SYS_ERROR_RESULT)
-            }
-        })
+        let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'credit', 'Chờ thanh toán')
+        res.json(result)
     },
     // get_list_credit_paid
     getListCreditPaid: async (req, res) => {
         var body = req.body
-        database.connectDatabase().then(async db => {
-            let array = []
-            var obj = {
-                "paging": {
-                    "pageSize": body.itemPerPage ? body.itemPerPage : 0,
-                    "currentPage": body.page ? body.page : 0
-                },
-                "type": body.type
-            }
-            // await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/share`, obj).then(async data => {
-            //     if (data) {
-            //         if (data.data.status_code == 200) {
-            if (dataCredit) {
-                for (let i = 0; i < dataCredit.length; i++) {
-                    let check = await mtblInvoice(db).findOne({
-                        where: { IDSpecializedSoftware: dataCredit[i].id }
-                    })
-                    let tblPaymentRInvoice = mtblPaymentRInvoice(db)
-                    tblPaymentRInvoice.belongsTo(mtblReceiptsPayment(db), { foreignKey: 'IDPayment', sourceKey: 'IDPayment', as: 'payment' })
-                    let arrayReceiptPayment = []
-                    await tblPaymentRInvoice.findAll({
-                        where: {
-                            IDSpecializedSoftware: dataCredit[i].id
-                        },
-                        include: [{
-                            model: mtblReceiptsPayment(db),
-                            required: false,
-                            as: 'payment'
-                        },],
-                    }).then(invoice => {
-                        if (invoice) {
-                            if (invoice && invoice.length > 0) {
-                                for (let item of invoice) {
-                                    arrayReceiptPayment.push({
-                                        receiptPaymentID: item.IDPayment,
-                                        receiptPaymentName: item.payment ? item.payment.CodeNumber : ''
-                                    })
-                                }
-                            }
-                        }
-                    })
-                    data[i]['arrayReceiptPayment'] = arrayReceiptPayment
-                    if (!check) {
-                        await mtblInvoice(db).create({
-                            IDSpecializedSoftware: dataCredit[i].id,
-                            Status: dataCredit[i].statusName,
-                            Request: dataCredit[i].request
-                        })
-                        if (dataCredit[i].statusName == 'Đã thanh toán')
-                            array.push(data[i])
-                    } else {
-                        dataCredit[i].statusName = check.Status
-                        dataCredit[i].request = check.Request
-                        if (check.Status == 'Đã thanh toán') {
-                            dataCredit[i]['payDate'] = check ? (check.PayDate ? moment(check.PayDate).format('DD/MM/YYYY') : null) : ''
-                            dataCredit[i]['payments'] = check ? check.Payments : ''
-                            array.push(dataCredit[i])
-                        }
-                    }
-                }
-                let totalMoney = await calculateTheTotalAmountOfEachCurrency(array)
-                var result = {
-                    array: array,
-                    status: Constant.STATUS.SUCCESS,
-                    message: Constant.MESSAGE.ACTION_SUCCESS,
-                    all: 10,
-                    totalMoney: totalMoney,
-                }
-
-                res.json(result);
-            } else {
-                res.json(Result.SYS_ERROR_RESULT)
-            }
-        })
+        let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'credit', 'Đã thanh toán')
+        res.json(result)
     },
     // get_list_credit_edit_request
     getListCreditEditRequest: async (req, res) => {
         var body = req.body
-        database.connectDatabase().then(async db => {
-            let array = []
-            var obj = {
-                "paging": {
-                    "pageSize": body.itemPerPage ? body.itemPerPage : 0,
-                    "currentPage": body.page ? body.page : 0
-                },
-                "type": body.type
-            }
-            // await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/share`, obj).then(async data => {
-            //     if (data) {
-            //         if (data.data.status_code == 200) {
-            if (dataCredit) {
-                for (let i = 0; i < dataCredit.length; i++) {
-                    let check = await mtblInvoice(db).findOne({
-                        where: { IDSpecializedSoftware: dataCredit[i].id }
-                    })
-                    await mtblPaymentRInvoice(db).findOne({
-                        where: {
-                            IDSpecializedSoftware: dataCredit[i].id
-                        }
-                    }).then(invoice => {
-                        if (invoice)
-                            dataCredit[i]['receiptPaymentID'] = invoice.IDPayment
-                    })
-                    if (!check) {
-                        await mtblInvoice(db).create({
-                            IDSpecializedSoftware: dataCredit[i].id,
-                            Status: dataCredit[i].statusName,
-                            Request: dataCredit[i].request
-                        })
-                        if (dataCredit[i].request == 'Yêu cầu sửa')
-                            array.push(data[i])
-                    } else {
-                        dataCredit[i].statusName = check.Status
-                        dataCredit[i].request = check.Request
-                        if (check.Request == 'Yêu cầu sửa')
-                            array.push(dataCredit[i])
-                    }
-                }
-                let totalMoney = await calculateTheTotalAmountOfEachCurrency(array)
-                var result = {
-                    array: array,
-                    status: Constant.STATUS.SUCCESS,
-                    message: Constant.MESSAGE.ACTION_SUCCESS,
-                    all: 10,
-                    totalMoney: totalMoney,
-                }
-
-                res.json(result);
-            } else {
-                res.json(Result.SYS_ERROR_RESULT)
-            }
-        })
+        let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'credit', 'Yêu cầu sửa')
+        res.json(result)
     },
     // get_list_Credit_delete_request
     getListCreditDeleteRequest: async (req, res) => {
         var body = req.body
-        database.connectDatabase().then(async db => {
-            let array = []
-            var obj = {
-                "paging": {
-                    "pageSize": body.itemPerPage ? body.itemPerPage : 0,
-                    "currentPage": body.page ? body.page : 0
-                },
-                "type": body.type
-            }
-            // await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/share`, obj).then(async data => {
-            //     if (data) {
-            //         if (data.data.status_code == 200) {
-            if (dataCredit) {
-                for (let i = 0; i < dataCredit.length; i++) {
-                    let check = await mtblInvoice(db).findOne({
-                        where: { IDSpecializedSoftware: dataCredit[i].id }
-                    })
-                    await mtblPaymentRInvoice(db).findOne({
-                        where: {
-                            IDSpecializedSoftware: dataCredit[i].id
-                        }
-                    }).then(invoice => {
-                        if (invoice)
-                            dataCredit[i]['receiptPaymentID'] = invoice.IDPayment
-                    })
-                    if (!check) {
-                        await mtblInvoice(db).create({
-                            IDSpecializedSoftware: dataCredit[i].id,
-                            Status: dataCredit[i].statusName,
-                            Request: dataCredit[i].request
-                        })
-                        if (dataCredit[i].request == 'Yêu cầu xóa')
-                            array.push(data[i])
-                    } else {
-                        dataCredit[i].statusName = check.Status
-                        dataCredit[i].request = check.Request
-                        if (check.Request == 'Yêu cầu xóa')
-                            array.push(dataCredit[i])
-                    }
-                }
-                let totalMoney = await calculateTheTotalAmountOfEachCurrency(array)
-                var result = {
-                    array: array,
-                    status: Constant.STATUS.SUCCESS,
-                    message: Constant.MESSAGE.ACTION_SUCCESS,
-                    all: 10,
-                    totalMoney: totalMoney,
-                }
-
-                res.json(result);
-            } else {
-                res.json(Result.SYS_ERROR_RESULT)
-            }
-        })
+        let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'credit', 'Yêu cầu xóa')
+        res.json(result)
     },
 
 
