@@ -1244,10 +1244,10 @@ module.exports = {
                             } else {
                                 let dataCus = await customerData.getDetailCustomerOfPMCM(data.IDCustomer)
                                 obj['object'] = {
-                                    name: dataCus ? dataCus.name : '',
-                                    code: dataCus ? dataCus.customerCode : '',
-                                    displayName: '[' + (dataCus ? dataCus.customerCode : '') + '] ' + (dataCus ? dataCus.name : ''),
-                                    address: dataCus ? dataCus.address : '',
+                                    name: dataCus.data ? dataCus.data.name : '',
+                                    code: dataCus.data ? dataCus.data.customerCode : '',
+                                    displayName: (dataCus.data.customerCode ? '[' + (dataCus.data.customerCode ? dataCus.data.customerCode : '') + '] ' : '') + (dataCus.data.name ? dataCus.data.name : ''),
+                                    address: dataCus.data ? dataCus.data.address : '',
                                     id: data.IDCustomer,
                                     type: 'customer',
                                 }
@@ -1999,7 +1999,7 @@ module.exports = {
                                 nameCurrency: data[i].currency ? data[i].currency.ShortName : null,
                                 date: data[i].Date ? moment(data[i].Date).format('DD/MM/YYYY') : null,
                                 idCustomer: data[i].IDCustomer ? data[i].IDCustomer : null,
-                                customerName: dataCus.name ? dataCus.name : dataStaff.fullName,
+                                customerName: dataCus.data.name ? dataCus.data.name : dataStaff.fullName,
                                 staffName: dataStaff.fullName,
                                 address: data[i].Address ? data[i].Address : '',
                                 amount: data[i].Amount ? data[i].Amount : null,
@@ -2054,10 +2054,10 @@ module.exports = {
                                 }
                             } else
                                 obj['object'] = {
-                                    name: dataCus ? dataCus.name : '',
-                                    code: dataCus ? dataCus.customerCode : '',
-                                    displayName: '[' + (dataCus ? dataCus.customerCode : '') + '] ' + (dataCus ? dataCus.name : ''),
-                                    address: dataCus ? dataCus.address : '',
+                                    name: dataCus.data ? dataCus.data.name : '',
+                                    code: dataCus.data ? dataCus.data.customerCode : '',
+                                    displayName: (dataCus.data.customerCode ? '[' + (dataCus.data.customerCode ? dataCus.data.customerCode : '') + '] ' : '') + (dataCus.data.name ? dataCus.data.name : ''),
+                                    address: dataCus.data ? dataCus.data.address : '',
                                     id: data[i].IDCustomer,
                                     type: 'customer',
                                 }

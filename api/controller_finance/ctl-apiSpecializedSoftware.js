@@ -86,7 +86,6 @@ async function getDetailCustomerOfPMCM(idCustomer) {
             objResult['data'] = data.data.data;
         }
     })
-    console.log(objResult);
     return objResult
 }
 async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, customerID = null, paymentID = null) {
@@ -109,43 +108,55 @@ async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, 
         obj["addressBookId"] = customerID
     let objResult = {}
     let totalMoneyVND = 0
-    await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/list_pmtc`, obj).then(async data => {
-        if (data.data.data) {
-            let arrayResult = []
-            for (let item of data.data.data.list) {
-                let refName = ''
-                for (let ref = 0; ref < item.refDetailModels.length; ref++) {
-                    if (item.refDetailModels[ref].agelessRef) {
-                        if (ref < item.refDetailModels.length - 1)
-                            refName += item.refDetailModels[ref].agelessRef + ', ';
-                        else
-                            refName += item.refDetailModels[ref].agelessRef;
-                    }
-                }
-                let typeMoney = item.grandTotal[0] ? convertypeMoneyPMCM(item.grandTotal[0].unit) : 'VND';
-                let arrayMoney = [{
-                    total: item.grandTotal[0] ? item.grandTotal[0].total : 0,
-                    typeMoney: typeMoney
-                }];
-                let departmentName = '';
-                let address = '';
-                let branchName = '';
-                let employeeName = '';
-                let staffCode = '';
-                let nameAccounting = '';
-                let payments = '';
-                let payDate = '';
-                let exchangeRate = 1;
-                let totalMoneyDisplay = item.grandTotal[0].total;
-                let paidAmount = 0;
-                let remainingAmount = 0;
-                let paymentAmount = 0;
-                let remainingAmountArray = [{
-                    key: typeMoney,
-                    value: item.grandTotal[0] ? item.grandTotal[0].total : 0,
-                }];
-                let paidAmountArray = [];
-                await database.connectDatabase().then(async db => {
+    await database.connectDatabase().then(async db => {
+        await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/list_pmtc`, obj).then(async data => {
+            if (data.data.data) {
+                let arrayResult = []
+                if (paymentID)
+                    await mtblPaymentRInvoice(db).findAll({
+                        where: {
+                            IDPayment: paymentID
+                        }
+                    }).then(async PayRInv => {
+                        for (let item of PayRInv) {
+                            let objInvPMCM = await getDetailInvCreOfPMCM(item.IDSpecializedSoftware)
+                            data.data.data.list.push(objInvPMCM.data)
+                        }
+                    })
+                for (let item of data.data.data.list) {
+                    let refName = ''
+                    if (item.refDetailModels)
+                        for (let ref = 0; ref < item.refDetailModels.length; ref++) {
+                            if (item.refDetailModels[ref].agelessRef) {
+                                if (ref < item.refDetailModels.length - 1)
+                                    refName += item.refDetailModels[ref].agelessRef + ', ';
+                                else
+                                    refName += item.refDetailModels[ref].agelessRef;
+                            }
+                        }
+                    let typeMoney = item.grandTotal[0] ? convertypeMoneyPMCM(item.grandTotal[0].unit) : 'VND';
+                    let arrayMoney = [{
+                        total: item.grandTotal[0] ? item.grandTotal[0].total : 0,
+                        typeMoney: typeMoney
+                    }];
+                    let departmentName = '';
+                    let address = '';
+                    let branchName = '';
+                    let employeeName = '';
+                    let staffCode = '';
+                    let nameAccounting = '';
+                    let payments = '';
+                    let payDate = '';
+                    let exchangeRate = 1;
+                    let totalMoneyDisplay = item.grandTotal[0].total;
+                    let paidAmount = 0;
+                    let remainingAmount = 0;
+                    let paymentAmount = 0;
+                    let remainingAmountArray = [{
+                        key: typeMoney,
+                        value: item.grandTotal[0] ? item.grandTotal[0].total : 0,
+                    }];
+                    let paidAmountArray = [];
                     if (typeMoney != '')
                         totalMoneyVND += await calculateMoneyFollowVND(db, typeMoney, item.grandTotal[0] ? item.grandTotal[0].total : 0, item.createDate)
                     if (item.userName) {
@@ -219,7 +230,7 @@ async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, 
                                     IDPayment: paymentID,
                                     IDSpecializedSoftware: item.id ? item.id : null,
                                 }
-                            }).findOne(payRInv => {
+                            }).then(payRInv => {
                                 paymentAmount = payRInv ? payRInv.Amount : 0
                             })
                         }
@@ -240,45 +251,47 @@ async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, 
                                     exchangeRate = rate.ExchangeRate
                             })
                     })
-                })
-                // Số tiền còn lại bằng tổng tiền trừ số tiền đã thanh toán
-                remainingAmount = totalMoneyDisplay - paidAmount;
-                let obj = {
-                    id: item.id,
-                    createdDate: item.createDate ? moment(item.createDate).format('DD-MM-YYYY') : null,
-                    refNumber: refName,
-                    address: address,
-                    invoiceNumber: item.no ? item.no : '',
-                    arrayMoney: arrayMoney,
-                    statusName: converStatusPMCM(item.status),
-                    idCustomer: item.addressBookId,
-                    customerName: item.addressBookName,
-                    content: item.note,
-                    request: item.status == 3 ? 'Yêu cầu sửa' : (item.status == 4 ? 'Yêu cầu xóa' : ''),
-                    departmentName: departmentName,
-                    branchName: branchName,
-                    accounting: item.recondingTxName ? item.recondingTxName : '',
-                    nameAccounting: nameAccounting,
-                    employeeName: employeeName,
-                    staffName: employeeName,
-                    staffcode: staffCode,
-                    payDate: payDate,
-                    payments: payments,
-                    remainingAmountArray: remainingAmountArray,
-                    paidAmountArray: paidAmountArray,
-                    typeMoney: typeMoney,
-                    exchangeRate: exchangeRate,
-                    totalMoneyDisplay: totalMoneyDisplay,
-                    paidAmount: paidAmount,
-                    remainingAmount: remainingAmount,
-                    paymentAmount: paymentAmount,
+                    // Số tiền còn lại bằng tổng tiền trừ số tiền đã thanh toán
+                    remainingAmount = totalMoneyDisplay - paidAmount;
+                    let obj = {
+                        id: item.id,
+                        createdDate: item.createDate ? moment(item.createDate).format('DD-MM-YYYY') : null,
+                        refNumber: refName,
+                        address: address,
+                        invoiceNumber: item.no ? item.no : '',
+                        arrayMoney: arrayMoney,
+                        statusName: converStatusPMCM(item.status),
+                        idCustomer: item.addressBookId,
+                        customerName: item.addressBookName,
+                        content: item.note,
+                        request: item.status == 3 ? 'Yêu cầu sửa' : (item.status == 4 ? 'Yêu cầu xóa' : ''),
+                        departmentName: departmentName,
+                        branchName: branchName,
+                        accounting: item.recondingTxName ? item.recondingTxName : '',
+                        nameAccounting: nameAccounting,
+                        employeeName: employeeName,
+                        staffName: employeeName,
+                        staffcode: staffCode,
+                        payDate: payDate,
+                        payments: payments,
+                        remainingAmountArray: remainingAmountArray,
+                        paidAmountArray: paidAmountArray,
+                        typeMoney: typeMoney,
+                        exchangeRate: exchangeRate,
+                        totalMoneyDisplay: totalMoneyDisplay,
+                        total: totalMoneyDisplay,
+                        paidAmount: paidAmount,
+                        remainingAmount: remainingAmount,
+                        paymentAmount: paymentAmount,
+                    }
+                    arrayResult.push(obj)
                 }
-                arrayResult.push(obj)
+                objResult['data'] = arrayResult;
+                objResult['count'] = data.data.data.pager.rowsCount;
             }
-            objResult['data'] = arrayResult;
-            objResult['count'] = data.data.data.pager.rowsCount;
-        }
+        })
     })
+
     let totalMoney = await calculateTheTotalAmountOfEachCurrency(objResult['data'] ? objResult['data'] : [])
     var result = {
         array: objResult['data'],
@@ -671,7 +684,7 @@ module.exports = {
             body.itemPerPage = 1000000000;
         }
         console.log(body);
-        let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'invoice', 'Yêu cầu thanh toán', body.idCustomer ? body.idCustomer : null)
+        let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'invoice', 'Yêu cầu thanh toán', body.idCustomer ? body.idCustomer : null, body.idReceiptPayment ? body.idReceiptPayment : null)
         res.json(result)
     },
     // get_list_invoice_paid_from_customer
@@ -691,7 +704,7 @@ module.exports = {
     // get_list_credit_wait_for_pay_from_customer
     getListCreditWaitForPayFromCustomer: async (req, res) => {
         var body = req.body
-        let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'credit', 'Yêu cầu thanh toán', body.idCustomer ? body.idCustomer : null)
+        let result = await getInvoiceOrCreditOfPMCM(body.page == 'null' ? 1 : body.page, body.itemPerPage ? body.itemPerPage : 10000, 'credit', 'Yêu cầu thanh toán', body.idCustomer ? body.idCustomer : null)
         res.json(result)
     },
     // get_list_credit_paid_from_customer
