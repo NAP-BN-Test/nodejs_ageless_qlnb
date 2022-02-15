@@ -16,316 +16,6 @@ var mtblDMChiNhanh = require('../tables/constants/tblDMChiNhanh')
 var mtblDMTaiKhoanKeToan = require('../tables/financemanage/tblDMTaiKhoanKeToan')
 var mtblCurrency = require('../tables/financemanage/tblCurrency')
 var mtblRate = require('../tables/financemanage/tblRate')
-// data model invoice của KH
-var dataCredit = [{
-    id: 100,
-    createdDate: '01/05/2021',
-    invoiceNumber: 'INV0001',
-    statusName: 'Chờ thanh toán',
-    idCustomer: 10,
-    creditNumber: 'CRE0001',
-    customerName: 'Công ty tnhh Hòa Phát',
-    employeeName: 'Lê Thị Thảo',
-    idEmployee: 1,
-    content: 'test 01',
-    request: 'Yêu cầu Xóa',
-    accountingDebt: '331',
-    accountingCredit: '642',
-    nameAccountingDebt: 'Phải trả người bán',
-    nameAccountingCredit: 'Chi phí quản lý doanh nghiệp',
-    arrayMoney: [{
-        total: '1000000',
-        typeMoney: 'VND',
-    },
-    {
-        total: '100',
-        typeMoney: 'USD',
-    },
-    ],
-},
-{
-    id: 102,
-    createdDate: '01/05/2021',
-    invoiceNumber: 'INV0002',
-    statusName: 'Chờ thanh toán',
-    idCustomer: 10,
-    creditNumber: 'CRE0002',
-    customerName: 'Công ty tnhh Hòa Phát',
-    employeeName: 'Lê Thị Thảo',
-    idEmployee: 1,
-    content: 'test 01',
-    request: '',
-    accountingDebt: '331',
-    nameAccountingDebt: 'Phải trả người bán',
-    accountingCredit: '642',
-    nameAccountingCredit: 'Chi phí quản lý doanh nghiệp',
-    arrayMoney: [{
-        total: '1100000',
-        typeMoney: 'VND',
-    },
-    {
-        total: '110',
-        typeMoney: 'USD',
-    },
-    ],
-},
-{
-    id: 103,
-    createdDate: '03/05/2021',
-    invoiceNumber: 'INV0003',
-    statusName: 'Đã thanh toán',
-    idCustomer: 10,
-    creditNumber: 'CRE0003',
-    customerName: 'Công ty tnhh Hòa Phát',
-    employeeName: 'Lê Thị Thảo',
-    idEmployee: 1,
-    content: 'test 01',
-    request: 'Yêu cầu xóa',
-    accountingDebt: '331',
-    nameAccountingDebt: 'Phải trả người bán',
-    accountingCredit: '642',
-    nameAccountingCredit: 'Chi phí quản lý doanh nghiệp',
-    arrayMoney: [{
-        total: '1200000',
-        typeMoney: 'VND',
-    },
-    {
-        total: '120',
-        typeMoney: 'USD',
-    },
-    ],
-},
-{
-    id: 104,
-    createdDate: '04/05/2021',
-    invoiceNumber: 'INV0004',
-    statusName: 'Đã thanh toán',
-    idCustomer: 10,
-    creditNumber: 'CRE0004',
-    customerName: 'Công ty tnhh Hòa Phát',
-    employeeName: 'Lê Thị Thảo',
-    idEmployee: 1,
-    content: 'test 01',
-    request: 'Yêu cầu sửa',
-    accountingDebt: '331',
-    nameAccountingDebt: 'Phải trả người bán',
-    accountingCredit: '642',
-    nameAccountingCredit: 'Chi phí quản lý doanh nghiệp',
-    arrayMoney: [{
-        total: '1300000',
-        typeMoney: 'VND',
-    },],
-},
-{
-    id: 105,
-    createdDate: '05/05/2021',
-    invoiceNumber: 'INV0005',
-    statusName: 'Chờ thanh toán',
-    idCustomer: 10,
-    creditNumber: 'CRE0005',
-    customerName: 'Công ty tnhh Hòa Phát',
-    employeeName: 'Lê Thị Thảo',
-    idEmployee: 1,
-    content: 'test 01',
-    request: '',
-    accountingDebt: '331',
-    nameAccountingDebt: 'Phải trả người bán',
-    accountingCredit: '642',
-    nameAccountingCredit: 'Chi phí quản lý doanh nghiệp',
-    arrayMoney: [{
-        total: '1500000',
-        typeMoney: 'VND',
-    },
-    {
-        total: '150',
-        typeMoney: 'USD',
-    },
-    ],
-},
-{
-    id: 106,
-    createdDate: '06/05/2021',
-    invoiceNumber: 'INV0006',
-    statusName: 'Chờ thanh toán',
-    idCustomer: 10,
-    creditNumber: 'CRE0006',
-    customerName: 'Công ty tnhh Hòa Phát',
-    employeeName: 'Lê Thị Thảo',
-    idEmployee: 1,
-    content: 'test 01',
-    request: '',
-    accountingDebt: '331',
-    nameAccountingDebt: 'Phải trả người bán',
-    accountingCredit: '642',
-    nameAccountingCredit: 'Chi phí quản lý doanh nghiệp',
-    arrayMoney: [{
-        total: '1600000',
-        typeMoney: 'VND',
-    },
-    {
-        total: '160',
-        typeMoney: 'USD',
-    },
-    ],
-},
-{
-    id: 107,
-    createdDate: '07/05/2021',
-    invoiceNumber: 'INV0007',
-    statusName: 'Đã thanh toán',
-    idCustomer: 10,
-    creditNumber: 'CRE0007',
-    customerName: 'Công ty tnhh Hòa Phát',
-    employeeName: 'Lê Thị Thảo',
-    idEmployee: 1,
-    content: 'test 01',
-    request: 'Yêu cầu xóa',
-    accountingDebt: '331',
-    nameAccountingDebt: 'Phải trả người bán',
-    accountingCredit: '642',
-    nameAccountingCredit: 'Chi phí quản lý doanh nghiệp',
-    arrayMoney: [{
-        total: '1700000',
-        typeMoney: 'VND',
-    },
-    {
-        total: '170',
-        typeMoney: 'USD',
-    },
-    ],
-},
-{
-    id: 108,
-    createdDate: '08/05/2021',
-    invoiceNumber: 'INV0008',
-    statusName: 'Chờ thanh toán',
-    idCustomer: 10,
-    creditNumber: 'CRE0008',
-    customerName: 'Công ty tnhh Hòa Phát',
-    employeeName: 'Lê Thị Thảo',
-    idEmployee: 1,
-    content: 'test 01',
-    request: '',
-    accountingDebt: '331',
-    nameAccountingDebt: 'Phải trả người bán',
-    accountingCredit: '642',
-    nameAccountingCredit: 'Chi phí quản lý doanh nghiệp',
-    arrayMoney: [{
-        total: '1800000',
-        typeMoney: 'VND',
-    },],
-},
-{
-    id: 109,
-    createdDate: '10/05/2021',
-    invoiceNumber: 'INV0009',
-    statusName: 'Chờ thanh toán',
-    idCustomer: 10,
-    creditNumber: 'CRE0009',
-    customerName: 'Công ty tnhh Hòa Phát',
-    employeeName: 'Lê Thị Thảo',
-    idEmployee: 1,
-    content: 'test 01',
-    request: '',
-    accountingDebt: '331',
-    nameAccountingDebt: 'Phải trả người bán',
-    accountingCredit: '642',
-    nameAccountingCredit: 'Chi phí quản lý doanh nghiệp',
-    arrayMoney: [{
-        total: '1900000',
-        typeMoney: 'VND',
-    },
-    {
-        total: '190',
-        typeMoney: 'USD',
-    },
-    ],
-},
-{
-    id: 110,
-    createdDate: '12/05/2021',
-    invoiceNumber: 'INV0010',
-    statusName: 'Đã thanh toán',
-    idCustomer: 10,
-    creditNumber: 'CRE0010',
-    customerName: 'Công ty tnhh Hòa Phát',
-    employeeName: 'Lê Thị Thảo',
-    idEmployee: 1,
-    content: 'test 01',
-    request: 'Yêu cầu sửa',
-    accountingDebt: '331',
-    nameAccountingDebt: 'Phải trả người bán',
-    accountingCredit: '642',
-    nameAccountingCredit: 'Chi phí quản lý doanh nghiệp',
-    arrayMoney: [{
-        total: '1750000',
-        typeMoney: 'VND',
-    },],
-},
-{
-    id: 111,
-    createdDate: '13/05/2021',
-    invoiceNumber: 'INV00011',
-    statusName: 'Chờ thanh toán',
-    idCustomer: 2,
-    creditNumber: 'CRE00011',
-    customerName: 'Công ty tnhh Is Tech Vina',
-    employeeName: 'Lê Thị Thảo',
-    idEmployee: 1,
-    content: 'test 01',
-    request: 'Yêu cầu Xóa',
-    accountingDebt: '331',
-    accountingCredit: '642',
-    nameAccountingDebt: 'Phải trả người bán',
-    nameAccountingCredit: 'Chi phí quản lý doanh nghiệp',
-    arrayMoney: [{
-        total: '1000000',
-        typeMoney: 'VND',
-    },],
-},
-{
-    id: 112,
-    createdDate: '14/05/2021',
-    invoiceNumber: 'INV00012',
-    statusName: 'Chờ thanh toán',
-    idCustomer: 2,
-    creditNumber: 'CRE00012',
-    customerName: 'Công ty tnhh Is Tech Vina',
-    employeeName: 'Lê Thị Thảo',
-    idEmployee: 1,
-    content: 'test 01',
-    request: 'Yêu cầu Xóa',
-    accountingDebt: '331',
-    accountingCredit: '642',
-    nameAccountingDebt: 'Phải trả người bán',
-    nameAccountingCredit: 'Chi phí quản lý doanh nghiệp',
-    arrayMoney: [{
-        total: '1000000',
-        typeMoney: 'VND',
-    },],
-},
-{
-    id: 113,
-    createdDate: '15/05/2021',
-    invoiceNumber: 'INV00013',
-    statusName: 'Chờ thanh toán',
-    idCustomer: 2,
-    creditNumber: 'CRE00013',
-    customerName: 'Công ty tnhh Is Tech Vina',
-    employeeName: 'Lê Thị Thảo',
-    idEmployee: 1,
-    content: 'test 01',
-    request: 'Yêu cầu Xóa',
-    accountingDebt: '331',
-    accountingCredit: '642',
-    nameAccountingDebt: 'Phải trả người bán',
-    nameAccountingCredit: 'Chi phí quản lý doanh nghiệp',
-    arrayMoney: [{
-        total: '1000000',
-        typeMoney: 'VND',
-    },],
-},
-]
 
 function checkDuplicate(array, elm) {
     var check = false;
@@ -372,11 +62,11 @@ async function calculateTheTotalAmountOfEachCurrency(array) {
     }
     return arrayResult
 }
-async function getCustomerOfPMCM(page, itemPerPage) {
+async function getCustomerOfPMCM(page = null, itemPerPage = null) {
     let obj = {
         "paging": {
-            "pageSize": itemPerPage,
-            "currentPage": page,
+            "pageSize": itemPerPage ? itemPerPage : 1000000,
+            "currentPage": page ? page : 1,
             "rowsCount": 0
         }
     }
@@ -399,7 +89,8 @@ async function getDetailCustomerOfPMCM(idCustomer) {
     console.log(objResult);
     return objResult
 }
-async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, customerID = null) {
+async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, customerID = null, paymentID = null) {
+    console.log(page, itemPerPage, type, status, customerID, paymentID);
     let typeRes = 1;
     if (type == 'credit')
         typeRes = 2
@@ -445,6 +136,10 @@ async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, 
                 let payments = '';
                 let payDate = '';
                 let exchangeRate = 1;
+                let totalMoneyDisplay = item.grandTotal[0].total;
+                let paidAmount = 0;
+                let remainingAmount = 0;
+                let paymentAmount = 0;
                 let remainingAmountArray = [{
                     key: typeMoney,
                     value: item.grandTotal[0] ? item.grandTotal[0].total : 0,
@@ -510,7 +205,7 @@ async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, 
                         where: {
                             IDSpecializedSoftware: item.id ? item.id : null
                         }
-                    }).then(invoice => {
+                    }).then(async invoice => {
                         if (invoice) {
                             payments = invoice.Payments ? invoice.Payments : null;
                             payDate = invoice.PayDate ? moment(invoice.PayDate).format('DD-MM-YYYY') : null;
@@ -518,6 +213,15 @@ async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, 
                                 key: typeMoney,
                                 value: invoice.PaidAmount ? invoice.PaidAmount : 0,
                             }]
+                            paidAmount = invoice.PaidAmount ? invoice.PaidAmount : 0;
+                            await mtblPaymentRInvoice(db).findOne({
+                                where: {
+                                    IDPayment: paymentID,
+                                    IDSpecializedSoftware: item.id ? item.id : null,
+                                }
+                            }).findOne(payRInv => {
+                                paymentAmount = payRInv ? payRInv.Amount : 0
+                            })
                         }
                     })
                     await mtblCurrency(db).findOne({
@@ -537,6 +241,8 @@ async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, 
                             })
                     })
                 })
+                // Số tiền còn lại bằng tổng tiền trừ số tiền đã thanh toán
+                remainingAmount = totalMoneyDisplay - paidAmount;
                 let obj = {
                     id: item.id,
                     createdDate: item.createDate ? moment(item.createDate).format('DD-MM-YYYY') : null,
@@ -562,6 +268,10 @@ async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, 
                     paidAmountArray: paidAmountArray,
                     typeMoney: typeMoney,
                     exchangeRate: exchangeRate,
+                    totalMoneyDisplay: totalMoneyDisplay,
+                    paidAmount: paidAmount,
+                    remainingAmount: remainingAmount,
+                    paymentAmount: paymentAmount,
                 }
                 arrayResult.push(obj)
             }
@@ -569,9 +279,11 @@ async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, 
             objResult['count'] = data.data.data.pager.rowsCount;
         }
     })
-    let totalMoney = await calculateTheTotalAmountOfEachCurrency(objResult['data'])
+    let totalMoney = await calculateTheTotalAmountOfEachCurrency(objResult['data'] ? objResult['data'] : [])
     var result = {
         array: objResult['data'],
+        arrayCreate: objResult['data'],
+        arrayUpdate: objResult['data'],
         status: Constant.STATUS.SUCCESS,
         message: Constant.MESSAGE.ACTION_SUCCESS,
         all: objResult['count'],
@@ -602,7 +314,7 @@ function converStatusPMCM(status) {
     if (status == 6)
         result = 'Đã thanh toán'
     if (status == 'Chờ thanh toán')
-        result = 2
+        result = 5
     if (status == 'Yêu cầu sửa')
         result = 3
     if (status == 'Yêu cầu xóa')
@@ -715,12 +427,53 @@ async function getExchangeRateFromDate(db, typeMoney, date) {
         })
     return result
 }
+async function getListReceiptOfPMCM(page = null, itemPerPage = null) {
+    let obj = {
+        "paging": {
+            "pageSize": itemPerPage ? itemPerPage : 10000000,
+            "currentPage": page ? page : 1,
+            "rowsCount": 0
+        }
+    }
+    let objResult = {}
+    await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/receipt/list_pmtc`, obj).then(async data => {
+        if (data.data.data) {
+            let array = []
+            for (let item of data.data.data.list) {
+                let obj = {
+                    id: item.id,
+                    invoiceNumber: item.invoiceNo ? item.invoiceNo : '',
+                    paymentSACode: item.no ? item.no : '',
+                    paymentSAName: item.agelessRef ? item.agelessRef : '',
+                    customerName: 'Công ty tnhh Is Tech Vina',
+                    partnerID: '2',
+                    createdDate: item.createDate ? moment(item.createDate).format('DD-MM-YYYY') : null,
+                    content: item.agelessRef ? item.agelessRef : '',
+                    total: item.total ? item.total : '',
+                    unit: 'VND',
+                    statusName: 'Chờ thanh toán',
+                    fileAttach: '',
+                    // typeVoucher: 'Phiếu chi',
+                    // numberVoucher: 'PC0012',
+                    note: item.note ? item.note : '',
+                }
+                array.push(obj)
+            }
+
+            objResult['data'] = array;
+            objResult['count'] = data.data.data.pager.rowsCount;
+        }
+    })
+    return objResult
+}
 module.exports = {
     getCustomerOfPMCM,
+    getListReceiptOfPMCM,
+    getDetailCustomerOfPMCM,
     test: async (req, res) => {
         let body = req.body;
         try {
-            let result = await getDetailInvCreOfPMCM(3042)
+            let result = await getListReceiptOfPMCM()
             res.json(result);
         } catch (error) {
             console.log(error);
@@ -772,103 +525,11 @@ module.exports = {
     },
     // get_list_partner
     getListPartner: async (req, res) => {
-        dataPartner = [{
-            id: "2",
-            partnerCode: "LOCK LOCK",
-            name: "Công ty TNHH Lock & Lock",
-            tax: "01245782110",
-            address: "Số 72A Nguyễn Trãi phường Thượng Đỉnh Thanh Xuân Hà Nội",
-            mobile: "0823145678",
-            fax: "045784124",
-            email: "locklockvn@gmail",
-        },
-        {
-            id: "3",
-            partnerCode: "HOA PHAT",
-            name: "Công ty TNHH Hòa Phát ",
-            tax: "012345678",
-            address: "Số 12 Bạch Mai Hà Nội",
-            mobile: "089745120",
-            fax: "023145216",
-            email: "hoaphat123@gmail.com",
-        },
-        {
-            id: "4",
-            partnerCode: "MEDIA MART",
-            name: "Siêu thị điện máy xanh media mart",
-            tax: "012345801",
-            address: "Số 1 Trương Định Hà Nội",
-            mobile: "089724152",
-            fax: "021465741",
-            email: "mediamart4546@gmail.com",
-        },
-        {
-            id: "5",
-            partnerCode: "GLOMED",
-            name: "Công ty dược phẩm Glomed  ",
-            tax: "012465563",
-            address: "Số 34 Huỳnh Thúc Kháng Hà Nội",
-            mobile: "012568523",
-            fax: "012457821",
-            email: "glomeddp@gmail.com",
-        },
-        {
-            id: "6",
-            partnerCode: "THUONG ĐINH",
-            name: "Công ty giầy Thượng Đỉnh",
-            tax: "012489660",
-            address: "Số 2 Kim Ngưu Hà Nội",
-            mobile: "021565635",
-            fax: "014653225",
-            email: "thuongdinhgiay@gmail.com",
-        },
-        {
-            id: "7",
-            partnerCode: "GIAY THANG LONG",
-            name: "Công ty TNHH giày Thăng Long",
-            tax: "012457821",
-            address: "Số 2A Phường Khương Trung Thanh Xuân Hà Nội",
-            mobile: "012465623",
-            fax: "01774125",
-            email: "giaytot@gmail.com",
-        },
-        {
-            id: "8",
-            partnerCode: "VINH DOAN",
-            name: "Công ty cổ phần Vĩnh Đoàn",
-            tax: "012458990",
-            address: "Số 60 Vĩnh Tuy Hai Bà Trưng Hà Nội",
-            mobile: "021565650",
-            fax: "0158555245",
-            email: "vinhdoan123@gmail.com",
-        },
-        {
-            id: "9",
-            partnerCode: "SINO VANLOCK",
-            name: "Công ty sản xuất thiết bị điện Sino vanlock",
-            tax: "0124456685",
-            address: "SỐ 10 nguyễn Văn Cừ Long Biên Hà Nội",
-            mobile: "0154878741",
-            fax: "0157878865",
-            email: "sinovanlock@gmail.com",
-        },
-        {
-            id: "10",
-            partnerCode: "TRUNG NGUYEN",
-            name: "Tập đoàn cà phê Trung Nguyên",
-            tax: "0125748546",
-            address: "Thị Cấm Phường Xuân Phương Nam Từ Liêm Hà Nội",
-            mobile: "045654565",
-            fax: "013245422",
-            email: "trugnnguyen@gmail.com",
-        },
-
-        ]
         // await axios.get(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/address_book/share`).then(data => {
         // console.log(data.data);
         if (dataPartner) {
             var result = {
-                array: dataPartner,
+                array: [],
                 // array: data.data.data,
                 status: Constant.STATUS.SUCCESS,
                 message: Constant.MESSAGE.ACTION_SUCCESS,
@@ -884,22 +545,19 @@ module.exports = {
     },
     // get_list_customer
     getListCustomer: async (req, res) => {
-        // await axios.get(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/address_book/partners_share`).then(data => {
+        console.log(body);
+        let dataCustomer = await getCustomerOfPMCM()
         if (dataCustomer) {
             var result = {
-                // array: data.data.data,
                 array: dataCustomer,
                 status: Constant.STATUS.SUCCESS,
                 message: Constant.MESSAGE.ACTION_SUCCESS,
                 all: 10
-                // all: data.data.data.length
             }
             res.json(result);
         } else {
             res.json(Result.SYS_ERROR_RESULT)
         }
-        // console.log(data.data);
-        // })
     },
     // get_list_user
     getListUser: async (req, res) => {
@@ -949,13 +607,14 @@ module.exports = {
         database.connectDatabase().then(async db => {
             if (db) {
                 let array = []
-                for (c = 0; c < dataCustomer.length; c++) {
+                let dataCustomer = await getCustomerOfPMCM(1, 100000000)
+                for (c = 0; c < dataCustomer.data.length; c++) {
                     array.push({
-                        name: dataCustomer[c].name,
-                        address: dataCustomer[c].address,
-                        code: dataCustomer[c].customerCode,
-                        displayName: '[' + dataCustomer[c].customerCode + '] ' + dataCustomer[c].name,
-                        id: dataCustomer[c].id,
+                        name: dataCustomer.data[c].name,
+                        address: dataCustomer.data[c].address,
+                        code: dataCustomer.data[c].code,
+                        displayName: dataCustomer.data[c].code ? '[' + dataCustomer.data[c].code + '] ' + dataCustomer.data[c].name : dataCustomer.data[c].name,
+                        id: dataCustomer.data[c].id,
                         type: 'customer',
                     })
                 }
@@ -1007,7 +666,12 @@ module.exports = {
     // get_list_invoice_wait_for_pay_from_customer
     getListInvoiceWaitForPayFromCustomer: async (req, res) => {
         var body = req.body
-        let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', 'Chờ thanh toán', body.idCustomer ? body.idCustomer : null)
+        if (body.currencyID) {
+            body.page = 1;
+            body.itemPerPage = 1000000000;
+        }
+        console.log(body);
+        let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'invoice', 'Yêu cầu thanh toán', body.idCustomer ? body.idCustomer : null)
         res.json(result)
     },
     // get_list_invoice_paid_from_customer
@@ -1027,7 +691,7 @@ module.exports = {
     // get_list_credit_wait_for_pay_from_customer
     getListCreditWaitForPayFromCustomer: async (req, res) => {
         var body = req.body
-        let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'credit', 'Chờ thanh toán', body.idCustomer ? body.idCustomer : null)
+        let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'credit', 'Yêu cầu thanh toán', body.idCustomer ? body.idCustomer : null)
         res.json(result)
     },
     // get_list_credit_paid_from_customer
@@ -1098,6 +762,12 @@ module.exports = {
         let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', 'Yêu cầu xóa')
         res.json(result)
     },
+    // get_list_invoice_payment_request
+    getListInvoicePaymentRequest: async (req, res) => {
+        var body = req.body
+        let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', 'Yêu thanh toán')
+        res.json(result)
+    },
     // credit-------------------------------------------------------------------------------------------------------------------------------------
     // get_list_credit
     getListCredit: async (req, res) => {
@@ -1123,14 +793,18 @@ module.exports = {
         let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'credit', 'Yêu cầu sửa')
         res.json(result)
     },
-    // get_list_Credit_delete_request
+    // get_list_credit_delete_request
     getListCreditDeleteRequest: async (req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'credit', 'Yêu cầu xóa')
         res.json(result)
     },
-
-
+    // get_list_credit_payment_request
+    getListCreditPaymentRequest: async (req, res) => {
+        var body = req.body
+        let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'credit', 'Yêu cầu thanh toán')
+        res.json(result)
+    },
     //  api waiting SoftWare
     // -----------------------------------------------------------------------------------INVOICE-------------------------------------------------------------------------------
     // approval_invoice_and_credit

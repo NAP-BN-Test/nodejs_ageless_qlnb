@@ -209,9 +209,9 @@ async function getDetailYCMS(db, id) {
 }
 var mModules = require('../constants/modules');
 async function getDetailCustomer(id) {
-    let dataCustomer = customerData.getCustomerSpecializeSoftware()
+    let dataCustomer = await customerData.getCustomerOfPMCM()
     var obj = {}
-    dataCustomer.forEach(item => {
+    dataCustomer.data.forEach(item => {
         if (item.id == id) {
             obj = item
         }

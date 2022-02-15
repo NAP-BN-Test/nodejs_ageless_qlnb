@@ -246,111 +246,33 @@ module.exports = {
         database.connectDatabase().then(async db => {
             if (db) {
                 try {
-                    // await axios.get(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/address_book/partners_share`).then(async data => {
-                    //     if (data) {
-                    let dataCustomer = ctlPMCM.getCustomerSpecializeSoftware()
-                    // var array = data.data.data;
-                    var array = dataCustomer;
-                    var arrayResult = [];
-                    var stt = 1;
-                    let arrayInvoice = []
+                    let dataCustomer = await ctlPMCM.getCustomerOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 100000000)
+                    let stt = 1;
                     let arrayCredit = []
-                    for (var i = 0; i < array.length; i++) {
-                        if (array[i].id == 1) {
-                            arrayInvoice = await calculateTheTotalAmountOfEachCurrency(db, data)
-                            arrayCredit = await calculateTheTotalForCredit(db, dataCredit)
-                        } else {
-                            arrayInvoice = [
-                                {
-                                    typeMoney: 'VND',
-                                    total: 0
-                                }]
-                            arrayCredit = [
-                                {
-                                    typeMoney: 'VND',
-                                    total: 0
-                                }]
+                    let arrayInvoice = []
+                    let arrayResult = []
+                    for (let cus of dataCustomer.data) {
+                        var obj = {
+                            stt: stt,
+                            id: Number(cus.id),
+                            name: cus.name ? cus.name : '',
+                            code: cus.code ? cus.code : '',
+                            address: cus.address ? cus.address : '',
+                            idSpecializedSoftware: Number(cus.id),
+                            amountUnspecified: [{ total: 1, typeMoney: 'VND' }, { total: 0, typeMoney: 'USD' }],
+                            amountSpent: arrayCredit,
+                            amountReceivable: arrayInvoice,
                         }
-                        var cus = await mtblCustomer(db).findOne({
-                            where: {
-                                IDSpecializedSoftware: array[i].id
-                            }
-                        })
-                        if (!cus) {
-                            await mtblCustomer(db).create({
-                                IDSpecializedSoftware: array[i].id ? array[i].id : null,
-                                AmountUnspecified: 0,
-                                AmountSpent: 0,
-                                AmountReceivable: 0,
-                            })
-                        }
-                        let totalInv = 0;
-                        let totalUndefind = 0;
-                        let totalCredit = 0;
-                        await mtblCustomer(db).findOne({
-                            where: { IDSpecializedSoftware: array[i].id },
-                        }).then(async data => {
-                            for (var inv = 0; inv < data.length; inv++) {
-                                if (data[inv].idCustomer == array[i].id) {
-                                    totalInv += Number(data[inv].total)
-                                }
-                            }
-                            for (var cre = 0; cre < dataCredit.length; cre++) {
-                                if (dataCredit[cre].idCustomer == array[i].id) {
-                                    totalCredit += Number(dataCredit[cre].total)
-                                }
-                            }
-                            await mtblReceiptsPayment(db).findAll({
-                                where: {
-                                    IDCustomer: array[i].id,
-                                    UnpaidAmount: { [Op.ne]: 0 },
-                                }
-                            }).then(data => {
-                                data.forEach(item => {
-                                    totalUndefind += Number(item.Amount);
-                                })
-                            })
-                            console.log(arrayInvoice);
-                            var obj = {
-                                stt: stt,
-                                id: Number(data.IDSpecializedSoftware),
-                                name: array[i].name ? array[i].name : '',
-                                code: array[i].customerCode ? array[i].customerCode : '',
-                                address: array[i].address ? array[i].address : '',
-                                idSpecializedSoftware: data.IDSpecializedSoftware ? data.IDSpecializedSoftware : 0,
-                                amountUnspecified: [{ total: totalUndefind, typeMoney: 'VND' }, { total: 0, typeMoney: 'USD' }],
-                                amountSpent: arrayCredit,
-                                amountReceivable: arrayInvoice,
-                            }
-                            let checkCredit = false
-                            arrayCredit.forEach(item => {
-                                if (item.total != 0)
-                                    checkCredit = true
-                            })
-                            let checkInvoice = false
-                            arrayInvoice.forEach(item => {
-                                if (item.total != 0)
-                                    checkInvoice = true
-                            })
-                            if (totalUndefind != 0 || checkCredit == true || checkInvoice == true)
-                                arrayResult.push(obj);
-                            stt += 1;
-                        })
+                        arrayResult.push(obj);
+                        stt += 1;
                     }
-                    var count = await mtblCustomer(db).count()
                     var result = {
                         array: arrayResult,
                         status: Constant.STATUS.SUCCESS,
                         message: Constant.MESSAGE.ACTION_SUCCESS,
-                        all: count
+                        all: dataCustomer.count
                     }
                     res.json(result);
-                    //     }
-                    //     else {
-                    //         res.json(Result.SYS_ERROR_RESULT)
-                    //     }
-                    //     // console.log(data.data);
-                    // })
                 } catch (error) {
                     console.log(error);
                     res.json(Result.SYS_ERROR_RESULT)
