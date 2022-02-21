@@ -314,6 +314,9 @@ async function getDetailInvCreOfPMCM(idInvCre) {
     })
     return objResult
 }
+async function paidPMCM(arrayInvCre) {
+    await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/paid_pmtc`, arrayInvCre)
+}
 function converStatusPMCM(status) {
     let result = status
     if (status == 2)
@@ -480,9 +483,11 @@ async function getListReceiptOfPMCM(page = null, itemPerPage = null) {
     return objResult
 }
 module.exports = {
+    paidPMCM,
     getCustomerOfPMCM,
     getListReceiptOfPMCM,
     getDetailCustomerOfPMCM,
+    getDetailInvCreOfPMCM,
     test: async (req, res) => {
         let body = req.body;
         try {
@@ -825,17 +830,20 @@ module.exports = {
         var body = req.body
         database.connectDatabase().then(async db => {
             if (db) {
-                await mtblInvoice(db).update({
-                    Status: 'Chờ thanh toán',
-                    Request: ''
-                }, {
-                    where: { IDSpecializedSoftware: body.id }
-                })
-                var result = {
-                    status: Constant.STATUS.SUCCESS,
-                    message: 'Đã phê duyệt thành công',
+                let obj = {
+                    "id": body.id,
+                    "approve": true,
+                    "reason": ""
                 }
-                res.json(result);
+                await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/approve_pmtc`, obj).then(data => {
+                    if(data){
+                        var result = {
+                            status: Constant.STATUS.SUCCESS,
+                            message: 'Đã phê duyệt thành công',
+                        }
+                        res.json(result);
+                    }
+                })
             } else {
                 res.json(Result.SYS_ERROR_RESULT)
             }
@@ -846,17 +854,20 @@ module.exports = {
         var body = req.body
         database.connectDatabase().then(async db => {
             if (db) {
-                await mtblInvoice(db).update({
-                    Status: 'Chờ thanh toán',
-                    Request: ''
-                }, {
-                    where: { IDSpecializedSoftware: body.id }
-                })
-                var result = {
-                    status: Constant.STATUS.SUCCESS,
-                    message: 'Đã phê duyệt thành công',
+                let obj = {
+                    "id": body.id,
+                    "approve": false,
+                    "reason": body.reason ? body.reason : ''
                 }
-                res.json(result);
+                await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/approve_pmtc`, obj).then(data => {
+                    if(data){
+                        var result = {
+                            status: Constant.STATUS.SUCCESS,
+                            message: 'Đã từ chối thành công',
+                        }
+                        res.json(result);
+                    }
+                })
             } else {
                 res.json(Result.SYS_ERROR_RESULT)
 

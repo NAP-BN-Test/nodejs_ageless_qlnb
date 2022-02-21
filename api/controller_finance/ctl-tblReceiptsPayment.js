@@ -846,6 +846,7 @@ async function recalculateTheAmountOfCredit(db, amount, listCreditID, receiptsPa
         await addUpTheAmountForCreditsAndDelete(db, receiptsPaymentID, currencyID)
     // listCreditID = listCreditID.sort(function(a, b) { return a - b })
     amount = Number(amount)
+    let arrayInvCrePaid = []
     for (let i = 0; i < listCreditID.length; i++) {
         let creditID = listCreditID[i]
         await mtblInvoice(db).findOne({
@@ -853,6 +854,8 @@ async function recalculateTheAmountOfCredit(db, amount, listCreditID, receiptsPa
                 IDSpecializedSoftware: creditID
             }
         }).then(async data => {
+            let InvCre = await customerData.getDetailInvCreOfPMCM(creditID)
+            let totalPMCM = InvCre.data ? (InvCre.data.grandTotal[0] ? InvCre.data.grandTotal[0].total : 0) : 0
             if (data) {
                 await mtblPaymentRInvoice(db).findOne({
                     where: {
@@ -861,49 +864,147 @@ async function recalculateTheAmountOfCredit(db, amount, listCreditID, receiptsPa
                     }
                 }).then(async payOrInv => {
                     if (payOrInv) {
-                        await mtblInvoice(db).update({
-                            PaidAmount: data.PaidAmount - payOrInv.Amount + amount,
-                        }, {
-                            where: {
-                                ID: data.ID
+                        if(amount <= (Number(totalPMCM) -data.PaidAmount)){
+                            await mtblInvoice(db).update({
+                                PaidAmount: data.PaidAmount - payOrInv.Amount + amount,
+                            }, {
+                                where: {
+                                    ID: data.ID
+                                }
+                            })
+                            await mtblPaymentRInvoice(db).update({
+                                Amount: amount,
+                            }, {
+                                where: {
+                                    ID: payOrInv.ID
+                                }
+                            })
+                            if(amount == (Number(totalPMCM) -data.PaidAmount))
+                              arrayInvCrePaid.push(creditID)
+                        }else {
+                            arrayInvCrePaid.push(creditID)
+                            await mtblInvoice(db).update({
+                                PaidAmount: totalPMCM,
+                            }, {
+                                where: {
+                                    ID: data.ID
+                                }
+                            })
+                            await mtblPaymentRInvoice(db).update({
+                                Amount: totalPMCM,
+                            }, {
+                                where: {
+                                    ID: payOrInv.ID
+                                }
+                            })
+                        }
+                        amount = amount -(Number(totalPMCM) -data.PaidAmount)
+                    }else {
+                        if(amount <= totalPMCM){
+                            await mtblPaymentRInvoice(db).create({
+                                IDPayment: receiptsPaymentID,
+                                IDSpecializedSoftware: creditID,
+                                Amount: amount,
+                            })
+                            let Payments = 'Tiền mặt'
+                            let isInvoice = true
+                            if (typePayment == "debit") {
+                                Payments = 'Chuyển khoản'
+                                isInvoice = false
+                            } else if (typePayment == "spending") {
+                                Payments = 'Chuyển khoản'
+                                isInvoice = false
                             }
-                        })
-                        await mtblPaymentRInvoice(db).update({
-                            Amount: amount,
-                        }, {
-                            where: {
-                                ID: payOrInv.ID
+                            await mtblInvoice(db).create({
+                                IDSpecializedSoftware: creditID,
+                                Payments: Payments,
+                                PayDate: dateACtive,
+                                PaidAmount: amount,
+                                IsInvoice: isInvoice,
+                            })
+                        }else {
+                            arrayInvCrePaid.push(creditID)
+                            await mtblPaymentRInvoice(db).create({
+                                IDPayment: receiptsPaymentID,
+                                IDSpecializedSoftware: creditID,
+                                Amount: totalPMCM,
+                            })
+                            let Payments = 'Tiền mặt'
+                            let isInvoice = true
+                            if (typePayment == "debit") {
+                                Payments = 'Chuyển khoản'
+                                isInvoice = false
+                            } else if (typePayment == "spending") {
+                                Payments = 'Chuyển khoản'
+                                isInvoice = false
                             }
-                        })
+                            await mtblInvoice(db).update({
+                                IDSpecializedSoftware: creditID,
+                                Payments: Payments,
+                                PayDate: dateACtive,
+                                PaidAmount: totalPMCM,
+                            }, {
+                                where: {
+                                    ID: data.ID
+                                }
+                            })
+                        }
                     }
                 })
-                // nếu thanh toán hết thì sao ?? --------------------------------------
             } else {
-                await mtblPaymentRInvoice(db).create({
-                    IDPayment: receiptsPaymentID,
-                    IDSpecializedSoftware: creditID,
-                    Amount: amount,
-                })
-                let Payments = 'Tiền mặt'
-                let isInvoice = true
-                if (typePayment == "debit") {
-                    Payments = 'Chuyển khoản'
-                    isInvoice = false
-                } else if (typePayment == "spending") {
-                    Payments = 'Chuyển khoản'
-                    isInvoice = false
+                if(amount <= totalPMCM){
+                    if(amount == totalPMCM)
+                     arrayInvCrePaid.push(creditID)
+                    await mtblPaymentRInvoice(db).create({
+                        IDPayment: receiptsPaymentID,
+                        IDSpecializedSoftware: creditID,
+                        Amount: amount,
+                    })
+                    let Payments = 'Tiền mặt'
+                    let isInvoice = true
+                    if (typePayment == "debit") {
+                        Payments = 'Chuyển khoản'
+                        isInvoice = false
+                    } else if (typePayment == "spending") {
+                        Payments = 'Chuyển khoản'
+                        isInvoice = false
+                    }
+                    await mtblInvoice(db).create({
+                        IDSpecializedSoftware: creditID,
+                        Payments: Payments,
+                        PayDate: dateACtive,
+                        PaidAmount: amount,
+                        IsInvoice: isInvoice,
+                    })
+                }else {
+                    arrayInvCrePaid.push(creditID)
+                    await mtblPaymentRInvoice(db).create({
+                        IDPayment: receiptsPaymentID,
+                        IDSpecializedSoftware: creditID,
+                        Amount: amount,
+                    })
+                    let Payments = 'Tiền mặt'
+                    let isInvoice = true
+                    if (typePayment == "debit") {
+                        Payments = 'Chuyển khoản'
+                        isInvoice = false
+                    } else if (typePayment == "spending") {
+                        Payments = 'Chuyển khoản'
+                        isInvoice = false
+                    }
+                    await mtblInvoice(db).create({
+                        IDSpecializedSoftware: creditID,
+                        Payments: Payments,
+                        PayDate: dateACtive,
+                        PaidAmount: amount,
+                        IsInvoice: isInvoice,
+                    })
                 }
-                await mtblInvoice(db).create({
-                    IDSpecializedSoftware: creditID,
-                    Payments: Payments,
-                    PayDate: dateACtive,
-                    PaidAmount: amount,
-                    IsInvoice: isInvoice,
-                })
             }
 
         })
     }
+    await customerData.paidPMCM([creditID])
 }
 
 
