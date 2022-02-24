@@ -7,6 +7,8 @@ var database = require('../database');
 var mtblReceiptsPayment = require('../tables/financemanage/tblReceiptsPayment')
 var mtblInvoice = require('../tables/financemanage/tblInvoice')
 var ctlPMCM = require('../controller_finance/ctl-apiSpecializedSoftware')
+var mtblPaymentRInvoice = require('../tables/financemanage/tblPaymentRInvoice')
+var mtblCurrency = require('../tables/financemanage/tblCurrency')
 
 async function deleteRelationshiptblCustomer(db, listID) {
     await mtblCustomer(db).destroy({
@@ -70,6 +72,7 @@ async function calculateTheTotalAmountOfEachCurrency(db, array) {
     }
     return arrayResult
 }
+
 function checkDuplicate(array, elm) {
     var check = false;
     array.forEach(item => {
@@ -88,10 +91,9 @@ async function calculateTheTotalForCredit(db, array) {
             if (check.Status == 'Chờ thanh toán') {
                 total += Number(array[i].total)
             }
-        }
-        else
-            if (array[i].statusName == 'Chờ thanh toán')
-                total += Number(array[i].total)
+        } else
+        if (array[i].statusName == 'Chờ thanh toán')
+            total += Number(array[i].total)
     }
     arrayResult.push({
         typeMoney: 'VND',
@@ -210,6 +212,49 @@ module.exports = {
                     let arrayInvoice = []
                     let arrayResult = []
                     for (let cus of dataCustomer.data) {
+                        let tblReceiptsPayment = mtblReceiptsPayment(db);
+                        tblReceiptsPayment.belongsTo(mtblCurrency(db), { foreignKey: 'IDCurrency', sourceKey: 'IDCurrency', as: 'cur' })
+                        await tblReceiptsPayment.findAll({
+                            where: {
+                                IDCustomer: cus.id
+                            },
+                            include: [{
+                                model: mtblCurrency(db),
+                                required: false,
+                                as: 'cur'
+                            }, ],
+                        }).then(payment => {
+                            for (let pay of payment) {
+                                let currencyName = pay.cur ? pay.cur.ShortName : 'VND';
+                                let arrayCurrencyCheck = []
+                                if (!checkDuplicate(arrayCurrencyCheck, currencyName)) {
+                                    arrayCurrencyCheck.push(currencyName)
+                                    if (pay.Type == 'payment' && pay.Type == 'debit') {
+                                        arrayInvoice.push({
+                                            total: pay.Amount,
+                                            typeMoney: currencyName,
+                                        })
+                                    } else if (pay.Type == 'receipt' && pay.Type == 'spending') {
+                                        arrayCredit.push({
+                                            total: pay.Amount,
+                                            typeMoney: currencyName,
+                                        })
+                                    }
+                                } else {
+                                    if (pay.Type == 'payment' && pay.Type == 'debit') {
+                                        for (let inv of arrayInvoice) {
+                                            if (inv.typeMoney == currencyName)
+                                                inv.total = Number(inv.total) + Number(pay.Amount)
+                                        }
+                                    } else if (pay.Type == 'receipt' && pay.Type == 'spending') {
+                                        for (let cre of arrayCredit) {
+                                            if (cre.typeMoney == currencyName)
+                                                cre.total = Number(cre.total) + Number(pay.Amount)
+                                        }
+                                    }
+                                }
+                            }
+                        })
                         var obj = {
                             stt: stt,
                             id: Number(cus.id),

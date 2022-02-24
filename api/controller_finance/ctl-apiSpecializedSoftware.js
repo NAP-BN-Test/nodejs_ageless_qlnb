@@ -170,27 +170,21 @@ async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, 
                             where: {
                                 Username: item.userName
                             },
-                            include: [
-                                {
-                                    model: tblDMNhanvien,
+                            include: [{
+                                model: tblDMNhanvien,
+                                required: false,
+                                as: 'staff',
+                                include: [{
+                                    model: tblDMBoPhan,
                                     required: false,
-                                    as: 'staff',
-                                    include: [
-                                        {
-                                            model: tblDMBoPhan,
-                                            required: false,
-                                            as: 'department',
-                                            include: [
-                                                {
-                                                    model: mtblDMChiNhanh(db),
-                                                    required: false,
-                                                    as: 'branch'
-                                                },
-                                            ],
-                                        },
-                                    ],
-                                },
-                            ],
+                                    as: 'department',
+                                    include: [{
+                                        model: mtblDMChiNhanh(db),
+                                        required: false,
+                                        as: 'branch'
+                                    }, ],
+                                }, ],
+                            }, ],
                         }).then(user => {
                             departmentName = user.staff ? (user.staff.department ? user.staff.department.DepartmentName : '') : ''
                             branchName = user.staff ? (user.staff.department ? (user.staff.department.branch ? user.staff.department.branch.BranchName : '') : '') : ''
@@ -236,22 +230,24 @@ async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, 
                         }
                     })
                     await mtblCurrency(db).findOne({
-                        where: {
-                            ShortName: typeMoney
-                        }
-                    }).then(async curency => {
-                        if (curency)
-                            await mtblRate(db).findOne({
-                                where: {
-                                    Date: { [Op.substring]: moment(item.createDate).format('DD-MM-YYYY') },
-                                    IDCurrency: curency.ID
-                                }
-                            }).then(rate => {
-                                if (rate)
-                                    exchangeRate = rate.ExchangeRate
-                            })
-                    })
-                    // Số tiền còn lại bằng tổng tiền trừ số tiền đã thanh toán
+                            where: {
+                                ShortName: typeMoney
+                            }
+                        }).then(async curency => {
+                            if (curency)
+                                await mtblRate(db).findOne({
+                                    where: {
+                                        Date: {
+                                            [Op.substring]: moment(item.createDate).format('DD-MM-YYYY')
+                                        },
+                                        IDCurrency: curency.ID
+                                    }
+                                }).then(rate => {
+                                    if (rate)
+                                        exchangeRate = rate.ExchangeRate
+                                })
+                        })
+                        // Số tiền còn lại bằng tổng tiền trừ số tiền đã thanh toán
                     remainingAmount = totalMoneyDisplay - paidAmount;
                     let obj = {
                         id: item.id,
@@ -263,6 +259,7 @@ async function getInvoiceOrCreditOfPMCM(page, itemPerPage, type, status = null, 
                         statusName: converStatusPMCM(item.status),
                         idCustomer: item.addressBookId,
                         customerName: item.addressBookName,
+                        customerCode: item.code,
                         content: item.note,
                         request: item.status == 3 ? 'Yêu cầu sửa' : (item.status == 4 ? 'Yêu cầu xóa' : ''),
                         departmentName: departmentName,
@@ -315,8 +312,11 @@ async function getDetailInvCreOfPMCM(idInvCre) {
     return objResult
 }
 async function paidPMCM(arrayInvCre) {
-    await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/paid_pmtc`, arrayInvCre)
+    await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/paid_pmtc`, arrayInvCre).then(data => {
+        console.log(arrayInvCre, data.data, 'result PMCM');
+    })
 }
+
 function converStatusPMCM(status) {
     let result = status
     if (status == 2)
@@ -341,6 +341,7 @@ function converStatusPMCM(status) {
         result = 6
     return result
 }
+
 function convertypeMoneyPMCM(type) {
     let result = 'VND'
     if (type == 1)
@@ -488,7 +489,7 @@ module.exports = {
     getListReceiptOfPMCM,
     getDetailCustomerOfPMCM,
     getDetailInvCreOfPMCM,
-    test: async (req, res) => {
+    test: async(req, res) => {
         let body = req.body;
         try {
             let result = await getListReceiptOfPMCM()
@@ -498,7 +499,7 @@ module.exports = {
         }
     },
     // change_customer_data
-    changeCustomerData: async (req, res) => {
+    changeCustomerData: async(req, res) => {
         let body = req.body;
         try {
             console.log(12345, body);
@@ -511,7 +512,7 @@ module.exports = {
         }
     },
     // change_invoice_or_credit_data
-    changeInvoiceOrCreditData: async (req, res) => {
+    changeInvoiceOrCreditData: async(req, res) => {
         let body = req.body;
         try {
             console.log(12345, body);
@@ -524,7 +525,7 @@ module.exports = {
         }
     },
     // get_list_department
-    getListDepartment: async (req, res) => {
+    getListDepartment: async(req, res) => {
         await axios.get(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/department/share`).then(data => {
             if (data) {
                 var result = {
@@ -542,7 +543,7 @@ module.exports = {
         })
     },
     // get_list_partner
-    getListPartner: async (req, res) => {
+    getListPartner: async(req, res) => {
         // await axios.get(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/address_book/share`).then(data => {
         // console.log(data.data);
         if (dataPartner) {
@@ -562,7 +563,7 @@ module.exports = {
         // })
     },
     // get_list_customer
-    getListCustomer: async (req, res) => {
+    getListCustomer: async(req, res) => {
         console.log(body);
         let dataCustomer = await getCustomerOfPMCM()
         if (dataCustomer) {
@@ -578,7 +579,7 @@ module.exports = {
         }
     },
     // get_list_user
-    getListUser: async (req, res) => {
+    getListUser: async(req, res) => {
         let body = req.body;
         database.connectDatabase().then(async db => {
             if (db) {
@@ -591,7 +592,7 @@ module.exports = {
                             model: mtblDMBoPhan(db),
                             required: false,
                             as: 'bp'
-                        },],
+                        }, ],
                     }).then(data => {
                         var array = [];
                         data.forEach(element => {
@@ -621,7 +622,7 @@ module.exports = {
         })
     },
     // get_all_object
-    getAllObject: async (req, res) => {
+    getAllObject: async(req, res) => {
         database.connectDatabase().then(async db => {
             if (db) {
                 let array = []
@@ -676,13 +677,13 @@ module.exports = {
 
     // Invoice follow customer ------------------------------------------------------------------------------------------------------------------
     // get_list_invoice_from_customer
-    getListInvoiceFromCustomer: async (req, res) => {
+    getListInvoiceFromCustomer: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', null, body.idCustomer ? body.idCustomer : null)
         res.json(result)
     },
     // get_list_invoice_wait_for_pay_from_customer
-    getListInvoiceWaitForPayFromCustomer: async (req, res) => {
+    getListInvoiceWaitForPayFromCustomer: async(req, res) => {
         var body = req.body
         if (body.currencyID) {
             body.page = 1;
@@ -693,7 +694,7 @@ module.exports = {
         res.json(result)
     },
     // get_list_invoice_paid_from_customer
-    getListInvoicePaidFromCustomer: async (req, res) => {
+    getListInvoicePaidFromCustomer: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', 'Đã thanh toán', body.idCustomer ? body.idCustomer : null)
         res.json(result)
@@ -701,19 +702,19 @@ module.exports = {
 
     // Credit follow customer ------------------------------------------------------------------------------------------------------------------
     // get_list_credit_from_customer
-    getListCreditFromCustomer: async (req, res) => {
+    getListCreditFromCustomer: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'credit', null, body.idCustomer ? body.idCustomer : null)
         res.json(result)
     },
     // get_list_credit_wait_for_pay_from_customer
-    getListCreditWaitForPayFromCustomer: async (req, res) => {
+    getListCreditWaitForPayFromCustomer: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page == 'null' ? 1 : body.page, body.itemPerPage ? body.itemPerPage : 10000, 'credit', 'Yêu cầu thanh toán', body.idCustomer ? body.idCustomer : null)
         res.json(result)
     },
     // get_list_credit_paid_from_customer
-    getListCreditPaidFromCustomer: async (req, res) => {
+    getListCreditPaidFromCustomer: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'credit', 'Đã thanh toán', body.idCustomer ? body.idCustomer : null)
         res.json(result)
@@ -722,7 +723,7 @@ module.exports = {
 
     // ------------------------------------------------------------------------------------------------------------------------------------------
     // get_list_invoice_from_partner
-    getListInvoiceFromPartner: async (req, res) => {
+    getListInvoiceFromPartner: async(req, res) => {
         var body = req.body
         var obj = {
             "paging": {
@@ -751,74 +752,74 @@ module.exports = {
     },
     // invoice-------------------------------------------------------------------------------------------------------------------------------------
     // get_list_tbl_invoice
-    getListtblInvoice: async (req, res) => {
+    getListtblInvoice: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice')
         res.json(result)
     },
     // get_list_invoice_wait_for_pay
-    getListInvoiceWaitForPay: async (req, res) => {
+    getListInvoiceWaitForPay: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', 'Chờ thanh toán')
         res.json(result)
     },
     // get_list_invoice_paid
-    getListInvoicePaid: async (req, res) => {
+    getListInvoicePaid: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', 'Đã thanh toán')
         res.json(result)
     },
     // get_list_invoice_edit_request
-    getListInvoiceEditRequest: async (req, res) => {
+    getListInvoiceEditRequest: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', 'Yêu cầu sửa')
         res.json(result)
     },
     // get_list_invoice_delete_request
-    getListInvoiceDeleteRequest: async (req, res) => {
+    getListInvoiceDeleteRequest: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', 'Yêu cầu xóa')
         res.json(result)
     },
     // get_list_invoice_payment_request
-    getListInvoicePaymentRequest: async (req, res) => {
+    getListInvoicePaymentRequest: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page, body.itemPerPage, 'invoice', 'Yêu thanh toán')
         res.json(result)
     },
     // credit-------------------------------------------------------------------------------------------------------------------------------------
     // get_list_credit
-    getListCredit: async (req, res) => {
+    getListCredit: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'credit')
         res.json(result)
     },
     // get_list_credit_wait_for_pay
-    getListCreditWaitForPay: async (req, res) => {
+    getListCreditWaitForPay: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'credit', 'Chờ thanh toán')
         res.json(result)
     },
     // get_list_credit_paid
-    getListCreditPaid: async (req, res) => {
+    getListCreditPaid: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'credit', 'Đã thanh toán')
         res.json(result)
     },
     // get_list_credit_edit_request
-    getListCreditEditRequest: async (req, res) => {
+    getListCreditEditRequest: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'credit', 'Yêu cầu sửa')
         res.json(result)
     },
     // get_list_credit_delete_request
-    getListCreditDeleteRequest: async (req, res) => {
+    getListCreditDeleteRequest: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'credit', 'Yêu cầu xóa')
         res.json(result)
     },
     // get_list_credit_payment_request
-    getListCreditPaymentRequest: async (req, res) => {
+    getListCreditPaymentRequest: async(req, res) => {
         var body = req.body
         let result = await getInvoiceOrCreditOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 10, 'credit', 'Yêu cầu thanh toán')
         res.json(result)
@@ -826,7 +827,7 @@ module.exports = {
     //  api waiting SoftWare
     // -----------------------------------------------------------------------------------INVOICE-------------------------------------------------------------------------------
     // approval_invoice_and_credit
-    approvalInvoiceAndCredit: async (req, res) => {
+    approvalInvoiceAndCredit: async(req, res) => {
         var body = req.body
         database.connectDatabase().then(async db => {
             if (db) {
@@ -836,7 +837,7 @@ module.exports = {
                     "reason": ""
                 }
                 await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/approve_pmtc`, obj).then(data => {
-                    if(data){
+                    if (data) {
                         var result = {
                             status: Constant.STATUS.SUCCESS,
                             message: 'Đã phê duyệt thành công',
@@ -850,7 +851,7 @@ module.exports = {
         })
     },
     // refuse_invoice_and_credit
-    refuseInvoiceAndCredit: async (req, res) => {
+    refuseInvoiceAndCredit: async(req, res) => {
         var body = req.body
         database.connectDatabase().then(async db => {
             if (db) {
@@ -860,7 +861,7 @@ module.exports = {
                     "reason": body.reason ? body.reason : ''
                 }
                 await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/approve_pmtc`, obj).then(data => {
-                    if(data){
+                    if (data) {
                         var result = {
                             status: Constant.STATUS.SUCCESS,
                             message: 'Đã từ chối thành công',

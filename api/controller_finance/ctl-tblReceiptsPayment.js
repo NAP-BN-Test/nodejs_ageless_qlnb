@@ -53,16 +53,18 @@ async function deleteRelationshiptblReceiptsPayment(db, listID) {
                 }
             })
             if (data[d].IDSpecializedSoftware) {
-                await mtblInvoice(db).update({
-                    Status: 'Chờ thanh toán',
-                    PayDate: null,
-                    Payments: null,
-                }, {
+                let invoice = await mtblInvoice(db).findOne({
                     where: {
                         IDSpecializedSoftware: data[d].IDSpecializedSoftware
                     }
                 })
-                let invoice = await mtblInvoice(db).findOne({
+                let amountInvoice = invoice ? invoice.PaidAmount : 0;
+                await mtblInvoice(db).update({
+                    Status: 'Chờ thanh toán',
+                    PayDate: null,
+                    Payments: null,
+                    PaidAmount: Number(amountInvoice) - data[d].Amount,
+                }, {
                     where: {
                         IDSpecializedSoftware: data[d].IDSpecializedSoftware
                     }
@@ -198,7 +200,7 @@ async function deleteRelationshiptblReceiptsPayment(db, listID) {
                         IDReceiptsPayment: data[i].ID
                     }
                 })
-            // Thêm mới số tiền không xác định
+                // Thêm mới số tiền không xác định
             arrayCustomerID.push(data[i].IDCustomer)
         }
     })
@@ -608,95 +610,95 @@ async function getDetailStaff(id) {
 }
 async function getDetailPartner(id) {
     dataPartner = [{
-        id: "2",
-        partnerCode: "LOCK LOCK",
-        name: "Công ty TNHH Lock & Lock",
-        tax: "01245782110",
-        address: "Số 72A Nguyễn Trãi phường Thượng Đỉnh Thanh Xuân Hà Nội",
-        mobile: "0823145678",
-        fax: "045784124",
-        email: "locklockvn@gmail",
-    },
-    {
-        id: "3",
-        partnerCode: "HOA PHAT",
-        name: "Công ty TNHH Hòa Phát ",
-        tax: "012345678",
-        address: "Số 12 Bạch Mai Hà Nội",
-        mobile: "089745120",
-        fax: "023145216",
-        email: "hoaphat123@gmail.com",
-    },
-    {
-        id: "4",
-        partnerCode: "MEDIA MART",
-        name: "Siêu thị điện máy xanh media mart",
-        tax: "012345801",
-        address: "Số 1 Trương Định Hà Nội",
-        mobile: "089724152",
-        fax: "021465741",
-        email: "mediamart4546@gmail.com",
-    },
-    {
-        id: "5",
-        partnerCode: "GLOMED",
-        name: "Công ty dược phẩm Glomed  ",
-        tax: "012465563",
-        address: "Số 34 Huỳnh Thúc Kháng Hà Nội",
-        mobile: "012568523",
-        fax: "012457821",
-        email: "glomeddp@gmail.com",
-    },
-    {
-        id: "6",
-        partnerCode: "THUONG ĐINH",
-        name: "Công ty giầy Thượng Đỉnh",
-        tax: "012489660",
-        address: "Số 2 Kim Ngưu Hà Nội",
-        mobile: "021565635",
-        fax: "014653225",
-        email: "thuongdinhgiay@gmail.com",
-    },
-    {
-        id: "7",
-        partnerCode: "GIAY THANG LONG",
-        name: "Công ty TNHH giày Thăng Long",
-        tax: "012457821",
-        address: "Số 2A Phường Khương Trung Thanh Xuân Hà Nội",
-        mobile: "012465623",
-        fax: "01774125",
-        email: "giaytot@gmail.com",
-    },
-    {
-        id: "8",
-        partnerCode: "VINH DOAN",
-        name: "Công ty cổ phần Vĩnh Đoàn",
-        tax: "012458990",
-        address: "Số 60 Vĩnh Tuy Hai Bà Trưng Hà Nội",
-        mobile: "021565650",
-        fax: "0158555245",
-        email: "vinhdoan123@gmail.com",
-    },
-    {
-        id: "9",
-        partnerCode: "SINO VANLOCK",
-        name: "Công ty sản xuất thiết bị điện Sino vanlock",
-        tax: "0124456685",
-        address: "SỐ 10 nguyễn Văn Cừ Long Biên Hà Nội",
-        mobile: "0154878741",
-        fax: "0157878865",
-        email: "sinovanlock@gmail.com",
-    },
-    {
-        id: "10",
-        partnerCode: "TRUNG NGUYEN",
-        name: "Tập đoàn cà phê Trung Nguyên",
-        tax: "0125748546",
-        address: "Thị Cấm Phường Xuân Phương Nam Từ Liêm Hà Nội",
-        mobile: "045654565",
-        fax: "013245422",
-        email: "trugnnguyen@gmail.com",
-    },
+            id: "2",
+            partnerCode: "LOCK LOCK",
+            name: "Công ty TNHH Lock & Lock",
+            tax: "01245782110",
+            address: "Số 72A Nguyễn Trãi phường Thượng Đỉnh Thanh Xuân Hà Nội",
+            mobile: "0823145678",
+            fax: "045784124",
+            email: "locklockvn@gmail",
+        },
+        {
+            id: "3",
+            partnerCode: "HOA PHAT",
+            name: "Công ty TNHH Hòa Phát ",
+            tax: "012345678",
+            address: "Số 12 Bạch Mai Hà Nội",
+            mobile: "089745120",
+            fax: "023145216",
+            email: "hoaphat123@gmail.com",
+        },
+        {
+            id: "4",
+            partnerCode: "MEDIA MART",
+            name: "Siêu thị điện máy xanh media mart",
+            tax: "012345801",
+            address: "Số 1 Trương Định Hà Nội",
+            mobile: "089724152",
+            fax: "021465741",
+            email: "mediamart4546@gmail.com",
+        },
+        {
+            id: "5",
+            partnerCode: "GLOMED",
+            name: "Công ty dược phẩm Glomed  ",
+            tax: "012465563",
+            address: "Số 34 Huỳnh Thúc Kháng Hà Nội",
+            mobile: "012568523",
+            fax: "012457821",
+            email: "glomeddp@gmail.com",
+        },
+        {
+            id: "6",
+            partnerCode: "THUONG ĐINH",
+            name: "Công ty giầy Thượng Đỉnh",
+            tax: "012489660",
+            address: "Số 2 Kim Ngưu Hà Nội",
+            mobile: "021565635",
+            fax: "014653225",
+            email: "thuongdinhgiay@gmail.com",
+        },
+        {
+            id: "7",
+            partnerCode: "GIAY THANG LONG",
+            name: "Công ty TNHH giày Thăng Long",
+            tax: "012457821",
+            address: "Số 2A Phường Khương Trung Thanh Xuân Hà Nội",
+            mobile: "012465623",
+            fax: "01774125",
+            email: "giaytot@gmail.com",
+        },
+        {
+            id: "8",
+            partnerCode: "VINH DOAN",
+            name: "Công ty cổ phần Vĩnh Đoàn",
+            tax: "012458990",
+            address: "Số 60 Vĩnh Tuy Hai Bà Trưng Hà Nội",
+            mobile: "021565650",
+            fax: "0158555245",
+            email: "vinhdoan123@gmail.com",
+        },
+        {
+            id: "9",
+            partnerCode: "SINO VANLOCK",
+            name: "Công ty sản xuất thiết bị điện Sino vanlock",
+            tax: "0124456685",
+            address: "SỐ 10 nguyễn Văn Cừ Long Biên Hà Nội",
+            mobile: "0154878741",
+            fax: "0157878865",
+            email: "sinovanlock@gmail.com",
+        },
+        {
+            id: "10",
+            partnerCode: "TRUNG NGUYEN",
+            name: "Tập đoàn cà phê Trung Nguyên",
+            tax: "0125748546",
+            address: "Thị Cấm Phường Xuân Phương Nam Từ Liêm Hà Nội",
+            mobile: "045654565",
+            fax: "013245422",
+            email: "trugnnguyen@gmail.com",
+        },
 
     ]
     var obj = {}
@@ -794,18 +796,18 @@ async function addUpTheAmountForCreditsAndDelete(db, receiptsPaymentID, currency
 
 async function isCheckAndUpdateInvoicePaid(db, invoiceID, receiptsPaymentID) {
     let checkStatusOfInvoice = true
-    // check tất cả các invoice của currency đã thanh toán hết chưa
+        // check tất cả các invoice của currency đã thanh toán hết chưa
     await mtblInvoiceRCurrency(db).findAll({
-        where: {
-            InvoiceID: invoiceID,
-        }
-    }).then(data => {
-        for (let inv of data) {
-            if (inv.Status == 'Chờ thanh toán')
-                checkStatusOfInvoice = false
-        }
-    })
-    // cập nhật trang thái đồng thời cho invoice để hiện thị dữ liệu trạng thái
+            where: {
+                InvoiceID: invoiceID,
+            }
+        }).then(data => {
+            for (let inv of data) {
+                if (inv.Status == 'Chờ thanh toán')
+                    checkStatusOfInvoice = false
+            }
+        })
+        // cập nhật trang thái đồng thời cho invoice để hiện thị dữ liệu trạng thái
     if (checkStatusOfInvoice == true) {
         let payment = await mtblReceiptsPayment(db).findOne({
             where: {
@@ -844,9 +846,10 @@ async function isCheckAndUpdateInvoicePaid(db, invoiceID, receiptsPaymentID) {
 async function recalculateTheAmountOfCredit(db, amount, listCreditID, receiptsPaymentID, type, currencyID, typePayment = '', dateACtive = null) {
     if (type == 'update')
         await addUpTheAmountForCreditsAndDelete(db, receiptsPaymentID, currencyID)
-    // listCreditID = listCreditID.sort(function(a, b) { return a - b })
+        // listCreditID = listCreditID.sort(function(a, b) { return a - b })
     amount = Number(amount)
     let arrayInvCrePaid = []
+    console.log(amount, listCreditID, receiptsPaymentID, type, currencyID, typePayment = '', dateACtive = null);
     for (let i = 0; i < listCreditID.length; i++) {
         let creditID = listCreditID[i]
         await mtblInvoice(db).findOne({
@@ -864,7 +867,7 @@ async function recalculateTheAmountOfCredit(db, amount, listCreditID, receiptsPa
                     }
                 }).then(async payOrInv => {
                     if (payOrInv) {
-                        if(amount <= (Number(totalPMCM) -data.PaidAmount)){
+                        if (amount <= (Number(totalPMCM) - data.PaidAmount)) {
                             await mtblInvoice(db).update({
                                 PaidAmount: data.PaidAmount - payOrInv.Amount + amount,
                             }, {
@@ -879,9 +882,9 @@ async function recalculateTheAmountOfCredit(db, amount, listCreditID, receiptsPa
                                     ID: payOrInv.ID
                                 }
                             })
-                            if(amount == (Number(totalPMCM) -data.PaidAmount))
-                              arrayInvCrePaid.push(creditID)
-                        }else {
+                            if (amount == (Number(totalPMCM) - data.PaidAmount))
+                                arrayInvCrePaid.push(creditID)
+                        } else {
                             arrayInvCrePaid.push(creditID)
                             await mtblInvoice(db).update({
                                 PaidAmount: totalPMCM,
@@ -898,9 +901,9 @@ async function recalculateTheAmountOfCredit(db, amount, listCreditID, receiptsPa
                                 }
                             })
                         }
-                        amount = amount -(Number(totalPMCM) -data.PaidAmount)
-                    }else {
-                        if(amount <= totalPMCM){
+                        amount = amount - (Number(totalPMCM) - data.PaidAmount)
+                    } else {
+                        if (amount <= totalPMCM) {
                             await mtblPaymentRInvoice(db).create({
                                 IDPayment: receiptsPaymentID,
                                 IDSpecializedSoftware: creditID,
@@ -922,7 +925,7 @@ async function recalculateTheAmountOfCredit(db, amount, listCreditID, receiptsPa
                                 PaidAmount: amount,
                                 IsInvoice: isInvoice,
                             })
-                        }else {
+                        } else {
                             arrayInvCrePaid.push(creditID)
                             await mtblPaymentRInvoice(db).create({
                                 IDPayment: receiptsPaymentID,
@@ -952,9 +955,9 @@ async function recalculateTheAmountOfCredit(db, amount, listCreditID, receiptsPa
                     }
                 })
             } else {
-                if(amount <= totalPMCM){
-                    if(amount == totalPMCM)
-                     arrayInvCrePaid.push(creditID)
+                if (amount <= totalPMCM) {
+                    if (amount == totalPMCM)
+                        arrayInvCrePaid.push(creditID)
                     await mtblPaymentRInvoice(db).create({
                         IDPayment: receiptsPaymentID,
                         IDSpecializedSoftware: creditID,
@@ -976,7 +979,7 @@ async function recalculateTheAmountOfCredit(db, amount, listCreditID, receiptsPa
                         PaidAmount: amount,
                         IsInvoice: isInvoice,
                     })
-                }else {
+                } else {
                     arrayInvCrePaid.push(creditID)
                     await mtblPaymentRInvoice(db).create({
                         IDPayment: receiptsPaymentID,
@@ -1004,7 +1007,7 @@ async function recalculateTheAmountOfCredit(db, amount, listCreditID, receiptsPa
 
         })
     }
-    await customerData.paidPMCM([creditID])
+    await customerData.paidPMCM(arrayInvCrePaid)
 }
 
 
@@ -1052,7 +1055,7 @@ async function allotmentInvoiceOrCredit(db, array, receiptsPaymentID, currencyID
 module.exports = {
     deleteRelationshiptblReceiptsPayment,
     //  get_detail_tbl_receipts_payment
-    detailtblReceiptsPayment: async (req, res) => {
+    detailtblReceiptsPayment: async(req, res) => {
         let body = req.body;
         console.log(body);
         database.connectDatabase().then(async db => {
@@ -1152,35 +1155,35 @@ module.exports = {
                                             ['ID', 'DESC']
                                         ],
                                         include: [{
-                                            model: tblDMBoPhan,
-                                            required: false,
-                                            as: 'phongban',
-                                            include: [{
-                                                model: mtblDMChiNhanh(db),
+                                                model: tblDMBoPhan,
                                                 required: false,
-                                                as: 'chinhanh',
-                                            }]
-                                        },
-                                        {
-                                            model: mtblDMNhanvien(db),
-                                            required: false,
-                                            as: 'NhanVien'
-                                        },
-                                        {
-                                            model: mtblDMNhanvien(db),
-                                            required: false,
-                                            as: 'PheDuyet1',
-                                        },
-                                        {
-                                            model: mtblDMNhanvien(db),
-                                            required: false,
-                                            as: 'PheDuyet2',
-                                        },
-                                        {
-                                            model: tblYeuCauMuaSamDetail,
-                                            required: false,
-                                            as: 'line'
-                                        },
+                                                as: 'phongban',
+                                                include: [{
+                                                    model: mtblDMChiNhanh(db),
+                                                    required: false,
+                                                    as: 'chinhanh',
+                                                }]
+                                            },
+                                            {
+                                                model: mtblDMNhanvien(db),
+                                                required: false,
+                                                as: 'NhanVien'
+                                            },
+                                            {
+                                                model: mtblDMNhanvien(db),
+                                                required: false,
+                                                as: 'PheDuyet1',
+                                            },
+                                            {
+                                                model: mtblDMNhanvien(db),
+                                                required: false,
+                                                as: 'PheDuyet2',
+                                            },
+                                            {
+                                                model: tblYeuCauMuaSamDetail,
+                                                required: false,
+                                                as: 'line'
+                                            },
                                         ],
                                         offset: Number(body.itemPerPage) * (Number(body.page) - 1),
                                         limit: Number(body.itemPerPage),
@@ -1362,7 +1365,7 @@ module.exports = {
                                     model: mtblDMTaiKhoanKeToan(db),
                                     required: false,
                                     as: 'acc'
-                                },],
+                                }, ],
                                 where: {
                                     IDReceiptsPayment: data.ID,
                                     type: "CREDIT"
@@ -1385,7 +1388,7 @@ module.exports = {
                                     model: mtblDMTaiKhoanKeToan(db),
                                     required: false,
                                     as: 'acc'
-                                },],
+                                }, ],
                                 where: {
                                     IDReceiptsPayment: data.ID,
                                     type: "DEBIT"
@@ -1445,7 +1448,7 @@ module.exports = {
         })
     },
     // add_tbl_receipts_payment
-    addtblReceiptsPayment: async (req, res) => {
+    addtblReceiptsPayment: async(req, res) => {
         let body = req.body;
         var listInvoiceID = []
         var listCreditID = []
@@ -1585,13 +1588,13 @@ module.exports = {
                                         // Trường hợp nếu tiền rút lớn hơn hoặc bằng số tiền chưa thanh toán
                                         if (withdrawalMoney > item.UnpaidAmount) {
                                             withdrawalMoney = withdrawalMoney - item.UnpaidAmount
-                                            // Tạo trước khi update
+                                                // Tạo trước khi update
                                             await mtblPaymentRPayment(db).create({
-                                                IDPayment: data.ID,
-                                                IDPaymentR: item.ID,
-                                                Amount: item.UnpaidAmount,
-                                            })
-                                            // Cập nhật số tiền thanh toán và không thanh toán của phiếu
+                                                    IDPayment: data.ID,
+                                                    IDPaymentR: item.ID,
+                                                    Amount: item.UnpaidAmount,
+                                                })
+                                                // Cập nhật số tiền thanh toán và không thanh toán của phiếu
                                             await mtblReceiptsPayment(db).update({
                                                 UnpaidAmount: 0,
                                                 PaidAmount: item.InitialAmount,
@@ -1981,7 +1984,7 @@ module.exports = {
                                     let array = []
                                     array.push(data.items[i].value1)
                                     array.push(data.items[i].value2)
-                                    array.sort(function (a, b) { return a - b });
+                                    array.sort(function(a, b) { return a - b });
                                     userFind['Amount'] = {
                                         [Op.between]: array
                                     }
@@ -2081,7 +2084,7 @@ module.exports = {
                             model: mtblCurrency(db),
                             required: false,
                             as: 'currency'
-                        },],
+                        }, ],
                     }).then(async data => {
                         var array = [];
                         for (var i = 0; i < data.length; i++) {
@@ -2172,7 +2175,7 @@ module.exports = {
                                     model: mtblDMTaiKhoanKeToan(db),
                                     required: false,
                                     as: 'acc'
-                                },],
+                                }, ],
                                 where: {
                                     IDReceiptsPayment: data[i].ID,
                                     type: "CREDIT"
@@ -2191,7 +2194,7 @@ module.exports = {
                                     model: mtblDMTaiKhoanKeToan(db),
                                     required: false,
                                     as: 'acc'
-                                },],
+                                }, ],
                                 where: {
                                     IDReceiptsPayment: data[i].ID,
                                     type: "DEBIT"
@@ -2323,7 +2326,7 @@ module.exports = {
                             model: mtblCurrency(db),
                             required: false,
                             as: 'currency'
-                        },],
+                        }, ],
                     }).then(async data => {
                         var array = [];
                         for (var i = 0; i < data.length; i++) {
@@ -2439,7 +2442,7 @@ module.exports = {
                             model: mtblCurrency(db),
                             required: false,
                             as: 'currency'
-                        },],
+                        }, ],
                     }).then(async data => {
                         var array = [];
                         for (var i = 0; i < data.length; i++) {
