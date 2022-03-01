@@ -208,10 +208,11 @@ module.exports = {
                 try {
                     let dataCustomer = await ctlPMCM.getCustomerOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 100000000)
                     let stt = 1;
-                    let arrayCredit = []
-                    let arrayInvoice = []
                     let arrayResult = []
                     for (let cus of dataCustomer.data) {
+                        let arrayCredit = []
+                        let arrayInvoice = []
+                        let amountUnspecified = []
                         let tblReceiptsPayment = mtblReceiptsPayment(db);
                         tblReceiptsPayment.belongsTo(mtblCurrency(db), { foreignKey: 'IDCurrency', sourceKey: 'IDCurrency', as: 'cur' })
                         await tblReceiptsPayment.findAll({
@@ -229,24 +230,36 @@ module.exports = {
                                 let arrayCurrencyCheck = []
                                 if (!checkDuplicate(arrayCurrencyCheck, currencyName)) {
                                     arrayCurrencyCheck.push(currencyName)
-                                    if (pay.Type == 'payment' && pay.Type == 'debit') {
+                                    if (pay.Unknown) {
+                                        amountUnspecified.push({
+                                            total: pay.Amount,
+                                            typeMoney: currencyName,
+                                        })
+                                    }
+                                    if (pay.Type == 'payment' || pay.Type == 'debit') {
                                         arrayInvoice.push({
                                             total: pay.Amount,
                                             typeMoney: currencyName,
                                         })
-                                    } else if (pay.Type == 'receipt' && pay.Type == 'spending') {
+                                    } else if (pay.Type == 'receipt' || pay.Type == 'spending') {
                                         arrayCredit.push({
                                             total: pay.Amount,
                                             typeMoney: currencyName,
                                         })
                                     }
                                 } else {
-                                    if (pay.Type == 'payment' && pay.Type == 'debit') {
+                                    if (pay.Unknown) {
+                                        for (let inv of amountUnspecified) {
+                                            if (inv.typeMoney == currencyName)
+                                                inv.total = Number(inv.total) + Number(pay.Amount)
+                                        }
+                                    }
+                                    if (pay.Type == 'payment' || pay.Type == 'debit') {
                                         for (let inv of arrayInvoice) {
                                             if (inv.typeMoney == currencyName)
                                                 inv.total = Number(inv.total) + Number(pay.Amount)
                                         }
-                                    } else if (pay.Type == 'receipt' && pay.Type == 'spending') {
+                                    } else if (pay.Type == 'receipt' || pay.Type == 'spending') {
                                         for (let cre of arrayCredit) {
                                             if (cre.typeMoney == currencyName)
                                                 cre.total = Number(cre.total) + Number(pay.Amount)
@@ -262,7 +275,7 @@ module.exports = {
                             code: cus.code ? cus.code : '',
                             address: cus.address ? cus.address : '',
                             idSpecializedSoftware: Number(cus.id),
-                            amountUnspecified: [{ total: 1, typeMoney: 'VND' }, { total: 0, typeMoney: 'USD' }],
+                            amountUnspecified: amountUnspecified,
                             amountSpent: arrayCredit,
                             amountReceivable: arrayInvoice,
                         }
