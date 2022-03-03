@@ -489,6 +489,7 @@ module.exports = {
     getListReceiptOfPMCM,
     getDetailCustomerOfPMCM,
     getDetailInvCreOfPMCM,
+    getInvoiceOrCreditOfPMCM,
     test: async(req, res) => {
         let body = req.body;
         try {
@@ -564,7 +565,6 @@ module.exports = {
     },
     // get_list_customer
     getListCustomer: async(req, res) => {
-        console.log(body);
         let dataCustomer = await getCustomerOfPMCM()
         if (dataCustomer) {
             var result = {

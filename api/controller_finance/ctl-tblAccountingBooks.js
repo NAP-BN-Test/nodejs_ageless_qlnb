@@ -11,8 +11,7 @@ var mtblCurrency = require('../tables/financemanage/tblCurrency')
 var mtblCustomerRCurrency = require('../tables/financemanage/tblCustomerRCurrency')
 var mtblRate = require('../tables/financemanage/tblRate')
 var customerData = require('../controller_finance/ctl-apiSpecializedSoftware')
-var dataCredit = customerData.dataCredit
-var dataInvoice = customerData.data
+
 var mtblInvoice = require('../tables/financemanage/tblInvoice')
 var mtblDMTaiKhoanKeToan = require('../tables/financemanage/tblDMTaiKhoanKeToan')
 async function deleteRelationshiptblAccountingBooks(db, listID) {
@@ -208,17 +207,6 @@ async function getCreditWaitPay(db, objWaitForPay, stt, customerName = '') {
     }
     return obj;
 }
-async function getDetailCustomer(id) {
-    let dataCustomer = customerData.getCustomerSpecializeSoftware()
-    var obj = {}
-    dataCustomer.forEach(item => {
-        if (item.id == id) {
-            obj = item
-        }
-    })
-    return obj
-
-}
 
 function checkConditionPushArrayResult(lenthArray, accountName, accountSystemID, idAccounting, idAccountingItem, accountSystemOtherID, type) {
     let check = false
@@ -261,139 +249,6 @@ function checkForDuplicateObjInArray(obj, array) {
     }
     return result
 }
-dataCustomer = [{
-        "customerCode": "KH0001",
-        "name": "Công ty tnhh An Phú",
-        "attributesChangeLog": "Công ty chuyên về lắp ráp linh kiện",
-        "tax": "123456789",
-        "countryName": "Việt Nam",
-        "address": "Số 2 Hoàng Mai Hà Nội",
-        "mobile": "098705124",
-        "fax": "01234567",
-        "email": "anphu@gmail.com",
-        "id": 1,
-    },
-    {
-        "customerCode": "KH0002",
-        "name": "Công ty tnhh Is Tech Vina",
-        "attributesChangeLog": "Công ty chuyên sản xuất bánh kẹo ",
-        "tax": "01245870",
-        "countryName": "Việt Nam",
-        "address": "Số 35 Bạch mai Cầu Giấy Hà Nội",
-        "mobile": "082457145",
-        "fax": "0241368451",
-        "email": "istech@gmail.com",
-        "id": 2,
-    },
-    {
-        "customerCode": "KH0003",
-        "name": "Công ty cổ phần Orion Việt Nam",
-        "attributesChangeLog": "Công ty chuyên sản xuất bánh kẹo",
-        "tax": "012341250",
-        "countryName": "Việt nam",
-        "address": "Số 12 Bạch Mai Hà Nội",
-        "mobile": "0315456554",
-        "fax": "132456545",
-        "email": "orion13@gmail.com",
-        "id": 3,
-    },
-    {
-        "customerCode": "KH0004",
-        "name": "Công ty TNHH Rồng Việt",
-        "attributesChangeLog": "Công ty chuyên cung cấp thiết bị điện lạnh",
-        "tax": "01323255",
-        "countryName": "Việt Nam",
-        "address": "Số 11 Vĩnh Tuy Hai Bà Trưng Hà Nội",
-        "mobile": "0445445474",
-        "fax": "1135635",
-        "email": "rongviet@gmail.com",
-        "id": 4,
-    },
-    {
-        "customerCode": "KH0005",
-        "name": "Công ty cổ phần và thương mại Đức Việt",
-        "attributesChangeLog": "Công ty chuyên cung cấp thức ăn đông lạnh ",
-        "tax": "017654124",
-        "countryName": "Việt Nam",
-        "address": "Số 389 Lĩnh Nam Hoàng mai Hà Nội",
-        "mobile": "0444545401",
-        "fax": "75241241241",
-        "email": "ducviet0209@gmail.com",
-        "id": 5,
-    },
-    {
-        "customerCode": "KH0006",
-        "name": "Công ty TNHH 1 thành viên Bảo Minh",
-        "attributesChangeLog": "Công ty chuyên cung cấp cácclaoị thực phẩm khô",
-        "tax": "154654565",
-        "countryName": "Việt Nam",
-        "address": "Số 25 Ba Đình Hà Nội",
-        "mobile": "045102474",
-        "fax": "02137244",
-        "email": "baominh56@gmail.com",
-        "id": 6,
-    },
-    {
-        "customerCode": "KH0007",
-        "name": "Công ty Sx và Tm Minh Hòa",
-        "attributesChangeLog": "Công ty chuyên cung cấp lao động thời vụ",
-        "tax": "04785635432",
-        "countryName": "Việt Nam",
-        "address": "Số 21 Hàng Mã Hà Nội",
-        "mobile": "0045454510",
-        "fax": "415265654",
-        "email": "minhhoa1212@gmail.com",
-        "id": 7,
-    },
-    {
-        "customerCode": "KH0008",
-        "name": "Công ty cổ phần EC",
-        "attributesChangeLog": "Công ty chuyên cung cấp đồ gá khuôn jig",
-        "tax": "45454545",
-        "countryName": "Việt Nam",
-        "address": "Số 13 đường 17 KCN Tiên Sơn Bắc Ninh",
-        "mobile": "012345474",
-        "fax": "012244635",
-        "email": "ec1312@gmail.com",
-        "id": 8,
-    },
-    {
-        "customerCode": "KH0009",
-        "name": "Công ty cổ phần Thu Hương",
-        "attributesChangeLog": "Công ty chuyên cung cấp suất ăn công  nghiệp",
-        "tax": "012546565",
-        "countryName": "Việt Nam",
-        "address": "Số 24 Bạch Mai Hà Nội",
-        "mobile": "015245454",
-        "fax": "45552478",
-        "email": "thuhuong34@gmail.com",
-        "id": 9,
-    },
-    {
-        "customerCode": "KH0010",
-        "name": "Công ty tnhh Hòa Phát",
-        "attributesChangeLog": "Công ty chuyên sản xuất tôn ngói ",
-        "tax": "014775745",
-        "countryName": "Việt Nam",
-        "address": "Số 2 Phố Huế Hà Nội",
-        "mobile": "045245401",
-        "fax": "021455235",
-        "email": "hoaphat0102@gmail.com",
-        "id": 10,
-    },
-    {
-        "customerCode": "KH0011",
-        "name": "Cơ quan nhà nước",
-        "attributesChangeLog": "Cơ quan nhà nước",
-        "tax": "014775745",
-        "countryName": "Việt Nam",
-        "address": "Số 2 Phố Huế Hà Nội",
-        "mobile": "045245401",
-        "fax": "021455235",
-        "email": "cqnnvn@gmail.com",
-        "id": 11,
-    },
-]
 async function findAcountingFollowLevel(db, level, idLevelAbove) {
     var result = []
     let tblDMTaiKhoanKeToan = mtblDMTaiKhoanKeToan(db);
@@ -656,6 +511,8 @@ module.exports = {
     // get_list_tbl_accounting_books
     getListtblAccountingBooks: async(req, res) => {
         let body = req.body;
+        var dataInvoice = await customerData.getInvoiceOrCreditOfPMCM(1, 1000000000, 'invoice')
+        var dataCredit = await customerData.getInvoiceOrCreditOfPMCM(1, 1000000000, 'credit')
         let array = [
             'first_six_months',
             'last_six_months',
@@ -978,7 +835,7 @@ module.exports = {
                         var array = [];
                         let objCustomer = {}
                         if (dataSearch.customerID) {
-                            objCustomer = await getDetailCustomer(dataSearch.customerID)
+                            objCustomer = await customerData.getDetailCustomerOfPMCM(dataSearch.customerID)
                         }
                         // Hàm lấy ra Những invoice chưa thanh toán tự động định khoản vào sổ tài khoản 131 và đối ứng là tài khoản 511
                         let tblDMTaiKhoanKeToan = mtblDMTaiKhoanKeToan(db);
@@ -1651,8 +1508,10 @@ module.exports = {
         })
     },
     // get_all_accounting_books
-    getAllAccountBooks: (req, res) => {
+    getAllAccountBooks: async(req, res) => {
         let body = req.body;
+        var dataInvoice = await customerData.getInvoiceOrCreditOfPMCM(1, 1000000000, 'invoice')
+        var dataCredit = await customerData.getInvoiceOrCreditOfPMCM(1, 1000000000, 'credit')
         let array = [
             'first_six_months',
             'last_six_months',
@@ -1918,7 +1777,7 @@ module.exports = {
                         let debtSurplus = 0;
                         let creaditSurplus = 0;
                         if (dataSearch.customerID)
-                            objCustomer = await getDetailCustomer(dataSearch.customerID)
+                            objCustomer = await customerData.getDetailCustomerOfPMCM(dataSearch.customerID)
                             // Hàm lấy ra Những invoice chưa thanh toán tự động định khoản vào sổ tài khoản 131 và đối ứng là tài khoản 511
                         let checkAccount131;
                         let checkAccount331;
@@ -2321,9 +2180,12 @@ module.exports = {
         })
     },
     // get_data_summary_book
-    getDataSummaryBook: (req, res) => {
+    getDataSummaryBook: async(req, res) => {
         let body = req.body;
         console.log(body);
+        let dataCustomer = await customerData.getCustomerOfPMCM(1, 10000)
+        var dataInvoice = await customerData.getInvoiceOrCreditOfPMCM(1, 1000000000, 'invoice')
+        var dataCredit = await customerData.getInvoiceOrCreditOfPMCM(1, 1000000000, 'credit')
         let dataSearch = JSON.parse(body.dataSearch)
         if (dataSearch.selection != 'date_range') {
             dataSearch.dateFrom = null
@@ -2340,7 +2202,7 @@ module.exports = {
                 try {
                     let arrayResponse = [];
                     let sttReponse = 1;
-                    for (let customer of dataCustomer) {
+                    for (let customer of dataCustomer.data) {
                         let accountName = '';
                         var arrayIDAccount = []
                         let checkAccount111 = await mtblDMTaiKhoanKeToan(db).findOne({
@@ -2586,7 +2448,7 @@ module.exports = {
                             var array = [];
                             let objCustomer = {}
                             if (customer.id)
-                                objCustomer = await getDetailCustomer(customer.id)
+                                objCustomer = await customerData.getDetailCustomerOfPMCM(customer.id)
                                 // Hàm lấy ra Những invoice chưa thanh toán tự động định khoản vào sổ tài khoản 131 và đối ứng là tài khoản 511
                             let checkAccount131 = await mtblDMTaiKhoanKeToan(db).findOne({
                                     where: {
