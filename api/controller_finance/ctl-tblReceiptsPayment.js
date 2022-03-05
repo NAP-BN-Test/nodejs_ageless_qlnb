@@ -1013,43 +1013,44 @@ async function recalculateTheAmountOfCredit(db, amount, listCreditID, receiptsPa
 
 async function allotmentInvoiceOrCredit(db, array, receiptsPaymentID, currencyID) {
     for (let item of array) {
-        await mtblInvoice(db).findOne({
-            where: {
-                IDSpecializedSoftware: item.id
-            }
-        }).then(async data => {
-            if (data) {
-                let invoiceRCurrency = await mtblInvoiceRCurrency(db).findOne({
-                    where: {
-                        CurrencyID: currencyID,
-                        InvoiceID: data.ID,
-                    }
-                })
-                let unpaidAmount = invoiceRCurrency ? invoiceRCurrency.UnpaidAmount : 0
-                let paidAmount = invoiceRCurrency ? invoiceRCurrency.PaidAmount : 0
-                let status = 'Chờ thanh toán'
-                if ((unpaidAmount - item.paymentAmount) == 0) {
-                    status = 'Đã thanh toán'
+        if (item.id)
+            await mtblInvoice(db).findOne({
+                where: {
+                    IDSpecializedSoftware: item.id
                 }
-                await mtblPaymentRInvoice(db).create({
-                    IDPayment: receiptsPaymentID,
-                    IDSpecializedSoftware: item.id,
-                    Amount: item.paymentAmount,
-                })
-                await mtblInvoiceRCurrency(db).update({
-                    InitialAmount: invoiceRCurrency ? invoiceRCurrency.InitialAmount : 0,
-                    UnpaidAmount: unpaidAmount - item.paymentAmount,
-                    PaidAmount: paidAmount + item.paymentAmount,
-                    Status: status,
-                }, {
-                    where: {
-                        CurrencyID: currencyID,
-                        InvoiceID: data.ID,
+            }).then(async data => {
+                if (data) {
+                    let invoiceRCurrency = await mtblInvoiceRCurrency(db).findOne({
+                        where: {
+                            CurrencyID: currencyID,
+                            InvoiceID: data.ID,
+                        }
+                    })
+                    let unpaidAmount = invoiceRCurrency ? invoiceRCurrency.UnpaidAmount : 0
+                    let paidAmount = invoiceRCurrency ? invoiceRCurrency.PaidAmount : 0
+                    let status = 'Chờ thanh toán'
+                    if ((unpaidAmount - item.paymentAmount) == 0) {
+                        status = 'Đã thanh toán'
                     }
-                })
-                await isCheckAndUpdateInvoicePaid(db, data.ID, receiptsPaymentID)
-            }
-        })
+                    await mtblPaymentRInvoice(db).create({
+                        IDPayment: receiptsPaymentID,
+                        IDSpecializedSoftware: item.id,
+                        Amount: item.paymentAmount,
+                    })
+                    await mtblInvoiceRCurrency(db).update({
+                        InitialAmount: invoiceRCurrency ? invoiceRCurrency.InitialAmount : 0,
+                        UnpaidAmount: unpaidAmount - item.paymentAmount,
+                        PaidAmount: paidAmount + item.paymentAmount,
+                        Status: status,
+                    }, {
+                        where: {
+                            CurrencyID: currencyID,
+                            InvoiceID: data.ID,
+                        }
+                    })
+                    await isCheckAndUpdateInvoicePaid(db, data.ID, receiptsPaymentID)
+                }
+            })
     }
 }
 module.exports = {

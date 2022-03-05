@@ -76,28 +76,29 @@ async function calculateMoneyFollowVND(db, typeMoney, total, date) {
     return result
 }
 async function getInvoiceWaitForPayInDB(db, dataRequest, account, customerID = null) {
+    console.log(dataRequest, account, customerID);
     let array = [];
-    for (let i = 0; i < dataRequest.length; i++) {
-        if (customerID == null || Number(dataRequest[i].idCustomer) == Number(customerID)) {
+    for (let i = 0; i < dataRequest.array.length; i++) {
+        if (customerID == null || Number(dataRequest.array[i].idCustomer) == Number(customerID)) {
             let check = await mtblInvoice(db).findOne({
-                where: { IDSpecializedSoftware: dataRequest[i].id }
+                where: { IDSpecializedSoftware: dataRequest.array[i].id }
             })
             if (check) {
                 if (account == '331')
-                    dataRequest[i].invoiceNumber = dataRequest[i].creditNumber
-                dataRequest[i].statusName = check.Status
-                dataRequest[i].request = check.Request
-                dataRequest[i]['invoiceID'] = check.ID
+                    dataRequest.array[i].invoiceNumber = dataRequest.array[i].creditNumber
+                dataRequest.array[i].statusName = check.Status
+                dataRequest.array[i].request = check.Request
+                dataRequest.array[i]['invoiceID'] = check.ID
                 let arrayTotal = []
-                for (let m = 0; m < dataRequest[i].arrayMoney.length; m++) {
+                for (let m = 0; m < dataRequest.array[i].arrayMoney.length; m++) {
                     arrayTotal.push({
-                        key: dataRequest[i].arrayMoney[m].typeMoney,
-                        value: dataRequest[i].arrayMoney[m].total,
+                        key: dataRequest.array[i].arrayMoney[m].typeMoney,
+                        value: dataRequest.array[i].arrayMoney[m].total,
                     })
                 }
-                dataRequest[i]['arrayTotal'] = arrayTotal
+                dataRequest.array[i]['arrayTotal'] = arrayTotal
                     // if (check.Status == 'Chờ thanh toán')
-                array.push(dataRequest[i])
+                array.push(dataRequest.array[i])
             }
         }
     }
@@ -2182,7 +2183,6 @@ module.exports = {
     // get_data_summary_book
     getDataSummaryBook: async(req, res) => {
         let body = req.body;
-        console.log(body);
         let dataCustomer = await customerData.getCustomerOfPMCM(1, 10000)
         var dataInvoice = await customerData.getInvoiceOrCreditOfPMCM(1, 1000000000, 'invoice')
         var dataCredit = await customerData.getInvoiceOrCreditOfPMCM(1, 1000000000, 'credit')
@@ -2389,11 +2389,12 @@ module.exports = {
 
                         }
                         if (customer.id || dataSearch.currencyID) {
-                            whereOjb.push({
-                                IDPayment: {
-                                    [Op.in]: arrayWhere
-                                }
-                            })
+                            if (arrayWhere.length > 0)
+                                whereOjb.push({
+                                    IDPayment: {
+                                        [Op.in]: arrayWhere
+                                    }
+                                })
                         }
                         let totalCreditIncurred = 0;
                         let arrayCreditIncurred = [];
@@ -2420,6 +2421,7 @@ module.exports = {
                         tblAccountingBooks.belongsTo(mtblDMTaiKhoanKeToan(db), { foreignKey: 'IDAccounting', sourceKey: 'IDAccounting', as: 'accounting' })
                         tblAccountingBooks.belongsTo(mtblReceiptsPayment(db), { foreignKey: 'IDPayment', sourceKey: 'IDPayment', as: 'payment' })
                         let tblReceiptsPayment = mtblReceiptsPayment(db);
+                        console.log(whereOjb, '------------------------------');
                         tblReceiptsPayment.belongsTo(mtblCurrency(db), { foreignKey: 'IDCurrency', sourceKey: 'IDCurrency', as: 'currency' })
                         await tblAccountingBooks.findAll({
                             offset: Number(body.itemPerPage) * (Number(body.page) - 1),
