@@ -65,7 +65,7 @@ async function calculateTheTotalAmountOfEachCurrency(array) {
 async function getCustomerOfPMCM(page = null, itemPerPage = null) {
     let obj = {
         "paging": {
-            "pageSize": itemPerPage ? itemPerPage : 1000000,
+            "pageSize": itemPerPage ? itemPerPage : 1000,
             "currentPage": page ? page : 1,
             "rowsCount": 0
         }
