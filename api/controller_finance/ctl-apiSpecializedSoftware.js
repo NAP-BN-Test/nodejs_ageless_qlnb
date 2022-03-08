@@ -71,10 +71,13 @@ async function getCustomerOfPMCM(page = null, itemPerPage = null) {
         }
     }
     let objResult = {}
+    console.log('------------------------Đợi api pmcm----------------------------- ');
     await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/address_book/list_pmtc`, obj).then(async data => {
         if (data.data.data) {
             objResult['data'] = data.data.data.list;
             objResult['count'] = data.data.data.pager.rowsCount;
+        } else {
+            console.log(data.data);
         }
     })
     return objResult
@@ -626,7 +629,7 @@ module.exports = {
         database.connectDatabase().then(async db => {
             if (db) {
                 let array = []
-                let dataCustomer = await getCustomerOfPMCM(1, 100000000)
+                let dataCustomer = await getCustomerOfPMCM(1, 20)
                 for (c = 0; c < dataCustomer.data.length; c++) {
                     array.push({
                         name: dataCustomer.data[c].name,
