@@ -203,10 +203,11 @@ module.exports = {
     // get_list_tbl_customer
     getListtblCustomer: (req, res) => {
         let body = req.body;
+        let dataSearch = JSON.parse(body.dataSearch)
         database.connectDatabase().then(async db => {
             if (db) {
                 try {
-                    let dataCustomer = await ctlPMCM.getCustomerOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 1000)
+                    let dataCustomer = await ctlPMCM.getCustomerOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 1000, dataSearch.search ? dataSearch.search : null)
                     let stt = 1;
                     let arrayResult = []
                     for (let cus of dataCustomer.data) {

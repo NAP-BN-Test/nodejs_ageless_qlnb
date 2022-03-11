@@ -62,15 +62,18 @@ async function calculateTheTotalAmountOfEachCurrency(array) {
     }
     return arrayResult
 }
-async function getCustomerOfPMCM(page = null, itemPerPage = null) {
+async function getCustomerOfPMCM(page = null, itemPerPage = null, searchKey = null) {
     let obj = {
         "paging": {
             "pageSize": itemPerPage ? itemPerPage : 1000,
             "currentPage": page ? page : 1,
             "rowsCount": 0
-        }
+        },
     }
+    if (searchKey)
+        obj["search"] = searchKey
     let objResult = {}
+    console.log(obj);
     console.log('------------------------Đợi api pmcm----------------------------- ');
     await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/address_book/list_pmtc`, obj).then(async data => {
         if (data.data.data) {
@@ -626,10 +629,12 @@ module.exports = {
     },
     // get_all_object
     getAllObject: async(req, res) => {
+        let body = req.body;
+        let dataSearch = JSON.parse(body.dataSearch)
         database.connectDatabase().then(async db => {
             if (db) {
                 let array = []
-                let dataCustomer = await getCustomerOfPMCM(1, 20)
+                let dataCustomer = await getCustomerOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 100, dataSearch.search ? dataSearch.search : null)
                 for (c = 0; c < dataCustomer.data.length; c++) {
                     array.push({
                         name: dataCustomer.data[c].name,
