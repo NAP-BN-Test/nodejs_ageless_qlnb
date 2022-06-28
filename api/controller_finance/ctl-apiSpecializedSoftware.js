@@ -630,7 +630,8 @@ module.exports = {
     // get_all_object
     getAllObject: async(req, res) => {
         let body = req.body;
-        let dataSearch = JSON.parse(body.dataSearch)
+        console.log(body);
+        let dataSearch = body.dataSearch ? JSON.parse(body.dataSearch) : {}
         database.connectDatabase().then(async db => {
             if (db) {
                 let array = []

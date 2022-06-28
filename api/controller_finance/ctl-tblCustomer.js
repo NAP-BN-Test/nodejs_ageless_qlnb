@@ -203,6 +203,7 @@ module.exports = {
     // get_list_tbl_customer
     getListtblCustomer: (req, res) => {
         let body = req.body;
+        console.log(body.dataSearch11);
         let dataSearch = JSON.parse(body.dataSearch)
         database.connectDatabase().then(async db => {
             if (db) {
