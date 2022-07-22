@@ -12,7 +12,9 @@ async function deleteRelationshiptblCoQuanNhaNuoc(db, listID) {
         let arrReceiptsPayment = []
         await mtblCoQuanNhaNuoc(db).findAll({
             where: {
-                ID: { [Op.in]: listID },
+                ID: {
+                    [Op.in]: listID
+                },
             }
         }).then(async data => {
             for (item of data) {
@@ -22,7 +24,9 @@ async function deleteRelationshiptblCoQuanNhaNuoc(db, listID) {
                     let year = Number(item.Date.slice(0, 4));
                     await mtblCoQuanNhaNuoc(db).destroy({
                         where: {
-                            ID: { [Op.in]: listID }
+                            ID: {
+                                [Op.in]: listID
+                            }
                         }
                     })
                     await deleteAndCreatePeriodBalanceFollowMonth(db, month, year)
@@ -41,8 +45,7 @@ async function deleteRelationshiptblCoQuanNhaNuoc(db, listID) {
     }
 
 }
-dataCQNN = [
-    {
+dataCQNN = [{
         id: 1,
         invoiceNumber: 'INV0001',
         paymentSACode: 'TTCCNN0001',
@@ -213,8 +216,7 @@ dataCQNN = [
         note: 'Thanh toán cho giấy báo nợ GBN0007'
     },
 ]
-dataFLCQNN = [
-    {
+dataFLCQNN = [{
         id: 1,
         createdDate: '01/02/2021',
         code: 'BL0001',
@@ -342,7 +344,9 @@ async function getMoneyFollowMonthAndType(db, month, type) {
     let totalResult = 0;
     await mtblCoQuanNhaNuoc(db).findAll({
         where: {
-            Date: { [Op.substring]: month },
+            Date: {
+                [Op.substring]: month
+            },
             Type: type,
         }
     }).then(data => {
@@ -503,16 +507,34 @@ module.exports = {
         })
     },
     // get_list_tbl_state_agencies
-    getListtblCoQuanNhaNuoc: async (req, res) => {
+    getListtblCoQuanNhaNuoc: async(req, res) => {
         let body = req.body;
-        let dataReciept = await ctlPMCM.getListReceiptOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : null)
-        var result = {
-            array: dataReciept.data,
-            all: dataReciept.count,
-            status: Constant.STATUS.SUCCESS,
-            message: Constant.MESSAGE.ACTION_SUCCESS,
-        }
-        res.json(result);
+        console.log(body);
+        database.connectDatabase().then(async db => {
+            let dataReciept = await ctlPMCM.getListReceiptOfPMCM(db, body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : null, body.paymentID ? body.paymentID : null)
+            var result = {
+                array: dataReciept.data,
+                all: dataReciept.count,
+                status: Constant.STATUS.SUCCESS,
+                message: Constant.MESSAGE.ACTION_SUCCESS,
+            }
+            res.json(result);
+        })
+    },
+    // get_list_tbl_state_agencies
+    getListtblCoQuanNhaNuoc_CHOTHANHTOAN: async(req, res) => {
+        let body = req.body;
+        console.log(body);
+        database.connectDatabase().then(async db => {
+            let dataReciept = await ctlPMCM.getListReceiptOfPMCM_CHOTHANHTOAN(db, body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : null, body.paymentID ? body.paymentID : null)
+            var result = {
+                array: dataReciept.data,
+                all: dataReciept.count,
+                status: Constant.STATUS.SUCCESS,
+                message: Constant.MESSAGE.ACTION_SUCCESS,
+            }
+            res.json(result);
+        })
     },
     // get_list_name_tbl_state_agencies
     getListNametblCoQuanNhaNuoc: (req, res) => {
@@ -861,7 +883,9 @@ module.exports = {
                     if (body.voucherNumber)
                         where['VoucherNumber'] = body.voucherNumber
                     if (body.id)
-                        where['ID'] = { [Op.ne]: body.id }
+                        where['ID'] = {
+                            [Op.ne]: body.id
+                        }
                     await mtblCoQuanNhaNuoc(db).findOne({
                         where: where
                     }).then(data => {

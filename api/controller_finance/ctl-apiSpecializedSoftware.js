@@ -317,6 +317,34 @@ async function getDetailInvCreOfPMCM(idInvCre) {
     })
     return objResult
 }
+async function getDetailCqnn(idInvCre) {
+    let objResult = {}
+    await axios.get(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/receipt/get_by_id?id=` + idInvCre).then(async data => {
+            if (data.data.data) {
+                objResult['data'] = data.data.data;
+            }
+        })
+        // objResult['data'] = {
+        //     "id": 2014,
+        //     "no": " 123",
+        //     "total": 1000,
+        //     "invoiceIds": null,
+        //     "refId": null,
+        //     "date": "2022-06-01T00:00:00",
+        //     "note": null,
+        //     "modifyDate": null,
+        //     "createBy": 1,
+        //     "createDate": "2022-06-01T17:09:34.1875927",
+        //     "modifyBy": null,
+        //     "recondingTxId": null,
+        //     "status": 1,
+        //     "agelessRef": null,
+        //     "invoiceNo": null,
+        //     "isDraft": null,
+        //     "uploadedFiles": []
+        // }
+    return objResult
+}
 async function paidPMCM(arrayInvCre) {
     await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/invoice/paid_pmtc`, arrayInvCre).then(data => {
         console.log(arrayInvCre, data.data, 'result PMCM');
@@ -450,8 +478,137 @@ async function getExchangeRateFromDate(db, typeMoney, date) {
         })
     return result
 }
-async function getListReceiptOfPMCM(page = null, itemPerPage = null) {
+async function getListReceiptOfPMCM(db, page = null, itemPerPage = null, paymentID) {
+    let obj_chothanhtoan = {
+        "status": 2,
+        "paging": {
+            "pageSize": itemPerPage ? itemPerPage : 10000000,
+            "currentPage": page ? page : 1,
+            "rowsCount": 0
+        }
+    }
+    let obj_dathanhtoan = {
+        "status": 3,
+        "paging": {
+            "pageSize": itemPerPage ? itemPerPage : 10000000,
+            "currentPage": page ? page : 1,
+            "rowsCount": 0
+        }
+    }
+    let objResult = {}
+    let array = []
+    let count = 0
+    await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/receipt/list_pmtc`, obj_chothanhtoan).then(async data => {
+        if (data.data.data) {
+            for (let item of data.data.data.list) {
+                let paymentAmount = 0
+                let paidAmount = 0
+                paymentID != "null" && paymentID != "undefined" ? await mtblPaymentRInvoice(db).findOne({
+                    where: {
+                        IDPayment: paymentID,
+                        IDCqnn: item.id
+                    }
+                }).then(dataPmcm => {
+                    if (dataPmcm) {
+                        paymentAmount = dataPmcm.Amount
+                    }
+                }) : null
+                await mtblPaymentRInvoice(db).findAll({
+                    where: {
+                        IDCqnn: item.id
+                    }
+                }).then(dataPmcm => {
+                    dataPmcm.forEach(cqnn => {
+                        paidAmount += cqnn.Amount
+                    })
+                })
+                let obj = {
+                    id: item.id,
+                    invoiceNumber: item.invoiceNo ? item.invoiceNo : '',
+                    paymentSACode: item.no ? item.no : '',
+                    paymentSAName: item.agelessRef ? item.agelessRef : '',
+                    customerName: 'Công ty tnhh Is Tech Vina',
+                    partnerID: '2',
+                    createdDate: item.createDate ? moment(item.createDate).format('DD-MM-YYYY') : null,
+                    content: item.agelessRef ? item.agelessRef : '',
+                    total: item.total ? item.total : '',
+                    totalMoneyDisplay: item.total ? item.total : '',
+                    paymentAmount: paymentAmount,
+                    remainingAmount: item.total - paidAmount,
+                    paidAmount: paidAmount,
+                    unit: 'VND',
+                    statusName: item.status == 2 ? 'Chờ thanh toán' : item.status == 3 ? "Đã thanh toán" : "Nháp",
+                    fileAttach: '',
+                    // typeVoucher: 'Phiếu chi',
+                    // numberVoucher: 'PC0012',
+                    note: item.note ? item.note : '',
+                }
+                array.push(obj)
+            }
+
+            count += data.data.data.pager.rowsCount;
+        }
+    })
+    await axios.post(`http://ageless-ldms-api.vnsolutiondev.com/api/v1/receipt/list_pmtc`, obj_dathanhtoan).then(async data => {
+        if (data.data.data) {
+            for (let item of data.data.data.list) {
+                let paymentAmount = 0
+                let paidAmount = 0
+                paymentID != "null" && paymentID != "undefined" ? await mtblPaymentRInvoice(db).findOne({
+                    where: {
+                        IDPayment: paymentID,
+                        IDCqnn: item.id
+                    }
+                }).then(dataPmcm => {
+                    if (dataPmcm) {
+                        paymentAmount = dataPmcm.Amount
+                    }
+                }) : null
+                await mtblPaymentRInvoice(db).findAll({
+                    where: {
+                        IDCqnn: item.id
+                    }
+                }).then(dataPmcm => {
+                    dataPmcm.forEach(cqnn => {
+                        paidAmount += cqnn.Amount
+                    })
+                })
+                console.log(item.status);
+                let obj = {
+                    id: item.id,
+                    invoiceNumber: item.invoiceNo ? item.invoiceNo : '',
+                    paymentSACode: item.no ? item.no : '',
+                    paymentSAName: item.agelessRef ? item.agelessRef : '',
+                    customerName: 'Công ty tnhh Is Tech Vina',
+                    partnerID: '2',
+                    createdDate: item.createDate ? moment(item.createDate).format('DD-MM-YYYY') : null,
+                    content: item.agelessRef ? item.agelessRef : '',
+                    total: item.total ? item.total : '',
+                    totalMoneyDisplay: item.total ? item.total : '',
+                    paymentAmount: paymentAmount,
+                    remainingAmount: item.total - paidAmount,
+                    paidAmount: paidAmount,
+                    unit: 'VND',
+                    statusName: item.status == 2 ? 'Chờ thanh toán' : item.status == 3 ? "Đã thanh toán" : "Nháp",
+                    fileAttach: '',
+                    // typeVoucher: 'Phiếu chi',
+                    // numberVoucher: 'PC0012',
+                    note: item.note ? item.note : '',
+                }
+                array.push(obj)
+            }
+
+            count += data.data.data.pager.rowsCount;
+        }
+    })
+    objResult['data'] = array;
+    objResult['count'] = count
+
+    return objResult
+}
+async function getListReceiptOfPMCM_CHOTHANHTOAN(db, page = null, itemPerPage = null, paymentID) {
     let obj = {
+        "status": 2,
         "paging": {
             "pageSize": itemPerPage ? itemPerPage : 10000000,
             "currentPage": page ? page : 1,
@@ -463,6 +620,27 @@ async function getListReceiptOfPMCM(page = null, itemPerPage = null) {
         if (data.data.data) {
             let array = []
             for (let item of data.data.data.list) {
+                let paymentAmount = 0
+                let paidAmount = 0
+                paymentID != "null" && paymentID != "undefined" ? await mtblPaymentRInvoice(db).findOne({
+                    where: {
+                        IDPayment: paymentID,
+                        IDCqnn: item.id
+                    }
+                }).then(dataPmcm => {
+                    if (dataPmcm) {
+                        paymentAmount = dataPmcm.Amount
+                    }
+                }) : null
+                await mtblPaymentRInvoice(db).findAll({
+                    where: {
+                        IDCqnn: item.id
+                    }
+                }).then(dataPmcm => {
+                    dataPmcm.forEach(cqnn => {
+                        paidAmount += cqnn.Amount
+                    })
+                })
                 let obj = {
                     id: item.id,
                     invoiceNumber: item.invoiceNo ? item.invoiceNo : '',
@@ -473,8 +651,12 @@ async function getListReceiptOfPMCM(page = null, itemPerPage = null) {
                     createdDate: item.createDate ? moment(item.createDate).format('DD-MM-YYYY') : null,
                     content: item.agelessRef ? item.agelessRef : '',
                     total: item.total ? item.total : '',
+                    totalMoneyDisplay: item.total ? item.total : '',
+                    paymentAmount: paymentAmount,
+                    remainingAmount: item.total - paidAmount,
+                    paidAmount: paidAmount,
                     unit: 'VND',
-                    statusName: 'Chờ thanh toán',
+                    statusName: item.status == 2 ? 'Chờ thanh toán' : item.status == 3 ? "Đã thanh toán" : "Nháp",
                     fileAttach: '',
                     // typeVoucher: 'Phiếu chi',
                     // numberVoucher: 'PC0012',
@@ -493,8 +675,10 @@ module.exports = {
     paidPMCM,
     getCustomerOfPMCM,
     getListReceiptOfPMCM,
+    getListReceiptOfPMCM_CHOTHANHTOAN,
     getDetailCustomerOfPMCM,
     getDetailInvCreOfPMCM,
+    getDetailCqnn,
     getInvoiceOrCreditOfPMCM,
     test: async(req, res) => {
         let body = req.body;
@@ -631,22 +815,40 @@ module.exports = {
     getAllObject: async(req, res) => {
         let body = req.body;
         console.log(body);
-        let dataSearch = body.dataSearch ? JSON.parse(body.dataSearch) : {}
+        let dataSearch = (body.dataSearch && body.dataSearch != 'undefined') ? JSON.parse(body.dataSearch) : {}
         database.connectDatabase().then(async db => {
             if (db) {
                 let array = []
                 let dataCustomer = await getCustomerOfPMCM(body.page ? body.page : 1, body.itemPerPage ? body.itemPerPage : 100, dataSearch.search ? dataSearch.search : null)
-                for (c = 0; c < dataCustomer.data.length; c++) {
-                    array.push({
-                        name: dataCustomer.data[c].name,
-                        address: dataCustomer.data[c].address,
-                        code: dataCustomer.data[c].code,
-                        displayName: dataCustomer.data[c].code ? '[' + dataCustomer.data[c].code + '] ' + dataCustomer.data[c].name : dataCustomer.data[c].name,
-                        id: dataCustomer.data[c].id,
-                        type: 'customer',
-                    })
+                console.log(Object.entries(dataCustomer).length);
+                if (Object.entries(dataCustomer).length !== 0) {
+                    for (c = 0; c < dataCustomer.data.length; c++) {
+                        array.push({
+                            name: dataCustomer.data[c].name,
+                            address: dataCustomer.data[c].address,
+                            code: dataCustomer.data[c].code,
+                            displayName: dataCustomer.data[c].code ? '[' + dataCustomer.data[c].code + '] ' + dataCustomer.data[c].name : dataCustomer.data[c].name,
+                            id: dataCustomer.data[c].id,
+                            type: 'customer',
+                        })
+                    }
                 }
-                await mtblDMNhanvien(db).findAll().then(data => {
+
+                await mtblDMNhanvien(db).findAll({
+                    where: {
+                        [Op.or]: [{
+                                StaffName: {
+                                    [Op.like]: '%' + dataSearch.search + '%'
+                                }
+                            },
+                            {
+                                StaffCode: {
+                                    [Op.like]: '%' + dataSearch.search + '%'
+                                }
+                            }
+                        ]
+                    }
+                }).then(data => {
                     data.forEach(element => {
                         array.push({
                             name: element.StaffName,
@@ -658,7 +860,21 @@ module.exports = {
                         })
                     })
                 })
-                await mtblDMNhaCungCap(db).findAll().then(data => {
+                await mtblDMNhaCungCap(db).findAll({
+                    where: {
+                        [Op.or]: [{
+                                SupplierName: {
+                                    [Op.like]: '%' + dataSearch.search + '%'
+                                }
+                            },
+                            {
+                                SupplierCode: {
+                                    [Op.like]: '%' + dataSearch.search + '%'
+                                }
+                            }
+                        ]
+                    }
+                }).then(data => {
                     data.forEach(element => {
                         array.push({
                             name: element.SupplierName,
@@ -669,6 +885,14 @@ module.exports = {
                             type: 'supplier',
                         })
                     })
+                })
+                array.push({
+                    name: "Cơ quan nhà nước",
+                    code: "cqnn",
+                    displayName: `[CQNN] Cơ Quan Nhà Nước`,
+                    address: null,
+                    id: 0,
+                    type: 'cqnn',
                 })
                 var result = {
                     array: array,

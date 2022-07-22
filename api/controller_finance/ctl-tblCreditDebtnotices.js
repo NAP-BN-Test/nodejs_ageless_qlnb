@@ -35,95 +35,95 @@ async function getDetailStaff(db, id) {
 }
 async function getDetailPartner(id) {
     dataPartner = [{
-        id: "2",
-        partnerCode: "LOCK LOCK",
-        name: "Công ty TNHH Lock & Lock",
-        tax: "01245782110",
-        address: "Số 72A Nguyễn Trãi phường Thượng Đỉnh Thanh Xuân Hà Nội",
-        mobile: "0823145678",
-        fax: "045784124",
-        email: "locklockvn@gmail",
-    },
-    {
-        id: "3",
-        partnerCode: "HOA PHAT",
-        name: "Công ty TNHH Hòa Phát ",
-        tax: "012345678",
-        address: "Số 12 Bạch Mai Hà Nội",
-        mobile: "089745120",
-        fax: "023145216",
-        email: "hoaphat123@gmail.com",
-    },
-    {
-        id: "4",
-        partnerCode: "MEDIA MART",
-        name: "Siêu thị điện máy xanh media mart",
-        tax: "012345801",
-        address: "Số 1 Trương Định Hà Nội",
-        mobile: "089724152",
-        fax: "021465741",
-        email: "mediamart4546@gmail.com",
-    },
-    {
-        id: "5",
-        partnerCode: "GLOMED",
-        name: "Công ty dược phẩm Glomed  ",
-        tax: "012465563",
-        address: "Số 34 Huỳnh Thúc Kháng Hà Nội",
-        mobile: "012568523",
-        fax: "012457821",
-        email: "glomeddp@gmail.com",
-    },
-    {
-        id: "6",
-        partnerCode: "THUONG ĐINH",
-        name: "Công ty giầy Thượng Đỉnh",
-        tax: "012489660",
-        address: "Số 2 Kim Ngưu Hà Nội",
-        mobile: "021565635",
-        fax: "014653225",
-        email: "thuongdinhgiay@gmail.com",
-    },
-    {
-        id: "7",
-        partnerCode: "GIAY THANG LONG",
-        name: "Công ty TNHH giày Thăng Long",
-        tax: "012457821",
-        address: "Số 2A Phường Khương Trung Thanh Xuân Hà Nội",
-        mobile: "012465623",
-        fax: "01774125",
-        email: "giaytot@gmail.com",
-    },
-    {
-        id: "8",
-        partnerCode: "VINH DOAN",
-        name: "Công ty cổ phần Vĩnh Đoàn",
-        tax: "012458990",
-        address: "Số 60 Vĩnh Tuy Hai Bà Trưng Hà Nội",
-        mobile: "021565650",
-        fax: "0158555245",
-        email: "vinhdoan123@gmail.com",
-    },
-    {
-        id: "9",
-        partnerCode: "SINO VANLOCK",
-        name: "Công ty sản xuất thiết bị điện Sino vanlock",
-        tax: "0124456685",
-        address: "SỐ 10 nguyễn Văn Cừ Long Biên Hà Nội",
-        mobile: "0154878741",
-        fax: "0157878865",
-        email: "sinovanlock@gmail.com",
-    },
-    {
-        id: "10",
-        partnerCode: "TRUNG NGUYEN",
-        name: "Tập đoàn cà phê Trung Nguyên",
-        tax: "0125748546",
-        address: "Thị Cấm Phường Xuân Phương Nam Từ Liêm Hà Nội",
-        mobile: "045654565",
-        fax: "013245422",
-        email: "trugnnguyen@gmail.com",
-    },
+            id: "2",
+            partnerCode: "LOCK LOCK",
+            name: "Công ty TNHH Lock & Lock",
+            tax: "01245782110",
+            address: "Số 72A Nguyễn Trãi phường Thượng Đỉnh Thanh Xuân Hà Nội",
+            mobile: "0823145678",
+            fax: "045784124",
+            email: "locklockvn@gmail",
+        },
+        {
+            id: "3",
+            partnerCode: "HOA PHAT",
+            name: "Công ty TNHH Hòa Phát ",
+            tax: "012345678",
+            address: "Số 12 Bạch Mai Hà Nội",
+            mobile: "089745120",
+            fax: "023145216",
+            email: "hoaphat123@gmail.com",
+        },
+        {
+            id: "4",
+            partnerCode: "MEDIA MART",
+            name: "Siêu thị điện máy xanh media mart",
+            tax: "012345801",
+            address: "Số 1 Trương Định Hà Nội",
+            mobile: "089724152",
+            fax: "021465741",
+            email: "mediamart4546@gmail.com",
+        },
+        {
+            id: "5",
+            partnerCode: "GLOMED",
+            name: "Công ty dược phẩm Glomed  ",
+            tax: "012465563",
+            address: "Số 34 Huỳnh Thúc Kháng Hà Nội",
+            mobile: "012568523",
+            fax: "012457821",
+            email: "glomeddp@gmail.com",
+        },
+        {
+            id: "6",
+            partnerCode: "THUONG ĐINH",
+            name: "Công ty giầy Thượng Đỉnh",
+            tax: "012489660",
+            address: "Số 2 Kim Ngưu Hà Nội",
+            mobile: "021565635",
+            fax: "014653225",
+            email: "thuongdinhgiay@gmail.com",
+        },
+        {
+            id: "7",
+            partnerCode: "GIAY THANG LONG",
+            name: "Công ty TNHH giày Thăng Long",
+            tax: "012457821",
+            address: "Số 2A Phường Khương Trung Thanh Xuân Hà Nội",
+            mobile: "012465623",
+            fax: "01774125",
+            email: "giaytot@gmail.com",
+        },
+        {
+            id: "8",
+            partnerCode: "VINH DOAN",
+            name: "Công ty cổ phần Vĩnh Đoàn",
+            tax: "012458990",
+            address: "Số 60 Vĩnh Tuy Hai Bà Trưng Hà Nội",
+            mobile: "021565650",
+            fax: "0158555245",
+            email: "vinhdoan123@gmail.com",
+        },
+        {
+            id: "9",
+            partnerCode: "SINO VANLOCK",
+            name: "Công ty sản xuất thiết bị điện Sino vanlock",
+            tax: "0124456685",
+            address: "SỐ 10 nguyễn Văn Cừ Long Biên Hà Nội",
+            mobile: "0154878741",
+            fax: "0157878865",
+            email: "sinovanlock@gmail.com",
+        },
+        {
+            id: "10",
+            partnerCode: "TRUNG NGUYEN",
+            name: "Tập đoàn cà phê Trung Nguyên",
+            tax: "0125748546",
+            address: "Thị Cấm Phường Xuân Phương Nam Từ Liêm Hà Nội",
+            mobile: "045654565",
+            fax: "013245422",
+            email: "trugnnguyen@gmail.com",
+        },
 
     ]
     var obj = {}
@@ -136,13 +136,17 @@ async function getDetailPartner(id) {
 
 }
 async function deleteRelationshiptblCreditDebtnotices(db, listID) {
-    await mtblAccountingBooks(db).destroy({ where: { IDnotices: { [Op.in]: listID } } })
-    await mtblCreditsAccounting(db).destroy({ where: { IDCreditDebtnotices: { [Op.in]: listID } } })
-    await mtblNoticesRInvoice(db).destroy({ where: { IDnotices: { [Op.in]: listID } } })
+    await mtblAccountingBooks(db).destroy({ where: { IDnotices: {
+                [Op.in]: listID } } })
+    await mtblCreditsAccounting(db).destroy({ where: { IDCreditDebtnotices: {
+                [Op.in]: listID } } })
+    await mtblNoticesRInvoice(db).destroy({ where: { IDnotices: {
+                [Op.in]: listID } } })
 
     await mtblCreditDebtnotices(db).destroy({
         where: {
-            ID: { [Op.in]: listID }
+            ID: {
+                [Op.in]: listID }
         }
     })
 }
@@ -264,13 +268,11 @@ module.exports = {
                     tblCreditDebtnotices.belongsTo(mtblCurrency(db), { foreignKey: 'IDCurrency', sourceKey: 'IDCurrency', as: 'currency' })
                     tblCreditDebtnotices.findOne({
                         where: { ID: body.id },
-                        include: [
-                            {
-                                model: mtblCurrency(db),
-                                required: false,
-                                as: 'currency'
-                            },
-                        ],
+                        include: [{
+                            model: mtblCurrency(db),
+                            required: false,
+                            as: 'currency'
+                        }, ],
                     }).then(async data => {
                         if (data) {
                             let dataCus = await getDetailCustomer(data.IDCustomer)
@@ -309,13 +311,11 @@ module.exports = {
                             let tblCreditsAccounting = mtblCreditsAccounting(db);
                             tblCreditsAccounting.belongsTo(mtblDMTaiKhoanKeToan(db), { foreignKey: 'IDAccounting', sourceKey: 'IDAccounting', as: 'acc' })
                             await tblCreditsAccounting.findAll({
-                                include: [
-                                    {
-                                        model: mtblDMTaiKhoanKeToan(db),
-                                        required: false,
-                                        as: 'acc'
-                                    },
-                                ],
+                                include: [{
+                                    model: mtblDMTaiKhoanKeToan(db),
+                                    required: false,
+                                    as: 'acc'
+                                }, ],
                                 where: {
                                     IDCreditDebtnotices: data.ID,
                                     type: "CREDIT"
@@ -333,13 +333,11 @@ module.exports = {
                                 })
                             })
                             await tblCreditsAccounting.findAll({
-                                include: [
-                                    {
-                                        model: mtblDMTaiKhoanKeToan(db),
-                                        required: false,
-                                        as: 'acc'
-                                    },
-                                ],
+                                include: [{
+                                    model: mtblDMTaiKhoanKeToan(db),
+                                    required: false,
+                                    as: 'acc'
+                                }, ],
                                 where: {
                                     IDCreditDebtnotices: data.ID,
                                     type: "DEBIT"
@@ -455,7 +453,7 @@ module.exports = {
                         //  Hoàn ứng tạm ứng
                         if (body.loanAdvanceIDs) {
                             body.loanAdvanceIDs = JSON.parse(body.loanAdvanceIDs)
-                            // for (let idNo = 0; idNo < body.loanAdvanceIDs.length; idNo++)
+                                // for (let idNo = 0; idNo < body.loanAdvanceIDs.length; idNo++)
                             await createLoanAdvances(db, data.ID, body.loanAdvanceIDs, body.type)
                         }
                         if (body.loanAdvanceID) {
@@ -517,7 +515,7 @@ module.exports = {
                     var listInvoiceID = JSON.parse(body.listInvoiceID)
                     if (body.loanAdvanceIDs) {
                         body.loanAdvanceIDs = JSON.parse(body.loanAdvanceIDs)
-                        // for (let idNo = 0; idNo < body.loanAdvanceIDs.length; idNo++) {
+                            // for (let idNo = 0; idNo < body.loanAdvanceIDs.length; idNo++) {
                         await updateLoanAdvances(db, body.id, body.loanAdvanceIDs)
 
                         // }
@@ -717,13 +715,11 @@ module.exports = {
                         order: [
                             ['ID', 'DESC']
                         ],
-                        include: [
-                            {
-                                model: mtblCurrency(db),
-                                required: false,
-                                as: 'currency'
-                            },
-                        ],
+                        include: [{
+                            model: mtblCurrency(db),
+                            required: false,
+                            as: 'currency'
+                        }, ],
                     }).then(async data => {
                         var array = [];
                         for (var i = 0; i < data.length; i++) {
@@ -756,13 +752,11 @@ module.exports = {
                             let tblCreditsAccounting = mtblCreditsAccounting(db);
                             tblCreditsAccounting.belongsTo(mtblDMTaiKhoanKeToan(db), { foreignKey: 'IDAccounting', sourceKey: 'IDAccounting', as: 'acc' })
                             await tblCreditsAccounting.findAll({
-                                include: [
-                                    {
-                                        model: mtblDMTaiKhoanKeToan(db),
-                                        required: false,
-                                        as: 'acc'
-                                    },
-                                ],
+                                include: [{
+                                    model: mtblDMTaiKhoanKeToan(db),
+                                    required: false,
+                                    as: 'acc'
+                                }, ],
                                 where: {
                                     IDCreditDebtnotices: data[i].ID,
                                     type: "CREDIT"
@@ -780,13 +774,11 @@ module.exports = {
                                 })
                             })
                             await tblCreditsAccounting.findAll({
-                                include: [
-                                    {
-                                        model: mtblDMTaiKhoanKeToan(db),
-                                        required: false,
-                                        as: 'acc'
-                                    },
-                                ],
+                                include: [{
+                                    model: mtblDMTaiKhoanKeToan(db),
+                                    required: false,
+                                    as: 'acc'
+                                }, ],
                                 where: {
                                     IDCreditDebtnotices: data[i].ID,
                                     type: "DEBIT"

@@ -42,6 +42,30 @@ var mtblDecidedInsuranceSalary = require('../tables/hrmanage/tblDecidedInsurance
 var mtblRewardPunishmentRStaff = require('../tables/hrmanage/tblRewardPunishmentRStaff')
 
 var database = require('../database');
+async function handleCalculateAdvancePayment(db, idStaff) {
+    let staffData = await mtblHopDongNhanSu(db).findOne({
+        where: { IDNhanVien: idStaff },
+        order: [
+            ['ID', 'ASC']
+        ],
+    })
+    var diff;
+    if (staffData) {
+        let now = new Date()
+        let dateSign = new Date(staffData.Date)
+        diff = await monthDiff(now, dateSign)
+        if (diff > 12) {
+            diff = 12 + Math.floor(diff / 60)
+        }
+
+    }
+    return diff ? diff : 0
+}
+async function monthDiff(d1, d2) {
+    var months = 0;
+    months = (Number(moment(d1).format('MM')) + (Number(moment(d1).format('YY')) * 12)) - (Number(moment(d2).format('MM')) + (12 * Number(moment(d2).format('YY'))))
+    return months;
+}
 async function deleteRelationshiptblDMNhanvien(db, listID) {
     await mtblIncreaseSalariesAndStaff(db).destroy({
         where: {
@@ -474,6 +498,7 @@ module.exports = {
                             statusEmployee: data.Status ? data.Status : '',
                             productivityWages: data.ProductivityWages ? data.ProductivityWages : '',
                             coefficientsSalary: data.CoefficientsSalary ? data.CoefficientsSalary : 0,
+                            nodateoff: data.NoDateOff ? data.NoDateOff : 0,
                         }
                         obj['fileAttach'] = {
                             id: data.file ? data.file.ID : null,
@@ -532,6 +557,7 @@ module.exports = {
         database.connectDatabase().then(async db => {
             if (db) {
                 try {
+                    var idNhanVien
                     let check = await mtblDMNhanvien(db).findOne({
                         where: {
                             StaffCode: body.staffCode,
@@ -573,7 +599,9 @@ module.exports = {
                             IDSpecializedSoftware: body.idSpecializedSoftware ? body.idSpecializedSoftware : null,
                             IDMayChamCong: body.idMayChamCong ? body.idMayChamCong : null,
                             FileAttachID: body.fileAttach ? body.fileAttach.id : null,
+                            NoDateOff: body.nodateoff ? body.nodateoff : null,
                         }).then(async data => {
+                            idNhanVien = data.ID
                             await mtblBangLuong(db).create({
                                 Date: body.signDate ? body.signDate : null,
                                 WorkingSalary: body.workingSalary ? body.workingSalary : 0,
@@ -601,6 +629,18 @@ module.exports = {
                                 Status: body.status ? body.status : '',
                                 ProductivityWages: body.productivityWages ? body.productivityWages : null,
                                 CoefficientsSalary: body.coefficientsSalary ? body.coefficientsSalary : null,
+                            }).then(async data => {
+                                var nodateoff
+                                if (!body.nodateoff) {
+                                    nodateoff = await handleCalculateAdvancePayment(db, idNhanVien)
+                                    await mtblDMNhanvien(db).update({
+                                        NoDateOff: nodateoff,
+                                    }, {
+                                        where: {
+                                            ID: idNhanVien
+                                        }
+                                    })
+                                }
                             })
                             var result = {
                                 contractID: contractID.ID,
@@ -634,6 +674,7 @@ module.exports = {
             if (db) {
                 try {
                     let update = [];
+                    let updatenghiphep = [];
                     let idCHamCong = await mtblDMNhanvien(db).findOne({
                         where: {
                             ID: body.id,
@@ -767,6 +808,14 @@ module.exports = {
                             update.push({ key: 'ContactUrgent', value: body.contactUrgent });
                         if (body.email || body.email === '')
                             update.push({ key: 'Email', value: body.email });
+                        if (body.nodateoff || body.nodateoff === '') {
+                            if (body.nodateoff === '') {
+                                update.push({ key: 'NoDateOff', value: null });
+                            } else {
+                                update.push({ key: 'NoDateOff', value: body.nodateoff });
+
+                            }
+                        }
                         if (body.idMayChamCong || body.idMayChamCong === '') {
                             if (body.idMayChamCong === '')
                                 update.push({ key: 'IDMayChamCong', value: null });
@@ -775,6 +824,13 @@ module.exports = {
                         }
                         database.updateTable(update, mtblDMNhanvien(db), body.id).then(response => {
                             if (response == 1) {
+                                mtblNghiPhep(db).update({
+                                    AdvancePayment: body.nodateoff ? body.nodateoff : null,
+                                }, {
+                                    where: {
+                                        IDNhanVien: body.id
+                                    }
+                                })
                                 res.json(Result.ACTION_SUCCESS);
                             } else {
                                 res.json(Result.SYS_ERROR_RESULT);
@@ -1102,7 +1158,19 @@ module.exports = {
                         ],
                     }).then(data => {
                         var array = [];
-                        data.forEach(element => {
+                        data.forEach(async element => {
+                            var nodateoff
+                            if (!element.NoDateOff) {
+                                nodateoff = await handleCalculateAdvancePayment(db, element.ID)
+                                console.log(nodateoff);
+                                await tblDMNhanvien.update({
+                                    NoDateOff: nodateoff,
+                                }, {
+                                    where: {
+                                        ID: element.ID
+                                    }
+                                })
+                            }
                             var obj = {
                                 stt: stt,
                                 id: Number(element.ID),

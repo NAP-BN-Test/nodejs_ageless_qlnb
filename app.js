@@ -313,13 +313,26 @@ app.post('/qlnb/render_automatic_work', async function(req, res) {
         let body = req.body;
         var pathFirst = '';
         var objKey = {};
+        var namefile = ''
         await database.connectDatabase().then(async db => {
             // pathFirst = await getPathFromtblTmplate(db, body.code, body.id)
             if (body.code == 'ycms') {
                 objKey = await handleRequestShopping(db, body.id)
+                let tblYeuCauMuaSam = mtblYeuCauMuaSam(db); // bắt buộc
+                await tblYeuCauMuaSam.findOne({
+                    where: { ID: body.id }
+                }).then(async data => {
+                    nameFile = data.RequestCode
+                })
                 pathFirst = 'templateYCMS.docx'
             } else if (body.code == 'dntt') {
                 objKey = await handlePaymentOrder(db, body.id)
+                let tblDeNghiThanhToan = mtblDeNghiThanhToan(db); // bắt buộc
+                await tblDeNghiThanhToan.findOne({
+                    where: { ID: body.id }
+                }).then(async data => {
+                    nameFile = data.PaymentOrderCode
+                })
                 pathFirst = 'templateDNTT.docx'
             } else {
                 objKey = await handleRequestShopping(db, body.id)
@@ -345,9 +358,9 @@ app.post('/qlnb/render_automatic_work', async function(req, res) {
                     var buf = doc.getZip().generate({ type: 'nodebuffer' });
                     // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
                     // var randomOutput = 'output-' + Math.floor(Math.random() * Math.floor(100000000000)) + '.docx';
-                    fs.writeFileSync(path.resolve(pathTo, 'export-file-word.docx'), buf);
+                    fs.writeFileSync(path.resolve(pathTo, nameFile + '.docx'), buf);
                     var result = {
-                        link: 'http://dbdev.namanphu.vn:1357/ageless_sendmail/' + 'export-file-word.docx',
+                        link: 'http://dbdev.namanphu.vn:1357/ageless_sendmail/' + nameFile + '.docx',
                         status: Constant.STATUS.SUCCESS,
                         message: Constant.MESSAGE.ACTION_SUCCESS,
                     }

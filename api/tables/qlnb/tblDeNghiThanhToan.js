@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-module.exports = function (db) {
+module.exports = function(db) {
     var table = db.define('tblDeNghiThanhToan', {
         ID: {
             type: Sequelize.BIGINT,

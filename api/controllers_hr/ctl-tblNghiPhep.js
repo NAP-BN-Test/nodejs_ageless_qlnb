@@ -167,30 +167,29 @@ async function handleCalculateDayOff(dateStart, dateEnd) {
             subtractHalfDay += 1
         }
     }
-    console.log(subtractHalfDay);
+    console.log(subtractHalfDay, days.length);
     if (days.length < 1) {
-        console.log("333333333333333", checkDateStart);
+        console.log("333333333333333", checkDateStart, checkDateEnd, Number(dateStart.slice(8, 10)), Number(dateEnd.slice(8, 10)));
 
         if (Number(dateStart.slice(8, 10)) != Number(dateEnd.slice(8, 10))) {
-            if ((checkDateStart <= 12 && checkDateEnd <= 13) || ((checkDateStart >= 12 && checkDateEnd >= 13)))
-                result = 1.5
-            if ((checkDateStart == 12 && checkDateEnd == 13) || ((checkDateStart >= checkDateEnd)))
-                result = 1
-            else
-                result = 2
+            if ((checkDateStart <= 12 && checkDateEnd <= 13) || ((checkDateStart >= 12 && checkDateEnd >= 13))) { result = 1.5 }
+            if ((checkDateStart == 12 && checkDateEnd == 13) || ((checkDateStart >= checkDateEnd))) { result = 1 } else { result = 2 }
         }
         // if (checkDateStart >= 12)
         //     result = 1.5
         // else
         //     result = 2
         else {
-            if ((checkDateStart <= 12 && checkDateEnd <= 13) || ((checkDateStart >= 12 && checkDateEnd >= 13)))
+            if ((checkDateStart <= 12 && checkDateEnd <= 13) || ((checkDateStart >= 12 && checkDateEnd >= 13))) {
                 result = 0.5
-            if ((checkDateStart == 12 && checkDateEnd == 13) || ((checkDateStart >= checkDateEnd)))
+            } else if ((checkDateStart == 12 && checkDateEnd == 13) || ((checkDateStart >= checkDateEnd))) {
                 result = 0
-            else
+            } else {
                 result = 1
+            }
         }
+        console.log("4444444444444", result);
+
     } else
         result = days.length - array7th.length + subtractHalfDay
     return result
@@ -254,25 +253,29 @@ module.exports = {
                     let deducted = 0 // số lương phép bị trừ
                     let arrayRespone = JSON.parse(body.array)
                     if (body.type == 'TakeLeave') {
-                        seniority = await handleCalculateAdvancePayment(db, body.idNhanVien) // thâm niên
-                            // var quotient = Math.floor(y / x);  // lấy nguyên
-                            // var remainder = y % x; // lấy dư
-                        if (seniority > 12) {
-                            advancePayment = 12 + Math.floor(seniority / 60)
-                        } else {
-                            let staffData = await mtblHopDongNhanSu(db).findOne({
-                                where: { IDNhanVien: body.idNhanVien },
-                                order: [
-                                    ['ID', 'ASC']
-                                ],
-                            })
-                            if (staffData) {
-                                let dateSign = new Date(staffData.Date)
-                                advancePayment = 12 - Number(moment(dateSign).format('MM'))
-                                if (Number(moment(dateSign).format('DD')) == 1)
-                                    advancePayment += 1
-                            }
+                        let staffData = await mtblDMNhanvien(db).findOne({
+                            where: { ID: body.idNhanVien }
+                        })
+                        if (staffData) {
+                            advancePayment = staffData.NoDateOff
                         }
+                        // seniority = await handleCalculateAdvancePayment(db, body.idNhanVien) // thâm niên
+                        // if (seniority > 12) {
+                        //     advancePayment = 12 + Math.floor(seniority / 60)
+                        // } else {
+                        //     let staffData = await mtblHopDongNhanSu(db).findOne({
+                        //         where: { IDNhanVien: body.idNhanVien },
+                        //         order: [
+                        //             ['ID', 'ASC']
+                        //         ],
+                        //     })
+                        //     if (staffData) {
+                        //         let dateSign = new Date(staffData.Date)
+                        //         advancePayment = 12 - Number(moment(dateSign).format('MM'))
+                        //         if (Number(moment(dateSign).format('DD')) == 1)
+                        //             advancePayment += 1
+                        //     }
+                        // }
                         for (let i = 0; i < arrayRespone.length; i++) {
                             let numberHolidayArray = 0
                             if (!arrayRespone[i].timeStart)

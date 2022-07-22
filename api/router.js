@@ -670,6 +670,7 @@ module.exports = function(app) {
     // Cơ quan nhà nước
     var tblStateAgencies = require('./controller_finance/ctl-tblCoQuanNhaNuoc')
     app.route('/qlnb/get_list_tbl_state_agencies').post(tblStateAgencies.getListtblCoQuanNhaNuoc);
+    app.route('/qlnb/get_list_tbl_state_agencies_chothanhtoan').post(tblStateAgencies.getListtblCoQuanNhaNuoc_CHOTHANHTOAN);
     app.route('/qlnb/track_receipts').post(tblStateAgencies.trackReceipts);
     app.route('/qlnb/add_tbl_state_agencies').post(tblStateAgencies.addtblCoQuanNhaNuoc);
     app.route('/qlnb/update_tbl_state_agencies').post(tblStateAgencies.updatetblCoQuanNhaNuoc);

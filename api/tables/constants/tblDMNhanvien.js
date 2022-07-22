@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-module.exports = function (db) {
+module.exports = function(db) {
     var table = db.define('tblDMNhanvien', {
         ID: {
             type: Sequelize.BIGINT,
@@ -39,6 +39,7 @@ module.exports = function (db) {
         FileAttachID: Sequelize.BIGINT,
         OldProductivity: Sequelize.FLOAT,
         Increase: Sequelize.FLOAT,
+        NoDateOff: Sequelize.FLOAT,
     });
 
     return table;

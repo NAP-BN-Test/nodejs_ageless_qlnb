@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-module.exports = function (db) {
+module.exports = function(db) {
     var table = db.define('tblInvoice', {
         ID: {
             type: Sequelize.BIGINT,
@@ -11,7 +11,9 @@ module.exports = function (db) {
         Payments: Sequelize.STRING,
         PayDate: Sequelize.DATE,
         PaidAmount: Sequelize.FLOAT,
+        TotalCqnn: Sequelize.FLOAT,
         IsInvoice: Sequelize.BOOLEAN,
+        IDCqnn: Sequelize.INTEGER,
     });
     return table;
 }
