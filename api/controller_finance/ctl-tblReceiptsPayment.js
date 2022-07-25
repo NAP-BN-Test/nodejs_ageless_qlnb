@@ -1,6 +1,7 @@
 const Constant = require('../constants/constant');
 const Op = require('sequelize').Op;
 const Sequelize = require('sequelize');
+const axios = require('axios');
 
 const Result = require('../constants/result');
 var moment = require('moment');
@@ -59,6 +60,22 @@ async function deleteRelationshiptblReceiptsPayment(db, listID) {
                 //         }
                 //     })
                 // }
+            if (data[d].IDCqnn) {
+                let objPmcm = {
+                    "id": data[d].IDCqnn,
+                    "status": 2
+                }
+                console.log(objPmcm, typeof objPmcm, 123456);
+                const URI = `http://ageless-ldms-api.vnsolutiondev.com/api/v1/receipt/changestatus_pmtc`
+                await axios.post(URI, objPmcm, {
+                    "headers": {
+                        "content-type": "application/json",
+                    },
+                }).then(async data => {
+                    console.log(data.data);
+                });
+                console.log('----------------------------------------Đợi api PMCM---------------------------------------');
+            }
             if (data[d].IDSpecializedSoftware) {
                 let invoice = await mtblInvoice(db).findOne({
                     where: {
@@ -1168,6 +1185,45 @@ async function allotmentInvoiceOrCredit(db, array, receiptsPaymentID, currencyID
             })
     }
 }
+
+// Từ 2-3
+async function changestatus_pmtc_paid_to_await(arrayReciept) {
+    for (const receiptID of arrayReciept) {
+        let objPmcm = {
+            "id": receiptID,
+            "status": 3
+        }
+        console.log(objPmcm);
+        const URI = `http://ageless-ldms-api.vnsolutiondev.com/api/v1/receipt/changestatus_pmtc`
+        await axios.post(URI, objPmcm, {
+            "headers": {
+                "content-type": "application/json",
+            },
+        }).then(async data => {
+            console.log(data.data);
+        });
+        console.log('----------------------------------------Đợi api PMCM---------------------------------------');
+    }
+}
+// Từ 3-2
+async function changestatus_pmtc_await_to_paid(arrayReciept) {
+    for (const receiptID of arrayReciept) {
+        let objPmcm = {
+            "id": receiptID,
+            "status": 2
+        }
+        console.log(objPmcm);
+        const URI = `http://ageless-ldms-api.vnsolutiondev.com/api/v1/receipt/changestatus_pmtc`
+        await axios.post(URI, objPmcm, {
+            "headers": {
+                "content-type": "application/json",
+            },
+        }).then(async data => {
+            console.log(data.data);
+        });
+        console.log('----------------------------------------Đợi api PMCM---------------------------------------');
+    }
+}
 module.exports = {
     deleteRelationshiptblReceiptsPayment,
     //  get_detail_tbl_receipts_payment
@@ -1653,6 +1709,7 @@ module.exports = {
                     else
                         objCreate['IDCustomer'] = body.object.id
                     await mtblReceiptsPayment(db).create(objCreate).then(async data => {
+                        await changestatus_pmtc_paid_to_await(listInvoiceID)
                         let amountMin = 0
                         if (allotment.length > 0) {
                             await allotmentInvoiceOrCredit(db, allotment, data.ID, body.idCurrency ? body.idCurrency : null)
@@ -1669,19 +1726,6 @@ module.exports = {
                                 await recalculateTheAmountOfCredit(db, body.amount ? body.amount : 0, listInvoiceID, data.ID, 'create', body.idCurrency ? body.idCurrency : null, body.type, body.date ? body.date : null, body.object.type = 'cqnn' ? 'cqnn' : null)
                             }
                         }
-                        // if (body.object.type == 'cqnn' && body.object.id == 0) {
-                        //     let typeCoQuanNhaNuoc = 'debtNotices'
-                        //     if (body.type && body.type == 'receipt') {
-                        //         typeCoQuanNhaNuoc = 'withdraw'
-                        //     } else if (body.type && body.type == 'payment') {
-                        //         typeCoQuanNhaNuoc = 'payment'
-                        //     } else if (body.type && body.type == 'debit') {
-                        //         typeCoQuanNhaNuoc = 'debtNotices'
-                        //     } else if (body.type && body.type == 'spending') {
-                        //         typeCoQuanNhaNuoc = 'withdraw'
-                        //     }
-                        //     await createTBLCoQuanNhaNuoc()
-                        // }
                         if (body.assetLiquidationIDs) {
                             body.assetLiquidationIDs = JSON.parse(body.assetLiquidationIDs)
                             for (var i = 0; i < body.assetLiquidationIDs.length; i++) {
@@ -1828,7 +1872,6 @@ module.exports = {
             if (db) {
                 try {
                     let update = [];
-
                     var listInvoiceID = body.listInvoiceID ? JSON.parse(body.listInvoiceID) : []
                     var listCreditID = body.listCreditID ? JSON.parse(body.listCreditID) : []
                     var listCredit = body.listCredit ? JSON.parse(body.listCredit) : []
@@ -1992,7 +2035,19 @@ module.exports = {
                     else
                         update.push({ key: 'IDCustomer', value: body.object.id });
                     let customerID = body.object.id
+                    await mtblPaymentRInvoice(db).findAll({
+                        where: {
+                            IDPayment: body.id
+                        }
+                    }).then(async data => {
+                        let listArrReceipt = []
+                        for (item of data) {
+                            listArrReceipt.push(item.IDCqnn)
+                        }
+                        await changestatus_pmtc_await_to_paid(listArrReceipt)
+                    })
                     await database.updateTable(update, mtblReceiptsPayment(db), body.id).then(async response => {
+                        await changestatus_pmtc_paid_to_await(listInvoiceID)
                         if (response == 1) {
                             let detail = await mtblReceiptsPayment(db).findOne({
                                 where: {
