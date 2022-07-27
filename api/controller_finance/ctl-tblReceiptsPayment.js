@@ -765,6 +765,8 @@ async function createTBLCoQuanNhaNuoc(db, date, voucherNumber, moneyNumber, type
         Status: 'Mới',
         ReceiptsPaymentID: receiptsPaymentID,
     })
+    console.log('Đã tạo xong');
+    console.log(1111111111);
 }
 var mtblDMNhaCungCap = require('../tables/qlnb/tblDMNhaCungCap');
 // 
@@ -1648,7 +1650,6 @@ module.exports = {
         var listInvoiceID = []
         var listCreditID = []
         var allotment = []
-        console.log(body);
         if (body.listInvoiceID)
             listInvoiceID = JSON.parse(body.listInvoiceID)
         if (body.allotment)
@@ -1736,6 +1737,21 @@ module.exports = {
                                 })
 
                             }
+                        }
+                        console.log(body.object, 1234556);
+                        if (body.object.type == 'cqnn' && body.object.id == 0) {
+
+                            let typeCoQuanNhaNuoc = 'debtNotices'
+                            if (body.type && body.type == 'receipt') {
+                                typeCoQuanNhaNuoc = 'withdraw'
+                            } else if (body.type && body.type == 'payment') {
+                                typeCoQuanNhaNuoc = 'payment'
+                            } else if (body.type && body.type == 'debit') {
+                                typeCoQuanNhaNuoc = 'debtNotices'
+                            } else if (body.type && body.type == 'spending') {
+                                typeCoQuanNhaNuoc = 'withdraw'
+                            }
+                            await createTBLCoQuanNhaNuoc(db, body.date ? body.date : null, body.voucherNumber ? body.voucherNumber : 'PT/PC', body.amount ? body.amount : null, typeCoQuanNhaNuoc, body.id)
                         }
                         if (body.paymentOrderID) {
                             if (body.type == 'payment') {
@@ -1926,7 +1942,7 @@ module.exports = {
                             ReceiptsPaymentID: body.id
                         }
                     })
-                    if (body.object.type == 'customer' && body.object.id == 11) {
+                    if (body.object.type == 'cqnn' && body.object.id == 0) {
 
                         let typeCoQuanNhaNuoc = 'debtNotices'
                         if (body.type && body.type == 'receipt') {
