@@ -804,9 +804,9 @@ module.exports = {
                             rq: item.Type == 'withdraw' ? item.MoneyNumber : null,
                             invoiceNumber: item.Type == 'invoice' ? item.MoneyNumber : null,
                             sttbl: item.Type == 'invoice' ? item.MoneyNumber : null,
-                            sdck: sdktcsCQNN + (item.Type == 'payment' ? Number(item.MoneyNumber) : 0) + (item.Type == 'debtNotices' ? Number(item.MoneyNumber) : 0) - (item.Type == 'invoice' ? Number(item.MoneyNumber) : 0) + (item.Type == 'withdraw' ? Number(item.MoneyNumber) : 0),
+                            sdck: sdktcsCQNN + (item.Type == 'payment' ? Number(item.MoneyNumber) : 0) + (item.Type == 'debtNotices' ? Number(item.MoneyNumber) : 0) - (item.Type == 'invoice' ? Number(item.MoneyNumber) : 0) - (item.Type == 'withdraw' ? Number(item.MoneyNumber) : 0),
                         })
-                        sdktcsCQNN = sdktcsCQNN + (item.Type == 'payment' ? Number(item.MoneyNumber) : 0) + (item.Type == 'debtNotices' ? Number(item.MoneyNumber) : 0) - (item.Type == 'invoice' ? Number(item.MoneyNumber) : 0) + (item.Type == 'withdraw' ? Number(item.MoneyNumber) : 0)
+                        sdktcsCQNN = sdktcsCQNN + (item.Type == 'payment' ? Number(item.MoneyNumber) : 0) + (item.Type == 'debtNotices' ? Number(item.MoneyNumber) : 0) - (item.Type == 'invoice' ? Number(item.MoneyNumber) : 0) - (item.Type == 'withdraw' ? Number(item.MoneyNumber) : 0)
                         stt += 1;
                     }
                 })

@@ -765,8 +765,6 @@ async function createTBLCoQuanNhaNuoc(db, date, voucherNumber, moneyNumber, type
         Status: 'Mới',
         ReceiptsPaymentID: receiptsPaymentID,
     })
-    console.log('Đã tạo xong');
-    console.log(1111111111);
 }
 var mtblDMNhaCungCap = require('../tables/qlnb/tblDMNhaCungCap');
 // 
@@ -1743,7 +1741,7 @@ module.exports = {
 
                             let typeCoQuanNhaNuoc = 'debtNotices'
                             if (body.type && body.type == 'receipt') {
-                                typeCoQuanNhaNuoc = 'withdraw'
+                                typeCoQuanNhaNuoc = 'invoice'
                             } else if (body.type && body.type == 'payment') {
                                 typeCoQuanNhaNuoc = 'payment'
                             } else if (body.type && body.type == 'debit') {
@@ -1946,7 +1944,7 @@ module.exports = {
 
                         let typeCoQuanNhaNuoc = 'debtNotices'
                         if (body.type && body.type == 'receipt') {
-                            typeCoQuanNhaNuoc = 'withdraw'
+                            typeCoQuanNhaNuoc = 'invoice'
                         } else if (body.type && body.type == 'payment') {
                             typeCoQuanNhaNuoc = 'payment'
                         } else if (body.type && body.type == 'debit') {
@@ -1962,11 +1960,10 @@ module.exports = {
                         update.push({ key: 'ApplicantReceiverName', value: body.applicantReceiverName });
                     update.push({ key: 'Unknown', value: body.isUndefined });
                     if (body.withdrawal || body.withdrawal === '')
-                        update.push({ key: 'Withdrawal', value: body.withdrawal });
-                    if (body.voucherNumber || body.voucherNumber === '') {
-                        update.push({ key: 'VoucherNumber', value: body.voucherNumber });
-                        update.push({ key: 'CodeNumber', value: body.voucherNumber });
-                    }
+                        if (body.voucherNumber || body.voucherNumber === '') {
+                            update.push({ key: 'VoucherNumber', value: body.voucherNumber });
+                            update.push({ key: 'CodeNumber', value: body.voucherNumber });
+                        }
                     if (body.address || body.address === '')
                         update.push({ key: 'Address', value: body.address });
                     if (body.amountWords || body.amountWords === '')
