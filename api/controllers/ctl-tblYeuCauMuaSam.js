@@ -56,6 +56,7 @@ module.exports = {
     // add_tbl_yeucaumuasam
     addtblYeuCauMuaSam: (req, res) => {
         let body = req.body;
+        console.log(body);
         database.connectDatabase().then(async db => {
             if (db) {
                 try {
@@ -67,9 +68,10 @@ module.exports = {
                         RequireDate: body.requireDate ? body.requireDate : null,
                         Reason: body.reason ? body.reason : '',
                         AssetName: body.assetName ? body.assetName : '',
-                        Status: 'Chờ phê duyệt',
+                        Status: 'Chờ trưởng bộ phận phê duyệt',
                         IDPheDuyet1: body.idPheDuyet1 ? body.idPheDuyet1 : null,
                         IDPheDuyet2: body.idPheDuyet2 ? body.idPheDuyet2 : null,
+                        IDPheDuyet3: body.idPheDuyet3 ? body.idPheDuyet3 : null,
                         IDSupplier: body.idSupplier ? body.idSupplier : null,
                         Type: body.type ? body.type : '',
                     }).then(async data => {
@@ -198,6 +200,12 @@ module.exports = {
                         else
                             update.push({ key: 'IDPheDuyet1', value: body.idPheDuyet1 });
                     }
+                    if (body.idPheDuyet3 || body.idPheDuyet3 === '') {
+                        if (body.idPheDuyet3 === '')
+                            update.push({ key: 'IDPheDuyet3', value: null });
+                        else
+                            update.push({ key: 'IDPheDuyet3', value: body.idPheDuyet3 });
+                    }
                     database.updateTable(update, mtblYeuCauMuaSam(db), body.id).then(response => {
                         if (response == 1) {
                             res.json(Result.ACTION_SUCCESS);
@@ -269,7 +277,7 @@ module.exports = {
             if (db) {
                 try {
                     await mtblYeuCauMuaSam(db).update({
-                        Status: 'Đang phê duyệt',
+                        Status: 'Chờ hành chính nhân sự phê duyệt',
                     }, { where: { ID: body.id } })
                     var result = {
                         status: Constant.STATUS.SUCCESS,
@@ -293,7 +301,31 @@ module.exports = {
             if (db) {
                 try {
                     await mtblYeuCauMuaSam(db).update({
-                        Status: 'Đã phê duyệt',
+                        Status: 'Chờ thủ trưởng phê duyệt',
+                    }, { where: { ID: body.id } })
+                    var result = {
+                        status: Constant.STATUS.SUCCESS,
+                        message: Constant.MESSAGE.ACTION_SUCCESS,
+                    }
+                    res.json(result);
+                } catch (error) {
+                    console.log(error);
+                    res.json(Result.SYS_ERROR_RESULT)
+                }
+            } else {
+                res.json(Constant.MESSAGE.USER_FAIL)
+            }
+        })
+    },
+    // approval_third_approver
+    approvalThirdApprover: (req, res) => {
+        let body = req.body;
+        database.connectDatabase().then(async db => {
+            let body = req.body;
+            if (db) {
+                try {
+                    await mtblYeuCauMuaSam(db).update({
+                        Status: 'Hoàn thành',
                     }, { where: { ID: body.id } })
                     var result = {
                         status: Constant.STATUS.SUCCESS,
@@ -341,6 +373,30 @@ module.exports = {
                 try {
                     await mtblYeuCauMuaSam(db).update({
                         ReasonReject2: body.reason,
+                        Status: 'Từ chối',
+                    }, { where: { ID: body.id } })
+                    var result = {
+                        status: Constant.STATUS.SUCCESS,
+                        message: Constant.MESSAGE.ACTION_SUCCESS,
+                    }
+                    res.json(result);
+                } catch (error) {
+                    console.log(error);
+                    res.json(Result.SYS_ERROR_RESULT)
+                }
+            } else {
+                res.json(Constant.MESSAGE.USER_FAIL)
+            }
+        })
+    },
+    // refuse_third_approver
+    refuseThirdApprover: (req, res) => {
+        let body = req.body;
+        database.connectDatabase().then(async db => {
+            if (db) {
+                try {
+                    await mtblYeuCauMuaSam(db).update({
+                        ReasonReject3: body.reason,
                         Status: 'Từ chối',
                     }, { where: { ID: body.id } })
                     var result = {
@@ -986,6 +1042,7 @@ module.exports = {
                     tblYeuCauMuaSam.belongsTo(mtblDMNhanvien(db), { foreignKey: 'IDNhanVien', sourceKey: 'IDNhanVien', as: 'NhanVien' })
                     tblYeuCauMuaSam.belongsTo(mtblDMNhanvien(db), { foreignKey: 'IDPheDuyet1', sourceKey: 'IDPheDuyet1', as: 'PheDuyet1' })
                     tblYeuCauMuaSam.belongsTo(mtblDMNhanvien(db), { foreignKey: 'IDPheDuyet2', sourceKey: 'IDPheDuyet2', as: 'PheDuyet2' })
+                    tblYeuCauMuaSam.belongsTo(mtblDMNhanvien(db), { foreignKey: 'IDPheDuyet3', sourceKey: 'IDPheDuyet3', as: 'PheDuyet3' })
                     tblYeuCauMuaSam.belongsTo(tblDMBoPhan, { foreignKey: 'IDPhongBan', sourceKey: 'IDPhongBan', as: 'phongban' })
                     tblDMBoPhan.belongsTo(mtblDMChiNhanh(db), { foreignKey: 'IDChiNhanh', sourceKey: 'IDChiNhanh', as: 'chinhanh' })
                     let tblYeuCauMuaSamDetail = mtblYeuCauMuaSamDetail(db);
@@ -1023,6 +1080,11 @@ module.exports = {
                                 model: mtblDMNhanvien(db),
                                 required: false,
                                 as: 'PheDuyet2',
+                            },
+                            {
+                                model: mtblDMNhanvien(db),
+                                required: false,
+                                as: 'PheDuyet3',
                             },
                             {
                                 model: tblYeuCauMuaSamDetail,
@@ -1067,6 +1129,8 @@ module.exports = {
                                 namePheDuyet1: element.PheDuyet1 ? element.PheDuyet1.StaffName : null,
                                 idPheDuyet2: element.IDPheDuyet2 ? element.IDPheDuyet2 : null,
                                 namePheDuyet2: element.PheDuyet2 ? element.PheDuyet2.StaffName : null,
+                                idPheDuyet3: element.IDPheDuyet3 ? element.IDPheDuyet3 : null,
+                                namePheDuyet3: element.PheDuyet3 ? element.PheDuyet3.StaffName : null,
                                 reasonReject: reasonReject,
                                 line: element.line,
                             }
@@ -1710,6 +1774,7 @@ module.exports = {
                     tblYeuCauMuaSam.belongsTo(mtblDMNhanvien(db), { foreignKey: 'IDNhanVien', sourceKey: 'IDNhanVien', as: 'NhanVien' })
                     tblYeuCauMuaSam.belongsTo(mtblDMNhanvien(db), { foreignKey: 'IDPheDuyet1', sourceKey: 'IDPheDuyet1', as: 'PheDuyet1' })
                     tblYeuCauMuaSam.belongsTo(mtblDMNhanvien(db), { foreignKey: 'IDPheDuyet2', sourceKey: 'IDPheDuyet2', as: 'PheDuyet2' })
+                    tblYeuCauMuaSam.belongsTo(mtblDMNhanvien(db), { foreignKey: 'IDPheDuyet3', sourceKey: 'IDPheDuyet3', as: 'PheDuyet3' })
                     tblYeuCauMuaSam.belongsTo(tblDMBoPhan, { foreignKey: 'IDPhongBan', sourceKey: 'IDPhongBan', as: 'phongban' })
                     tblDMBoPhan.belongsTo(mtblDMChiNhanh(db), { foreignKey: 'IDChiNhanh', sourceKey: 'IDChiNhanh', as: 'chinhanh' })
                     let tblYeuCauMuaSamDetail = mtblYeuCauMuaSamDetail(db);
@@ -1749,6 +1814,11 @@ module.exports = {
                                 model: mtblDMNhanvien(db),
                                 required: false,
                                 as: 'PheDuyet2',
+                            },
+                            {
+                                model: mtblDMNhanvien(db),
+                                required: false,
+                                as: 'PheDuyet3',
                             },
                             {
                                 model: tblYeuCauMuaSamDetail,
@@ -1793,6 +1863,8 @@ module.exports = {
                                 namePheDuyet1: element.PheDuyet1 ? element.PheDuyet1.StaffName : null,
                                 idPheDuyet2: element.IDPheDuyet2 ? element.IDPheDuyet2 : null,
                                 namePheDuyet2: element.PheDuyet2 ? element.PheDuyet2.StaffName : null,
+                                idPheDuyet3: element.IDPheDuyet3 ? element.IDPheDuyet3 : null,
+                                namePheDuyet3: element.PheDuyet3 ? element.PheDuyet3.StaffName : null,
                                 reasonReject: reasonReject,
                                 line: element.line,
                             }
@@ -1897,6 +1969,7 @@ module.exports = {
                     tblYeuCauMuaSam.belongsTo(mtblDMNhanvien(db), { foreignKey: 'IDNhanVien', sourceKey: 'IDNhanVien', as: 'NhanVien' })
                     tblYeuCauMuaSam.belongsTo(mtblDMNhanvien(db), { foreignKey: 'IDPheDuyet1', sourceKey: 'IDPheDuyet1', as: 'PheDuyet1' })
                     tblYeuCauMuaSam.belongsTo(mtblDMNhanvien(db), { foreignKey: 'IDPheDuyet2', sourceKey: 'IDPheDuyet2', as: 'PheDuyet2' })
+                    tblYeuCauMuaSam.belongsTo(mtblDMNhanvien(db), { foreignKey: 'IDPheDuyet3', sourceKey: 'IDPheDuyet3', as: 'PheDuyet3' })
                     tblYeuCauMuaSam.belongsTo(mtblDMBoPhan(db), { foreignKey: 'IDPhongBan', sourceKey: 'IDPhongBan', as: 'phongban' })
                     let tblYeuCauMuaSamDetail = mtblYeuCauMuaSamDetail(db);
                     tblYeuCauMuaSam.hasMany(tblYeuCauMuaSamDetail, { foreignKey: 'IDYeuCauMuaSam', as: 'line' })
@@ -1952,6 +2025,8 @@ module.exports = {
                             namePheDuyet1: data.PheDuyet1 ? data.PheDuyet1.StaffName : null,
                             idPheDuyet2: data.IDPheDuyet2 ? data.IDPheDuyet2 : null,
                             namePheDuyet2: data.PheDuyet2 ? data.PheDuyet2.StaffName : null,
+                            idPheDuyet3: data.IDPheDuyet3 ? data.IDPheDuyet3 : null,
+                            namePheDuyet3: data.PheDuyet3 ? data.PheDuyet3.StaffName : null,
                             type: data.Type ? data.Type : '',
                             line: data.line,
                         }

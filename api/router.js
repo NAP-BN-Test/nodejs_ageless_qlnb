@@ -159,8 +159,10 @@ module.exports = function(app) {
     // button approval
     app.route('/qlnb/approval_first_approver').post(checkToken.checkToken, tblYeuCauMuaSam.approvalFirstApprover);
     app.route('/qlnb/approval_second_approver').post(checkToken.checkToken, tblYeuCauMuaSam.approvalSecondApprover);
+    app.route('/qlnb/approval_third_approver').post(checkToken.checkToken, tblYeuCauMuaSam.approvalThirdApprover);
     app.route('/qlnb/refuse_first_approver').post(checkToken.checkToken, tblYeuCauMuaSam.refuseFirstApprover);
     app.route('/qlnb/refuse_second_approver').post(checkToken.checkToken, tblYeuCauMuaSam.refuseSecondApprover);
+    app.route('/qlnb/refuse_third_approver').post(checkToken.checkToken, tblYeuCauMuaSam.refuseThirdApprover);
     app.route('/qlnb/cancel_purchase').post(checkToken.checkToken, tblYeuCauMuaSam.cancelPurchase);
     app.route('/qlnb/done_purchase').post(checkToken.checkToken, tblYeuCauMuaSam.donePurchase);
     // app.route('/qlnb/get_list_name_tbl_yeucaumuasam').post(checkToken.checkToken ,tblYeuCauMuaSam.getListNametblYeuCauMuaSam);

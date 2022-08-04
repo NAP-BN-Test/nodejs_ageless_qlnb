@@ -1318,7 +1318,6 @@ module.exports = {
     // confirm_head_department
     confirmHeadDepartment: (req, res) => {
         let body = req.body;
-        console.log('confirm_head_department');
         database.connectDatabase().then(async db => {
             if (db) {
                 try {
@@ -1356,31 +1355,8 @@ module.exports = {
             if (db) {
                 try {
                     let leave = await mtblNghiPhep(db).findOne({
-                            where: { ID: body.id }
-                        })
-                        // let tblDateOfLeave = mtblDateOfLeave(db);
-                        // await tblDateOfLeave.findAll({
-                        //     where: { LeaveID: leave.ID },
-                        // }).then(date => {
-                        //     for (let d = 0; d < date.length; d++) {
-                        //         var time = moment(date[d].DateEnd).add(17, 'hours').format('YYYY-MM-DD HH:mm:ss.SSS');
-                        //         let dbCon = db
-                        //         let idN = body.id
-                        //         var job = schedule.scheduleJob(time, async function() {
-                        //             await mtblNghiPhep(dbCon).update({
-                        //                 Status: 'Từ chối',
-                        //             }, {
-                        //                 where: {
-                        //                     ID: idN,
-                        //                     Status: {
-                        //                         [Op.ne]: 'Hoàn thành'
-                        //                     },
-                        //                 }
-                        //             })
-                        //         });
-                        //         console.log(job);
-                        //     }
-                        // })
+                        where: { ID: body.id }
+                    })
                     if (leave.Type == 'TakeLeave')
                         await mtblNghiPhep(db).update({
                             Status: 'Chờ hành chính nhân sự phê duyệt',
