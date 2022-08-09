@@ -3,6 +3,7 @@ const Op = require('sequelize').Op;
 const Result = require('../constants/result');
 var moment = require('moment');
 var mtblNghiPhep = require('../tables/hrmanage/tblNghiPhep')
+var mtblTimeAttendanceSummary = require('../tables/hrmanage/tblTimeAttendanceSummary')
 var database = require('../database');
 var mtblDMNhanvien = require('../tables/constants/tblDMNhanvien');
 var mtblLoaiChamCong = require('../tables/hrmanage/tblLoaiChamCong')
@@ -1642,46 +1643,53 @@ module.exports = {
             if (db) {
                 try {
                     let result = 0
-                    await mtblNghiPhep(db).findOne({
+                        // await mtblNghiPhep(db).findOne({
+                        //     where: {
+                        //         IDNhanVien: body.staffID,
+                        //         Type: 'TakeLeave',
+                        //     },
+                        //     order: [
+                        //         ['ID', 'DESC']
+                        //     ],
+                        // }).then(async data => {
+                        //     if (data)
+                        //         if (data.Status == 'Hoàn thành') {
+                        //             result = data.AdvancePayment - data.UsedLeave - data.Deducted
+                        //         } else {
+                        //             result = data.AdvancePayment - data.UsedLeave
+                        //         }
+                        //     else {
+                        //         let seniority = await handleCalculateAdvancePayment(db, body.staffID) // thâm niên
+                        //             // var quotient = Math.floor(y / x);  // lấy nguyên
+                        //             // var remainder = y % x; // lấy dư
+                        //         let advancePayment = 0
+                        //         if (seniority > 12) {
+                        //             advancePayment = 12 + Math.floor(seniority / 60)
+                        //         } else {
+                        //             let staffData = await mtblHopDongNhanSu(db).findOne({
+                        //                 where: { IDNhanVien: body.staffID },
+                        //                 order: [
+                        //                     ['ID', 'ASC']
+                        //                 ],
+                        //             })
+                        //             if (staffData) {
+                        //                 let dateSign = new Date(staffData.Date)
+                        //                 advancePayment = 12 - Number(moment(dateSign).format('MM'))
+                        //                 if (Number(moment(dateSign).format('DD')) == 1)
+                        //                     advancePayment += 1
+                        //             }
+                        //         }
+                        //         result = advancePayment
+                        //     }
+                        // })
+                    await mtblTimeAttendanceSummary(db).findOne({
                         where: {
-                            IDNhanVien: body.staffID,
-                            Type: 'TakeLeave',
-                        },
-                        order: [
-                            ['ID', 'DESC']
-                        ],
-                    }).then(async data => {
-                        if (data)
-                            if (data.Status == 'Hoàn thành') {
-                                result = data.AdvancePayment - data.UsedLeave - data.Deducted
-                            } else {
-                                result = data.AdvancePayment - data.UsedLeave
-                            }
-                        else {
-                            let seniority = await handleCalculateAdvancePayment(db, body.staffID) // thâm niên
-                                // var quotient = Math.floor(y / x);  // lấy nguyên
-                                // var remainder = y % x; // lấy dư
-                            let advancePayment = 0
-                            if (seniority > 12) {
-                                advancePayment = 12 + Math.floor(seniority / 60)
-                            } else {
-                                let staffData = await mtblHopDongNhanSu(db).findOne({
-                                    where: { IDNhanVien: body.staffID },
-                                    order: [
-                                        ['ID', 'ASC']
-                                    ],
-                                })
-                                if (staffData) {
-                                    let dateSign = new Date(staffData.Date)
-                                    advancePayment = 12 - Number(moment(dateSign).format('MM'))
-                                    if (Number(moment(dateSign).format('DD')) == 1)
-                                        advancePayment += 1
-                                }
-                            }
-                            result = advancePayment
+                            StaffID: body.staffID
                         }
+                    }).then(data => {
+                        if (data)
+                            result = data.Remaining
                     })
-
                     var resultRes = {
                         result: result,
                         status: Constant.STATUS.SUCCESS,
