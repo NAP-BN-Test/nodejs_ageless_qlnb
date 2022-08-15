@@ -1683,11 +1683,11 @@ module.exports = {
                         //     }
                         // })
                     await mtblTimeAttendanceSummary(db).findOne({
+                        order: [
+                            ['ID', 'DESC']
+                        ],
                         where: {
                             StaffID: body.staffID,
-                            order: [
-                                ['ID', 'DESC']
-                            ],
                         }
                     }).then(data => {
                         if (data)
