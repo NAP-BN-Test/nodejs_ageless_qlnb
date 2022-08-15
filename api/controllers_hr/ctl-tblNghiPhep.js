@@ -1691,7 +1691,7 @@ module.exports = {
                         }
                     }).then(data => {
                         if (data)
-                            result = data.Remaining
+                            result = data.RemainingPreviousYear
                     })
                     var resultRes = {
                         result: result,
