@@ -121,7 +121,6 @@ async function take7thDataToWork(year, month) {
 
 }
 async function handleCalculateDayOff(dateStart, dateEnd) {
-    console.log(dateStart, dateEnd);
     let result = 0;
     let subtractHalfDay = 0;
     let arrayMonth = []
@@ -131,7 +130,6 @@ async function handleCalculateDayOff(dateStart, dateEnd) {
         arrayMonth.push(m)
     }
     let days = await enumerateDaysBetweenDates(dateStart, dateEnd)
-    console.log("days", days);
     let array7th = [];
     for (var i = 0; i < days.length; i++) {
         var monthOfDay = moment(days[i]).add(14, 'hours').format('MM')
@@ -153,7 +151,6 @@ async function handleCalculateDayOff(dateStart, dateEnd) {
     let arrayWorkStart = await take7thDataToWork(yearOfDayStart, monthOfDayStart)
     let arrayWorkEnd = await take7thDataToWork(yearOfDayEnd, monthOfDayEnd)
     if (mModules.checkDuplicate(arrayWorkStart, Number(dayStart))) {
-        console.log("1111111", checkDateStart);
         if (checkDateStart <= 12) {
             subtractHalfDay += 0.5
         } else {
@@ -161,7 +158,6 @@ async function handleCalculateDayOff(dateStart, dateEnd) {
         }
     }
     if (mModules.checkDuplicate(arrayWorkEnd, Number(dayEnd))) {
-        console.log("2222222", checkDateEnd);
         if (checkDateEnd <= 13) {
             subtractHalfDay += 0.5
         } else {
@@ -170,8 +166,6 @@ async function handleCalculateDayOff(dateStart, dateEnd) {
     }
     console.log(subtractHalfDay, days.length);
     if (days.length < 1) {
-        console.log("333333333333333", checkDateStart, checkDateEnd, Number(dateStart.slice(8, 10)), Number(dateEnd.slice(8, 10)));
-
         if (Number(dateStart.slice(8, 10)) != Number(dateEnd.slice(8, 10))) {
             if ((checkDateStart <= 12 && checkDateEnd <= 13) || ((checkDateStart >= 12 && checkDateEnd >= 13))) { result = 1.5 }
             if ((checkDateStart == 12 && checkDateEnd == 13) || ((checkDateStart >= checkDateEnd))) { result = 1 } else { result = 2 }
@@ -189,8 +183,6 @@ async function handleCalculateDayOff(dateStart, dateEnd) {
                 result = 1
             }
         }
-        console.log("4444444444444", result);
-
     } else
         result = days.length - array7th.length + subtractHalfDay
     return result
@@ -222,7 +214,6 @@ module.exports = {
     // add_tbl_nghiphep
     addtblNghiPhep: (req, res) => {
         let body = req.body;
-        console.log(body);
         database.connectDatabase().then(async db => {
             if (db) {
                 try {
@@ -260,23 +251,6 @@ module.exports = {
                         if (staffData) {
                             advancePayment = staffData.NoDateOff
                         }
-                        // seniority = await handleCalculateAdvancePayment(db, body.idNhanVien) // thâm niên
-                        // if (seniority > 12) {
-                        //     advancePayment = 12 + Math.floor(seniority / 60)
-                        // } else {
-                        //     let staffData = await mtblHopDongNhanSu(db).findOne({
-                        //         where: { IDNhanVien: body.idNhanVien },
-                        //         order: [
-                        //             ['ID', 'ASC']
-                        //         ],
-                        //     })
-                        //     if (staffData) {
-                        //         let dateSign = new Date(staffData.Date)
-                        //         advancePayment = 12 - Number(moment(dateSign).format('MM'))
-                        //         if (Number(moment(dateSign).format('DD')) == 1)
-                        //             advancePayment += 1
-                        //     }
-                        // }
                         for (let i = 0; i < arrayRespone.length; i++) {
                             let numberHolidayArray = 0
                             if (!arrayRespone[i].timeStart)
@@ -1206,6 +1180,19 @@ module.exports = {
                             } else {
                                 remaining = data[i].AdvancePayment - data[i].UsedLeave
                             }
+                            // Sửa ngày 15/8 theo yêu cầu bên TX
+                            await mtblTimeAttendanceSummary(db).findOne({
+                                    order: [
+                                        ['ID', 'DESC']
+                                    ],
+                                    where: {
+                                        StaffID: body.staffID,
+                                    }
+                                }).then(data => {
+                                    if (data)
+                                        remaining = data.RemainingPreviousYear
+                                })
+                                // remaining = 123
                             var obj = {
                                 stt: stt,
                                 id: Number(data[i].ID),

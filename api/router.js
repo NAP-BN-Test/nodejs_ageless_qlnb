@@ -681,4 +681,7 @@ module.exports = function(app) {
     app.route('/qlnb/check_duplicate_voucher_number_cqnn').post(tblStateAgencies.checkDuplicateVoucherNumberCQNN);
     app.route('/qlnb/save_previous_period_balance').post(tblStateAgencies.savePreviousPeriodBalance);
 
+    var tblScheduleJob = require('./scheduleJob');
+    app.route('/qlnb/create_data_timekeeping').post(tblScheduleJob.createDataTimekeepingAPI);
+
 }

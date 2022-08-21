@@ -12,6 +12,8 @@ var mtblNghiPhep = require('./tables/hrmanage/tblNghiPhep')
 var mtblDateOfLeave = require('./tables/hrmanage/tblDateOfLeave')
 var mtblChamCong = require('./tables/hrmanage/tblChamCong')
 var mModules = require('./constants/modules');
+const path = require('path');
+
 // tìm ngày trong dữ liệu chấm công
 async function filterByDate(userID, dateFinal, array, month, year) {
     var arrayResult = [];
@@ -450,6 +452,7 @@ async function createDataTimeKeeping(db, year, month, date, staffID, IDMayChamCo
         }
     }
 }
+var fs = require('fs');
 
 module.exports = {
     editStatus24HourEveryday: async(req, res) => {
@@ -672,5 +675,86 @@ module.exports = {
             }
         })
 
-    }
+    },
+    createDataTimekeepingAPI: (req, res) => {
+        let body = req.body;
+        database.connectDatabase().then(async db => {
+            if (db) {
+                try {
+                    let arrayData = [];
+                    var pathlink = './dlcc.txt'
+                    const file = fs.readFileSync(pathlink).toString();
+                    arrayData = JSON.parse(file)
+                    let arrayMonthCheck = [];
+                    for (let dataTimeKp = 0; dataTimeKp < arrayData.length; dataTimeKp++) {
+                        let monthYear = moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D h:m:s').format('YYYY-MM');
+                        if (!checkDuplicate(arrayMonthCheck, monthYear))
+                            arrayMonthCheck.push(monthYear);
+                    }
+                    for (let monthYear = 0; monthYear < arrayMonthCheck.length; monthYear++) {
+                        await mtblChamCong(db).destroy({
+                            where: {
+                                Date: {
+                                    [Op.substring]: arrayMonthCheck[monthYear]
+                                }
+                            }
+                        })
+                    }
+                    for (let dataTimeKp = 0; dataTimeKp < arrayData.length; dataTimeKp++) {
+                        console.log(arrayData[dataTimeKp]);
+                        let date = moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D h:m:s').format('DD');
+                        let month = moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D h:m:s').format('MM');
+                        let year = moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D h:m:s').format('YYYY');
+                        let staff = await mtblDMNhanvien(db).findOne({
+                            where: { IDMayChamCong: arrayData[dataTimeKp]['User ID'] }
+                        })
+                        if (staff) {
+                            let checkMonth = await moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D').format('YYYY-MM-DD');
+                            let checkTimekeeping = await mtblChamCong(db).findOne({
+                                where: {
+                                    Date: {
+                                        [Op.substring]: checkMonth
+                                    },
+                                    IDNhanVien: staff.ID,
+                                }
+                            })
+                            if (!checkTimekeeping) {
+                                await createDataTimeKeeping(db, year, month, Number(date), staff.ID, arrayData[dataTimeKp]['User ID'], arrayData);
+                            }
+                        }
+                    }
+                    arrayMonthCheck = arrayMonthCheck.sort();
+                    for (let monthYear = 0; monthYear < arrayMonthCheck.length; monthYear++) {
+                        month = Number(arrayMonthCheck[monthYear].slice(5, 7)); // January
+                        year = Number(arrayMonthCheck[monthYear].slice(0, 4));
+                        var dateFi = new Date(year, month, 0);
+                        var dateFinal = Number(dateFi.toISOString().slice(8, 10))
+                        dateFinal += 1
+                        for (let date = 1; date <= dateFinal; date++) {
+                            let dateCheck = year + '-' + await convertNumber(month) + '-' + await convertNumber(date)
+                            await mtblDMNhanvien(db).findAll().then(async staffObj => {
+                                for (let staff = 0; staff < staffObj.length; staff++) {
+                                    if (staffObj[staff].IDMayChamCong) {
+                                        let timeKeeping = await mtblChamCong(db).findOne({
+                                            where: {
+                                                IDNhanVien: staffObj[staff].ID,
+                                                Date: {
+                                                    [Op.substring]: dateCheck
+                                                },
+                                            }
+                                        })
+                                        if (!timeKeeping) {
+                                            await createDataTimeKeeping(db, year, month, Number(date), staffObj[staff].ID, staffObj[staff].IDMayChamCong, arrayData);
+                                        }
+                                    }
+                                }
+                            })
+                        }
+                    }
+                } catch (error) {
+                    console.log(error);
+                }
+            } else {}
+        })
+    },
 }

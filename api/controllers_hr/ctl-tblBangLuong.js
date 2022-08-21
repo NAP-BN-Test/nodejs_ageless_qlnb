@@ -963,15 +963,23 @@ async function calculateRemainingPreviousYear(db, staffID, date) {
     if (seniority > 12) {
         advancePayment = 12 + Math.floor(seniority / 60)
     } else {
-        let staffData = await mtblHopDongNhanSu(db).findOne({
+        let tblHopDongNhanSu = mtblHopDongNhanSu(db);
+        tblHopDongNhanSu.belongsTo(mtblDMNhanvien(db), { foreignKey: 'IDNhanVien', sourceKey: 'IDNhanVien', as: 'nv' })
+
+        let staffData = await tblHopDongNhanSu.findOne({
             where: { IDNhanVien: staffID },
             order: [
                 ['ID', 'ASC']
             ],
+            include: [{
+                model: mtblDMNhanvien(db),
+                required: false,
+                as: 'nv'
+            }, ],
         })
         if (staffData) {
             let dateSign = new Date(staffData.Date)
-            advancePayment = 12 - Number(moment(dateSign).format('MM'))
+            advancePayment = (staffData.nv ? Number(staffData.nv.NoDateOff) : 12) - Number(moment(dateSign).format('MM'))
             if (Number(moment(dateSign).format('DD')) == 1)
                 advancePayment += 1
         }
@@ -1063,21 +1071,6 @@ async function createTimeAttendanceSummary() {
                         objResult['remaining'] = remaining.toFixed(2)
                         objResult['remainingPreviousYear'] = remainingPreviousYear.toFixed(2)
                         let objLeave = await getListleaveDate(db, month, year, data[i].ID, dateFinal)
-                        console.log({
-                            StaffID: objResult.staffID,
-                            StaffName: objResult.staffName,
-                            StaffCode: objResult.staffCode,
-                            DepartmentName: objResult.departmentName,
-                            Overtime: objResult.overtime,
-                            NumberHoliday: objResult.numberHoliday,
-                            FreeBreak: objResult.freeBreak,
-                            LateDay: objResult.lateDay,
-                            Remaining: objResult.remaining,
-                            RemainingPreviousYear: objResult.remainingPreviousYear,
-                            Month: year + '-' + await convertNumber(month),
-                            SickLeave: objLeave.arrayO.length,
-                            RegimeLeave: objLeave.arrayRegimeLeave.length - objLeave.arrayO.length,
-                        });
                         await mtblTimeAttendanceSummary(db).create({
                             StaffID: objResult.staffID,
                             StaffName: objResult.staffName,
@@ -2659,25 +2652,25 @@ module.exports = {
     syntheticInformationMonthly: async(req, res) => {
         let body = req.body;
         console.log(body);
-        // await createTimeAttendanceSummary()
-        database.connectDatabase().then(async db => {
-            if (db) {
-                try {
-                    let array = await getDetailSyntheticTimkeeping(db, body.departmentID, body.dateStart ? body.dateStart : null, body.dateEnd ? body.dateEnd : null)
-                    var result = {
-                        array: array,
-                        status: Constant.STATUS.SUCCESS,
-                        message: Constant.MESSAGE.ACTION_SUCCESS,
-                    }
-                    res.json(result);
-                } catch (error) {
-                    console.log(error);
-                    res.json(Result.SYS_ERROR_RESULT)
-                }
-            } else {
-                res.json(Constant.MESSAGE.USER_FAIL)
-            }
-        })
+        await createTimeAttendanceSummary()
+            // database.connectDatabase().then(async db => {
+            //     if (db) {
+            //         try {
+            //             let array = await getDetailSyntheticTimkeeping(db, body.departmentID, body.dateStart ? body.dateStart : null, body.dateEnd ? body.dateEnd : null)
+            //             var result = {
+            //                 array: array,
+            //                 status: Constant.STATUS.SUCCESS,
+            //                 message: Constant.MESSAGE.ACTION_SUCCESS,
+            //             }
+            //             res.json(result);
+            //         } catch (error) {
+            //             console.log(error);
+            //             res.json(Result.SYS_ERROR_RESULT)
+            //         }
+            //     } else {
+            //         res.json(Constant.MESSAGE.USER_FAIL)
+            //     }
+            // })
     },
 
 
