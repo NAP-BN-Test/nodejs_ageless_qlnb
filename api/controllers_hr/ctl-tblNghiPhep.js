@@ -157,14 +157,13 @@ async function handleCalculateDayOff(dateStart, dateEnd) {
             subtractHalfDay += 1
         }
     }
-    if (mModules.checkDuplicate(arrayWorkEnd, Number(dayEnd))) {
+    if (mModules.checkDuplicate(arrayWorkEnd, Number(arrayWorkEnd))) {
         if (checkDateEnd <= 13) {
             subtractHalfDay += 0.5
         } else {
             subtractHalfDay += 1
         }
     }
-    console.log(subtractHalfDay, days.length);
     if (days.length < 1) {
         if (Number(dateStart.slice(8, 10)) != Number(dateEnd.slice(8, 10))) {
             if ((checkDateStart <= 12 && checkDateEnd <= 13) || ((checkDateStart >= 12 && checkDateEnd >= 13))) { result = 1.5 }
@@ -365,7 +364,7 @@ module.exports = {
         })
     },
     // update_tbl_nghiphep
-    updatetblNghiPhep: (req, res) => {
+    updatetblNghiPhep: async(req, res) => {
         let body = req.body;
         console.log(body);
         database.connectDatabase().then(async db => {
@@ -374,7 +373,8 @@ module.exports = {
                     let update = [];
                     if (body.type == 'TakeLeave') {
                         body.fileAttach = JSON.parse(body.fileAttach)
-                        await mModules.updateForFileAttach(db, 'IDTakeLeave', body.fileAttach, body.id)
+                        if (body.fileAttach.length > 0)
+                            await mModules.updateForFileAttach(db, 'IDTakeLeave', body.fileAttach, body.id)
                     }
                     let arrayRespone = JSON.parse(body.array)
                     let numberHoliday = 0
@@ -402,7 +402,6 @@ module.exports = {
                     update.push({ key: 'NumberHoliday', value: numberHoliday });
                     update.push({ key: 'Deducted', value: deducted });
                     await mtblDateOfLeave(db).destroy({ where: { LeaveID: body.id } })
-                    console.log(arrayRespone);
                     for (let i = 0; i < arrayRespone.length; i++) {
                         if (body.type != 'TakeLeave') {
                             await mtblDateOfLeave(db).create({
@@ -415,7 +414,6 @@ module.exports = {
                                 LeaveID: body.id,
                             })
                         } else {
-                            console.log(arrayRespone);
                             await mtblDateOfLeave(db).create({
                                 DateStart: arrayRespone[i].dateStart + ' ' + arrayRespone[i].timeStart,
                                 DateEnd: arrayRespone[i].dateEnd + ' ' + arrayRespone[i].timeEnd,
