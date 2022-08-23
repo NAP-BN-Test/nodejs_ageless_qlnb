@@ -177,7 +177,7 @@ async function handleCalculateDayOff(dateStart, dateEnd) {
             }
         }
     } else
-        result = days.length - array7th.length + subtractHalfDay
+        result = days.length + 1 - array7th.length + subtractHalfDay
     return result
 }
 async function handleCalculatePreviousYear(db, idStaff, currentYear) {
