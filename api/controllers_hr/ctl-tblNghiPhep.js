@@ -150,34 +150,43 @@ async function handleCalculateDayOff(dateStart, dateEnd) {
     var dayEnd = moment(dateEnd).add(14, 'hours').format('DD')
     let arrayWorkStart = await take7thDataToWork(yearOfDayStart, monthOfDayStart)
     let arrayWorkEnd = await take7thDataToWork(yearOfDayEnd, monthOfDayEnd)
-    if (mModules.checkDuplicate(arrayWorkStart, Number(dayStart))) {
-        if (checkDateStart <= 12) {
-            subtractHalfDay += 0.5
-        } else {
-            subtractHalfDay += 1
-        }
-    }
-    if (mModules.checkDuplicate(arrayWorkEnd, Number(checkDateEnd))) {
-        if (checkDateEnd <= 13) {
-            subtractHalfDay += 0.5
-        } else {
-            subtractHalfDay += 1
-        }
-    }
-    if (days.length < 1) {
-        if (Number(dateStart.slice(8, 10)) != Number(dateEnd.slice(8, 10))) {
-            if ((checkDateStart <= 12 && checkDateEnd <= 13) || ((checkDateStart >= 12 && checkDateEnd >= 13))) { result = 1.5 } else if ((checkDateStart == 12 && checkDateEnd == 13) || ((checkDateStart >= checkDateEnd))) { result = 1 } else { result = 2 }
-        } else {
-            if ((checkDateStart <= 12 && checkDateEnd <= 13) || ((checkDateStart >= 12 && checkDateEnd >= 13))) {
-                result = 0.5
-            } else if ((checkDateStart == 12 && checkDateEnd == 13) || ((checkDateStart >= checkDateEnd))) {
-                result = 0
-            } else {
-                result = 1
-            }
-        }
-    } else
-        result = days.length + 1 - array7th.length + subtractHalfDay
+    date_start = new Date(dateStart.slice(0, 10))
+    date_end = new Date(dateEnd.slice(0, 10))
+    date = (date_end - date_start) / 86400000
+    hour_start = dateStart.slice(11, 13)
+    hour_end = dateEnd.slice(11, 13)
+    let hour = 0
+    if (hour_start >= 12) hour += 0.5
+    if (hour_end <= 13) hour += 0.5
+    result = date - hour + 1 - array7th.length
+        // if (mModules.checkDuplicate(arrayWorkStart, Number(dayStart))) {
+        //     if (checkDateStart <= 12) {
+        //         subtractHalfDay += 0.5
+        //     } else {
+        //         subtractHalfDay += 1
+        //     }
+        // }
+        // if (mModules.checkDuplicate(arrayWorkEnd, Number(checkDateEnd))) {
+        //     if (checkDateEnd <= 13) {
+        //         subtractHalfDay += 0.5
+        //     } else {
+        //         subtractHalfDay += 1
+        //     }
+        // }
+        // if (days.length < 1) {
+        //     if (Number(dateStart.slice(8, 10)) != Number(dateEnd.slice(8, 10))) {
+        //         if ((checkDateStart <= 12 && checkDateEnd <= 13) || ((checkDateStart >= 12 && checkDateEnd >= 13))) { result = 1.5 } else if ((checkDateStart == 12 && checkDateEnd == 13) || ((checkDateStart >= checkDateEnd))) { result = 1 } else { result = 2 }
+        //     } else {
+        //         if ((checkDateStart <= 12 && checkDateEnd <= 13) || ((checkDateStart >= 12 && checkDateEnd >= 13))) {
+        //             result = 0.5
+        //         } else if ((checkDateStart == 12 && checkDateEnd == 13) || ((checkDateStart >= checkDateEnd))) {
+        //             result = 0
+        //         } else {
+        //             result = 1
+        //         }
+        //     }
+        // } else
+        //     result = days.length + 1 - array7th.length + subtractHalfDay
     return result
 }
 async function handleCalculatePreviousYear(db, idStaff, currentYear) {
