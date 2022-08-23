@@ -42,6 +42,7 @@ var mtblDecidedInsuranceSalary = require('../tables/hrmanage/tblDecidedInsurance
 var mtblRewardPunishmentRStaff = require('../tables/hrmanage/tblRewardPunishmentRStaff')
 
 var database = require('../database');
+const { now } = require('underscore');
 async function handleCalculateAdvancePayment(db, idStaff) {
     let staffData = await mtblHopDongNhanSu(db).findOne({
         where: { IDNhanVien: idStaff },
@@ -879,7 +880,6 @@ module.exports = {
     // get_list_tbl_dmnhanvien
     getListtblDMNhanvien: (req, res) => {
         let body = req.body;
-        console.log(body);
         database.connectDatabase().then(async db => {
             if (db) {
                 try {
@@ -1128,12 +1128,31 @@ module.exports = {
                             }
                         }
                     }
+                    let now = moment().add(7, 'hours').format('YYYY-MM-DD HH:mm:ss.SSS');
+                    let arrayNV = []
+                    await mtblHopDongNhanSu(db).findAll({
+                        where: {
+                            ContractDateStart: {
+                                [Op.gte]: now
+                            }
+                        }
+                    }).then(data => {
+                        for (const item of data) {
+                            arrayNV.push(item.IDNhanVien)
+                        }
+                    })
+                    whereOjb[Op.and].push({
+                        ID: {
+                            [Op.in]: arrayNV
+                        }
+                    })
                     let stt = 1;
                     let tblDMNhanvien = mtblDMNhanvien(db);
                     tblDMNhanvien.belongsTo(mtblDMBoPhan(db), { foreignKey: 'IDBoPhan', sourceKey: 'IDBoPhan', as: 'bophan' })
                     tblDMNhanvien.belongsTo(mtblFileAttach(db), { foreignKey: 'FileAttachID', sourceKey: 'FileAttachID', as: 'file' })
                     let tblDMBoPhan = mtblDMBoPhan(db);
                     tblDMBoPhan.belongsTo(mtblDMChiNhanh(db), { foreignKey: 'IDChiNhanh', sourceKey: 'IDChiNhanh' })
+                    tblDMNhanvien.hasMany(mtblHopDongNhanSu(db), { foreignKey: 'IDNhanVien', as: 'hd' })
                     let all = await tblDMNhanvien.count({ where: whereOjb, })
                     tblDMNhanvien.findAll({
                         order: [

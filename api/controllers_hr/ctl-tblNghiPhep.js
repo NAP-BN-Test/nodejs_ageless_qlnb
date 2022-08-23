@@ -157,7 +157,7 @@ async function handleCalculateDayOff(dateStart, dateEnd) {
             subtractHalfDay += 1
         }
     }
-    if (mModules.checkDuplicate(arrayWorkEnd, Number(arrayWorkEnd))) {
+    if (mModules.checkDuplicate(arrayWorkEnd, Number(checkDateEnd))) {
         if (checkDateEnd <= 13) {
             subtractHalfDay += 0.5
         } else {
@@ -166,14 +166,8 @@ async function handleCalculateDayOff(dateStart, dateEnd) {
     }
     if (days.length < 1) {
         if (Number(dateStart.slice(8, 10)) != Number(dateEnd.slice(8, 10))) {
-            if ((checkDateStart <= 12 && checkDateEnd <= 13) || ((checkDateStart >= 12 && checkDateEnd >= 13))) { result = 1.5 }
-            if ((checkDateStart == 12 && checkDateEnd == 13) || ((checkDateStart >= checkDateEnd))) { result = 1 } else { result = 2 }
-        }
-        // if (checkDateStart >= 12)
-        //     result = 1.5
-        // else
-        //     result = 2
-        else {
+            if ((checkDateStart <= 12 && checkDateEnd <= 13) || ((checkDateStart >= 12 && checkDateEnd >= 13))) { result = 1.5 } else if ((checkDateStart == 12 && checkDateEnd == 13) || ((checkDateStart >= checkDateEnd))) { result = 1 } else { result = 2 }
+        } else {
             if ((checkDateStart <= 12 && checkDateEnd <= 13) || ((checkDateStart >= 12 && checkDateEnd >= 13))) {
                 result = 0.5
             } else if ((checkDateStart == 12 && checkDateEnd == 13) || ((checkDateStart >= checkDateEnd))) {

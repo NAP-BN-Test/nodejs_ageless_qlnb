@@ -504,6 +504,8 @@ module.exports = {
                             update.push({ key: 'NoticeTime', value: moment().add(7, 'hours').format('YYYY-MM-DD HH:mm:ss.SSS') });
 
                         update.push({ key: 'ContractDateEnd', value: body.contractDateEnd });
+                    } else {
+                        update.push({ key: 'ContractDateEnd', value: null });
                     }
                     if (body.contractDateStart || body.contractDateStart === '') {
                         update.push({ key: 'ContractDateStart', value: body.contractDateStart });
