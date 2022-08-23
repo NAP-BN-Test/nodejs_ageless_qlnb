@@ -795,11 +795,23 @@ module.exports = {
                         var array = [];
                         for (var i = 0; i < data.length; i++) {
                             let remaining = 0
-                            if (data[i].Status == 'Hoàn thành') {
-                                remaining = data[i].AdvancePayment - data[i].UsedLeave - data[i].Deducted
-                            } else {
-                                remaining = data[i].AdvancePayment - data[i].UsedLeave
-                            }
+                                // if (data[i].Status == 'Hoàn thành') {
+                                //     remaining = data[i].AdvancePayment - data[i].UsedLeave - data[i].Deducted
+                                // } else {
+                                //     remaining = data[i].AdvancePayment - data[i].UsedLeave
+                                // }
+                                // Sửa ngày 15/8 theo yêu cầu bên TX
+                            await mtblTimeAttendanceSummary(db).findOne({
+                                order: [
+                                    ['ID', 'DESC']
+                                ],
+                                where: {
+                                    StaffID: body.staffID,
+                                }
+                            }).then(data => {
+                                if (data)
+                                    remaining = data.RemainingPreviousYear
+                            })
                             var obj = {
                                 stt: stt,
                                 id: Number(data[i].ID),
@@ -1167,24 +1179,23 @@ module.exports = {
                         var array = [];
                         for (var i = 0; i < data.length; i++) {
                             let remaining = 0
-                            if (data[i].Status == 'Hoàn thành') {
-                                remaining = data[i].AdvancePayment - data[i].UsedLeave - data[i].Deducted
-                            } else {
-                                remaining = data[i].AdvancePayment - data[i].UsedLeave
-                            }
-                            // Sửa ngày 15/8 theo yêu cầu bên TX
+                                // if (data[i].Status == 'Hoàn thành') {
+                                //     remaining = data[i].AdvancePayment - data[i].UsedLeave - data[i].Deducted
+                                // } else {
+                                //     remaining = data[i].AdvancePayment - data[i].UsedLeave
+                                // }
+                                // Sửa ngày 15/8 theo yêu cầu bên TX
                             await mtblTimeAttendanceSummary(db).findOne({
-                                    order: [
-                                        ['ID', 'DESC']
-                                    ],
-                                    where: {
-                                        StaffID: body.staffID,
-                                    }
-                                }).then(data => {
-                                    if (data)
-                                        remaining = data.RemainingPreviousYear
-                                })
-                                // remaining = 123
+                                order: [
+                                    ['ID', 'DESC']
+                                ],
+                                where: {
+                                    StaffID: body.staffID,
+                                }
+                            }).then(data => {
+                                if (data)
+                                    remaining = data.RemainingPreviousYear
+                            })
                             var obj = {
                                 stt: stt,
                                 id: Number(data[i].ID),
