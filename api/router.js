@@ -100,6 +100,7 @@ module.exports = function(app) {
     app.route('/qlnb/get_list_name_tbl_dmnhanvien').post(tblDMNhanvien.getListNametblDMNhanvien);
     app.route('/qlnb/get_list_name_truongbophan').post(tblDMNhanvien.getListNameTruongBoPhan);
     app.route('/qlnb/get_list_name_hanhchinhnhansu').post(tblDMNhanvien.getListNameHanhChinhNhanSu);
+    app.route('/qlnb/get_list_name_hanhchinhnhansu_it').post(tblDMNhanvien.getListNameHanhChinhNhanSuIT);
     app.route('/qlnb/get_list_name_thutruong').post(tblDMNhanvien.getListNameThuTruong);
     app.route('/qlnb/get_employee_from_department').post(checkToken.checkToken, tblDMNhanvien.getEmployeeFromDepartment);
     app.route('/qlnb/get_number_leave_day').post(checkToken.checkToken, tblDMNhanvien.getNumberLeaveDay);

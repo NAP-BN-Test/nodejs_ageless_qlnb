@@ -560,6 +560,7 @@ module.exports = {
     // get_list_tbl_nghiphep
     getListtblNghiPhep: (req, res) => {
         let body = req.body;
+        console.log("bodyyyyyyyyyyyyy", body);
         database.connectDatabase().then(async db => {
             if (db) {
                 try {
@@ -815,12 +816,13 @@ module.exports = {
                                     ['ID', 'DESC']
                                 ],
                                 where: {
-                                    StaffID: body.staffID,
+                                    StaffID: data[i].IDNhanVien,
                                 }
                             }).then(data => {
                                 if (data)
-                                    remaining = data.RemainingPreviousYear
+                                    remaining = data.Remaining
                             })
+                            console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaa", remaining);
                             var obj = {
                                 stt: stt,
                                 id: Number(data[i].ID),
@@ -1199,11 +1201,11 @@ module.exports = {
                                     ['ID', 'DESC']
                                 ],
                                 where: {
-                                    StaffID: body.staffID,
+                                    StaffID: data[i].IDNhanVien,
                                 }
                             }).then(data => {
                                 if (data)
-                                    remaining = data.RemainingPreviousYear
+                                    remaining = data.Remaining
                             })
                             var obj = {
                                 stt: stt,

@@ -1129,24 +1129,33 @@ module.exports = {
                         }
                     }
                     let now = moment().add(7, 'hours').format('YYYY-MM-DD HH:mm:ss.SSS');
-                    let arrayNV = []
+                    let arrayNV_HHL = []
+                    let arrayNV_CHL = []
                     await mtblHopDongNhanSu(db).findAll({
                         where: {
-                            ContractDateStart: {
-                                [Op.gte]: now
-                            }
+                            Status: 'Hết hiệu lực'
                         }
                     }).then(data => {
                         for (const item of data) {
-                            arrayNV.push(item.IDNhanVien)
+                            arrayNV_HHL.push(item.IDNhanVien)
                         }
                     })
+                    await mtblHopDongNhanSu(db).findAll({
+                        where: {
+                            Status: 'Có hiệu lực'
+                        }
+                    }).then(data => {
+                        for (const item of data) {
+                            arrayNV_CHL.push(item.IDNhanVien)
+                        }
+                    })
+                    let arrayNV = arrayNV_CHL.filter(item => !arrayNV_HHL.includes(item))
                     whereOjb[Op.and].push({
                         ID: {
                             [Op.in]: arrayNV
                         }
                     })
-                    let stt = 1;
+                    let stt = 1
                     let tblDMNhanvien = mtblDMNhanvien(db);
                     tblDMNhanvien.belongsTo(mtblDMBoPhan(db), { foreignKey: 'IDBoPhan', sourceKey: 'IDBoPhan', as: 'bophan' })
                     tblDMNhanvien.belongsTo(mtblFileAttach(db), { foreignKey: 'FileAttachID', sourceKey: 'FileAttachID', as: 'file' })
@@ -1540,6 +1549,115 @@ module.exports = {
             }
         })
     },
+    // get_list_name_hanhchinhnhansu_it
+    getListNameHanhChinhNhanSuIT: (req, res) => {
+        let body = req.body;
+        database.connectDatabase().then(async db => {
+            if (db) {
+                try {
+                    var arriduser = []
+                    var arridnv = []
+                    let tblRRoleUser = mtblRRoleUser(db);
+                    tblRRoleUser.belongsTo(mtblRole(db), { foreignKey: 'RoleID', sourceKey: 'RoleID', as: 'role' })
+                    await tblRRoleUser.findAll({
+                        include: [{
+                            model: mtblRole(db),
+                            where: {
+                                Code: {
+                                    [Op.in]: ['TBHC', 'KTT', 'KTV', 'NVIT']
+                                }
+                            },
+                            required: true,
+                            as: 'role'
+                        }, ],
+                    }).then(user => {
+                        for (let u = 0; u < user.length; u++) {
+                            arriduser.push(user[u].UserID)
+                        }
+                    })
+                    let tblDMUser = mtblDMUser(db);
+                    await tblDMUser.findAll({
+                        where: {
+                            ID: {
+                                [Op.in]: arriduser
+                            }
+                        },
+                    }).then(user => {
+                        for (let u = 0; u < user.length; u++) {
+                            arridnv.push(user[u].IDNhanvien)
+                        }
+                    })
+                    let tblDMNhanvien = mtblDMNhanvien(db);
+                    let tblHopDongNhanSu = mtblHopDongNhanSu(db);
+                    tblDMNhanvien.belongsTo(mtblDMBoPhan(db), { foreignKey: 'IDBoPhan', sourceKey: 'IDBoPhan', as: 'bp' })
+                        // tblHopDongNhanSu.hasMany(tblDMNhanvien, { foreignKey: 'IDNhanVien', sourceKey: 'IDNhanVien', as: 'hdns' })
+
+                    tblDMNhanvien.findAll({
+                        where: {
+                            ID: {
+                                [Op.in]: arridnv
+                            }
+                        },
+                        include: [{
+                            model: mtblDMBoPhan(db),
+                            required: true,
+                            as: 'bp'
+                        }],
+                    }).then(async staff => {
+                        var array = [];
+                        for (let i = 0; i < staff.length; i++) {
+
+                            await tblHopDongNhanSu.findAll({
+                                where: {
+                                    Status: "Có hiệu lực",
+                                    IDNhanVien: staff[i].ID,
+                                },
+                            }).then(async datas => {
+                                if (datas[0]) {
+                                    let salary = 0;
+                                    if (body.date) {
+                                        let dateSearch = moment(data.date).add(30, 'hours').format('YYYY-MM-DD HH:mm:ss.SSS');
+                                        await mtblIncreaseSalariesAndStaff(db).findAll({
+                                            where: {
+                                                Date: {
+                                                    [Op.lte]: dateSearch
+                                                },
+                                                StaffID: staff[i].ID,
+                                            },
+                                        }).then(async data => {
+                                            data.forEach(element => {
+                                                salary += element.Increase
+                                            })
+                                        })
+                                    }
+                                    var obj = {
+                                        id: Number(staff[i].ID),
+                                        staffCode: staff[i].StaffCode ? staff[i].StaffCode : '',
+                                        staffName: staff[i].StaffName ? staff[i].StaffName : '',
+                                        departmentName: staff[i].bp ? staff[i].bp.DepartmentName : '',
+                                        productivityWagesPresent: Number(staff[i].ProductivityWages ? staff[i].ProductivityWages : 0) + Number(salary),
+                                    }
+                                    array.push(obj);
+                                }
+                            })
+                        }
+                        var result = {
+                            array: array,
+                            status: Constant.STATUS.SUCCESS,
+                            message: Constant.MESSAGE.ACTION_SUCCESS,
+                        }
+                        res.json(result);
+                    })
+
+                } catch (error) {
+                    console.log(error);
+                    res.json(Result.SYS_ERROR_RESULT)
+                }
+            } else {
+                res.json(Constant.MESSAGE.USER_FAIL)
+            }
+        })
+    },
     // get_list_name_thutruong
     getListNameThuTruong: (req, res) => {
         let body = req.body;
@@ -1571,6 +1689,9 @@ module.exports = {
                         where: {
                             ID: {
                                 [Op.in]: arriduser
+                            },
+                            Username: {
+                                [Op.ne]: 'ducpa'
                             }
                         },
                     }).then(user => {
