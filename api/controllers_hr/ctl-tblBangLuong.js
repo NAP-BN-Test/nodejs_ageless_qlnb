@@ -2651,26 +2651,25 @@ module.exports = {
     // synthetic_information_monthly
     syntheticInformationMonthly: async(req, res) => {
         let body = req.body;
-        console.log(body);
-        await createTimeAttendanceSummary()
-            // database.connectDatabase().then(async db => {
-            //     if (db) {
-            //         try {
-            //             let array = await getDetailSyntheticTimkeeping(db, body.departmentID, body.dateStart ? body.dateStart : null, body.dateEnd ? body.dateEnd : null)
-            //             var result = {
-            //                 array: array,
-            //                 status: Constant.STATUS.SUCCESS,
-            //                 message: Constant.MESSAGE.ACTION_SUCCESS,
-            //             }
-            //             res.json(result);
-            //         } catch (error) {
-            //             console.log(error);
-            //             res.json(Result.SYS_ERROR_RESULT)
-            //         }
-            //     } else {
-            //         res.json(Constant.MESSAGE.USER_FAIL)
-            //     }
-            // })
+        // await createTimeAttendanceSummary()
+        database.connectDatabase().then(async db => {
+            if (db) {
+                try {
+                    let array = await getDetailSyntheticTimkeeping(db, body.departmentID, body.dateStart ? body.dateStart : null, body.dateEnd ? body.dateEnd : null)
+                    var result = {
+                        array: array,
+                        status: Constant.STATUS.SUCCESS,
+                        message: Constant.MESSAGE.ACTION_SUCCESS,
+                    }
+                    res.json(result);
+                } catch (error) {
+                    console.log(error);
+                    res.json(Result.SYS_ERROR_RESULT)
+                }
+            } else {
+                res.json(Constant.MESSAGE.USER_FAIL)
+            }
+        })
     },
 
 
