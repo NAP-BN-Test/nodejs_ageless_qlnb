@@ -53,12 +53,12 @@ async function handleCalculateAdvancePayment(db, idStaff) {
     var diff;
     if (staffData) {
         let now = new Date()
+        let theLast = new Date(now.getFullYear(), 11, 31)
         let dateSign = new Date(staffData.Date)
-        diff = await monthDiff(now, dateSign)
+        diff = await monthDiff(theLast, dateSign)
         if (diff > 12) {
             diff = 12 + Math.floor(diff / 60)
         }
-
     }
     return diff ? diff : 0
 }

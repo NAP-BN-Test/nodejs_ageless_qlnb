@@ -507,7 +507,7 @@ module.exports = {
                         }
                     })
                     let arrayData = [];
-                    await axios.get(`http://dbdev.namanphu.vn:1333/dulieuchamcong/index`).then(data => {
+                    await axios.get(`http://192.168.23.16:1333/dulieuchamcong/index`).then(data => {
                         if (data.data.length > 0)
                             arrayData = data.data
                     })
@@ -543,7 +543,9 @@ module.exports = {
                                     IDNhanVien: staff.ID,
                                 }
                             })
-                            if (!checkTimekeeping) {
+                            let ngaychamcong = Date.parse(year + '-' + month + '-' + date)
+                            let ngayapdung = Date.parse('2022-09-01')
+                            if (!checkTimekeeping && ngaychamcong >= ngayapdung) {
                                 await createDataTimeKeeping(db, year, month, Number(date), staff.ID, arrayData[dataTimeKp]['User ID'], arrayData);
                             }
                         }
@@ -597,77 +599,153 @@ module.exports = {
                     })
                 });
                 schedule.scheduleJob({ hour: 11, minute: 59 }, async function() {
-                    let arrayData = [];
-                    await axios.get(`http://dbdev.namanphu.vn:1333/dulieuchamcong/index`).then(data => {
-                        if (data.data.length > 0)
-                            arrayData = data.data
-                    })
-                    let arrayMonthCheck = [];
-                    for (let dataTimeKp = 0; dataTimeKp < arrayData.length; dataTimeKp++) {
-                        let monthYear = moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D h:m:s').format('YYYY-MM');
-                        if (!checkDuplicate(arrayMonthCheck, monthYear))
-                            arrayMonthCheck.push(monthYear);
-                    }
-                    for (let monthYear = 0; monthYear < arrayMonthCheck.length; monthYear++) {
-                        await mtblChamCong(db).destroy({
-                            where: {
-                                Date: {
-                                    [Op.substring]: arrayMonthCheck[monthYear]
-                                }
-                            }
+                        let arrayData = [];
+                        await axios.get(`http://192.168.23.16:1333/dulieuchamcong/index`).then(data => {
+                            if (data.data.length > 0)
+                                arrayData = data.data
                         })
-                    }
-                    for (let dataTimeKp = 0; dataTimeKp < arrayData.length; dataTimeKp++) {
-                        let date = moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D h:m:s').format('DD');
-                        let month = moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D h:m:s').format('MM');
-                        let year = moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D h:m:s').format('YYYY');
-                        let staff = await mtblDMNhanvien(db).findOne({
-                            where: { IDMayChamCong: arrayData[dataTimeKp]['User ID'] }
-                        })
-                        if (staff) {
-                            let checkMonth = await moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D').format('YYYY-MM-DD');
-                            let checkTimekeeping = await mtblChamCong(db).findOne({
+                        let arrayMonthCheck = [];
+                        for (let dataTimeKp = 0; dataTimeKp < arrayData.length; dataTimeKp++) {
+                            let monthYear = moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D h:m:s').format('YYYY-MM');
+                            if (!checkDuplicate(arrayMonthCheck, monthYear))
+                                arrayMonthCheck.push(monthYear);
+                        }
+                        for (let monthYear = 0; monthYear < arrayMonthCheck.length; monthYear++) {
+                            await mtblChamCong(db).destroy({
                                 where: {
                                     Date: {
-                                        [Op.substring]: checkMonth
-                                    },
-                                    IDNhanVien: staff.ID,
-                                }
-                            })
-                            if (!checkTimekeeping) {
-                                await createDataTimeKeeping(db, year, month, Number(date), staff.ID, arrayData[dataTimeKp]['User ID'], arrayData);
-                            }
-                        }
-                    }
-                    arrayMonthCheck = arrayMonthCheck.sort();
-                    for (let monthYear = 0; monthYear < arrayMonthCheck.length; monthYear++) {
-                        month = Number(arrayMonthCheck[monthYear].slice(5, 7)); // January
-                        year = Number(arrayMonthCheck[monthYear].slice(0, 4));
-                        var dateFi = new Date(year, month, 0);
-                        var dateFinal = Number(dateFi.toISOString().slice(8, 10))
-                        dateFinal += 1
-                        for (let date = 1; date <= dateFinal; date++) {
-                            let dateCheck = year + '-' + await convertNumber(month) + '-' + await convertNumber(date)
-                            await mtblDMNhanvien(db).findAll().then(async staffObj => {
-                                for (let staff = 0; staff < staffObj.length; staff++) {
-                                    if (staffObj[staff].IDMayChamCong) {
-                                        let timeKeeping = await mtblChamCong(db).findOne({
-                                            where: {
-                                                IDNhanVien: staffObj[staff].ID,
-                                                Date: {
-                                                    [Op.substring]: dateCheck
-                                                },
-                                            }
-                                        })
-                                        if (!timeKeeping) {
-                                            await createDataTimeKeeping(db, year, month, Number(date), staffObj[staff].ID, staffObj[staff].IDMayChamCong, arrayData);
-                                        }
+                                        [Op.substring]: arrayMonthCheck[monthYear]
                                     }
                                 }
                             })
                         }
-                    }
-                })
+                        for (let dataTimeKp = 0; dataTimeKp < arrayData.length; dataTimeKp++) {
+                            let date = moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D h:m:s').format('DD');
+                            let month = moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D h:m:s').format('MM');
+                            let year = moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D h:m:s').format('YYYY');
+                            let staff = await mtblDMNhanvien(db).findOne({
+                                where: { IDMayChamCong: arrayData[dataTimeKp]['User ID'] }
+                            })
+                            if (staff) {
+                                let checkMonth = await moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D').format('YYYY-MM-DD');
+                                let checkTimekeeping = await mtblChamCong(db).findOne({
+                                    where: {
+                                        Date: {
+                                            [Op.substring]: checkMonth
+                                        },
+                                        IDNhanVien: staff.ID,
+                                    }
+                                })
+                                let ngaychamcong = Date.parse(year + '-' + month + '-' + date)
+                                let ngayapdung = Date.parse('2022-09-01')
+                                if (!checkTimekeeping && ngaychamcong >= ngayapdung) {
+                                    await createDataTimeKeeping(db, year, month, Number(date), staff.ID, arrayData[dataTimeKp]['User ID'], arrayData);
+                                }
+                            }
+                        }
+                        arrayMonthCheck = arrayMonthCheck.sort();
+                        for (let monthYear = 0; monthYear < arrayMonthCheck.length; monthYear++) {
+                            month = Number(arrayMonthCheck[monthYear].slice(5, 7)); // January
+                            year = Number(arrayMonthCheck[monthYear].slice(0, 4));
+                            var dateFi = new Date(year, month, 0);
+                            var dateFinal = Number(dateFi.toISOString().slice(8, 10))
+                            dateFinal += 1
+                            for (let date = 1; date <= dateFinal; date++) {
+                                let dateCheck = year + '-' + await convertNumber(month) + '-' + await convertNumber(date)
+                                await mtblDMNhanvien(db).findAll().then(async staffObj => {
+                                    for (let staff = 0; staff < staffObj.length; staff++) {
+                                        if (staffObj[staff].IDMayChamCong) {
+                                            let timeKeeping = await mtblChamCong(db).findOne({
+                                                where: {
+                                                    IDNhanVien: staffObj[staff].ID,
+                                                    Date: {
+                                                        [Op.substring]: dateCheck
+                                                    },
+                                                }
+                                            })
+                                            if (!timeKeeping) {
+                                                await createDataTimeKeeping(db, year, month, Number(date), staffObj[staff].ID, staffObj[staff].IDMayChamCong, arrayData);
+                                            }
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    }),
+                    schedule.scheduleJob({ year: 2022, month: 09, date: 15, hour: 16, minute: 00 }, async function() {
+                        let arrayData = [];
+                        await axios.get(`http://192.168.23.16:1333/dulieuchamcong/index`).then(data => {
+                            if (data.data.length > 0)
+                                arrayData = data.data
+                        })
+                        let arrayMonthCheck = [];
+                        for (let dataTimeKp = 0; dataTimeKp < arrayData.length; dataTimeKp++) {
+                            let monthYear = moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D h:m:s').format('YYYY-MM');
+                            if (!checkDuplicate(arrayMonthCheck, monthYear))
+                                arrayMonthCheck.push(monthYear);
+                        }
+                        for (let monthYear = 0; monthYear < arrayMonthCheck.length; monthYear++) {
+                            await mtblChamCong(db).destroy({
+                                where: {
+                                    Date: {
+                                        [Op.substring]: arrayMonthCheck[monthYear]
+                                    }
+                                }
+                            })
+                        }
+                        for (let dataTimeKp = 0; dataTimeKp < arrayData.length; dataTimeKp++) {
+                            let date = moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D h:m:s').format('DD');
+                            let month = moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D h:m:s').format('MM');
+                            let year = moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D h:m:s').format('YYYY');
+                            let staff = await mtblDMNhanvien(db).findOne({
+                                where: { IDMayChamCong: arrayData[dataTimeKp]['User ID'] }
+                            })
+                            if (staff) {
+                                let checkMonth = await moment(arrayData[dataTimeKp]['Verify Date'], 'YYYY-M-D').format('YYYY-MM-DD');
+                                let checkTimekeeping = await mtblChamCong(db).findOne({
+                                    where: {
+                                        Date: {
+                                            [Op.substring]: checkMonth
+                                        },
+                                        IDNhanVien: staff.ID,
+                                    }
+                                })
+                                let ngaychamcong = Date.parse(year + '-' + month + '-' + date)
+                                let ngayapdung = Date.parse('2022-09-01')
+                                if (!checkTimekeeping && ngaychamcong >= ngayapdung) {
+                                    await createDataTimeKeeping(db, year, month, Number(date), staff.ID, arrayData[dataTimeKp]['User ID'], arrayData);
+                                }
+                            }
+                        }
+                        arrayMonthCheck = arrayMonthCheck.sort();
+                        for (let monthYear = 0; monthYear < arrayMonthCheck.length; monthYear++) {
+                            month = Number(arrayMonthCheck[monthYear].slice(5, 7)); // January
+                            year = Number(arrayMonthCheck[monthYear].slice(0, 4));
+                            var dateFi = new Date(year, month, 0);
+                            var dateFinal = Number(dateFi.toISOString().slice(8, 10))
+                            dateFinal += 1
+                            for (let date = 1; date <= dateFinal; date++) {
+                                let dateCheck = year + '-' + await convertNumber(month) + '-' + await convertNumber(date)
+                                await mtblDMNhanvien(db).findAll().then(async staffObj => {
+                                    for (let staff = 0; staff < staffObj.length; staff++) {
+                                        if (staffObj[staff].IDMayChamCong) {
+                                            let timeKeeping = await mtblChamCong(db).findOne({
+                                                where: {
+                                                    IDNhanVien: staffObj[staff].ID,
+                                                    Date: {
+                                                        [Op.substring]: dateCheck
+                                                    },
+                                                }
+                                            })
+                                            if (!timeKeeping) {
+                                                await createDataTimeKeeping(db, year, month, Number(date), staffObj[staff].ID, staffObj[staff].IDMayChamCong, arrayData);
+                                            }
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    })
                 console.log(job);
             } catch (error) {
                 console.log(error);
